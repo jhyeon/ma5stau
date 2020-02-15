@@ -1,0 +1,3675 @@
+diff -rNup madanalysis5.orig/madanalysis/install/install_delphes.py madanalysis5/madanalysis/install/install_delphes.py
+--- madanalysis5.orig/madanalysis/install/install_delphes.py	2020-02-11 01:45:28.000000000 +0900
++++ madanalysis5/madanalysis/install/install_delphes.py	2020-02-14 00:44:17.868472308 +0900
+@@ -147,6 +147,25 @@ class InstallDelphes:
+                 self.logger.error('impossible to apply the patch '+output)
+                 return False
+ 
++            # Copying the patch
++            self.logger.debug('Copying the patch ...')
++            input=self.toolsdir+'/SampleAnalyzer/Interfaces/delphesMA5tune/delphes-3.4.1_rpc_types_h.patch'
++            output=packagedir+'/delphes-3.4.1_rpc_types_h.patch'
++            try:
++                shutil.copy(input,output)
++            except:
++                self.logger.error('impossible to copy the patch '+input+' to '+output)
++                return False
++
++            # Applying the patch
++            logname = os.path.normpath(self.installdir+'/delphes-3.4.1_rpc_types_h.patch.log')
++            theCommand='cd '+packagedir+' && patch -p1 < delphes-3.4.1_rpc_types_h.patch'
++            self.logger.debug('shell command: '+theCommand)
++            os.system(theCommand+' > '+logname+' 2>&1')
++            if not ok:
++                self.logger.error('impossible to apply the patch '+output)
++                return False
++
+         # Getting the list of files
+         self.logger.debug('Getting the list of files ...')
+         myfiles=glob.glob(packagedir+'/*')
+diff -rNup madanalysis5.orig/tools/SampleAnalyzer/Interfaces/delphesMA5tune/delphes-3.4.1_rpc_types_h.patch madanalysis5/tools/SampleAnalyzer/Interfaces/delphesMA5tune/delphes-3.4.1_rpc_types_h.patch
+--- madanalysis5.orig/tools/SampleAnalyzer/Interfaces/delphesMA5tune/delphes-3.4.1_rpc_types_h.patch	1970-01-01 09:00:00.000000000 +0900
++++ madanalysis5/tools/SampleAnalyzer/Interfaces/delphesMA5tune/delphes-3.4.1_rpc_types_h.patch	2020-02-14 00:57:37.419364864 +0900
+@@ -0,0 +1,3642 @@
++diff -rNup Delphes-3.4.1.orig/Makefile Delphes-3.4.1/Makefile
++--- Delphes-3.4.1.orig/Makefile	2018-02-16 00:05:06.000000000 +0900
+++++ Delphes-3.4.1/Makefile	2020-02-13 23:52:36.541099486 +0900
++@@ -479,15 +479,18 @@ tmp/classes/DelphesModule.$(ObjSuf): \
++ 	external/ExRootAnalysis/ExRootResult.h
++ tmp/classes/DelphesPileUpReader.$(ObjSuf): \
++ 	classes/DelphesPileUpReader.$(SrcSuf) \
++-	classes/DelphesPileUpReader.h
+++	classes/DelphesPileUpReader.h \
+++	classes/DelphesXDRReader.h
++ tmp/classes/DelphesPileUpWriter.$(ObjSuf): \
++ 	classes/DelphesPileUpWriter.$(SrcSuf) \
++-	classes/DelphesPileUpWriter.h
+++	classes/DelphesPileUpWriter.h \
+++	classes/DelphesXDRWriter.h
++ tmp/classes/DelphesSTDHEPReader.$(ObjSuf): \
++ 	classes/DelphesSTDHEPReader.$(SrcSuf) \
++ 	classes/DelphesSTDHEPReader.h \
++ 	classes/DelphesClasses.h \
++ 	classes/DelphesFactory.h \
+++	classes/DelphesXDRReader.h \
++ 	external/ExRootAnalysis/ExRootTreeBranch.h
++ tmp/classes/DelphesStream.$(ObjSuf): \
++ 	classes/DelphesStream.$(SrcSuf) \
++@@ -495,6 +498,12 @@ tmp/classes/DelphesStream.$(ObjSuf): \
++ tmp/classes/DelphesTF2.$(ObjSuf): \
++ 	classes/DelphesTF2.$(SrcSuf) \
++ 	classes/DelphesTF2.h
+++tmp/classes/DelphesXDRReader.$(ObjSuf): \
+++	classes/DelphesXDRReader.$(SrcSuf) \
+++	classes/DelphesXDRReader.h
+++tmp/classes/DelphesXDRWriter.$(ObjSuf): \
+++	classes/DelphesXDRWriter.$(SrcSuf) \
+++	classes/DelphesXDRWriter.h
++ tmp/external/ExRootAnalysis/ExRootConfReader.$(ObjSuf): \
++ 	external/ExRootAnalysis/ExRootConfReader.$(SrcSuf) \
++ 	external/ExRootAnalysis/ExRootConfReader.h \
++@@ -993,6 +1002,8 @@ DELPHES_OBJ +=  \
++ 	tmp/classes/DelphesSTDHEPReader.$(ObjSuf) \
++ 	tmp/classes/DelphesStream.$(ObjSuf) \
++ 	tmp/classes/DelphesTF2.$(ObjSuf) \
+++	tmp/classes/DelphesXDRReader.$(ObjSuf) \
+++	tmp/classes/DelphesXDRWriter.$(ObjSuf) \
++ 	tmp/external/ExRootAnalysis/ExRootConfReader.$(ObjSuf) \
++ 	tmp/external/ExRootAnalysis/ExRootFilter.$(ObjSuf) \
++ 	tmp/external/ExRootAnalysis/ExRootProgressBar.$(ObjSuf) \
++@@ -1992,6 +2003,10 @@ modules/PdgCodeFilter.h: \
++ 	classes/DelphesModule.h
++ 	@touch $@
++ 
+++classes/DelphesSTDHEPReader.h: \
+++	classes/DelphesXDRReader.h
+++	@touch $@
+++
++ external/fastjet/plugins/CDFCones/fastjet/CDFMidPointPlugin.hh: \
++ 	external/fastjet/JetDefinition.hh
++ 	@touch $@
++diff -rNup Delphes-3.4.1.orig/Makefile.orig Delphes-3.4.1/Makefile.orig
++--- Delphes-3.4.1.orig/Makefile.orig	1970-01-01 09:00:00.000000000 +0900
+++++ Delphes-3.4.1/Makefile.orig	2020-02-13 23:51:00.561035078 +0900
++@@ -0,0 +1,2323 @@
+++
+++#
+++# Makefile for ExRootAnalysis
+++#
+++# Author: P. Demin - UCL, Louvain-la-Neuve
+++#
+++# multi-platform configuration is taken from ROOT (root/test/Makefile.arch)
+++#
+++
+++include doc/Makefile.arch
+++
+++ROOT_MAJOR := $(shell $(RC) --version | cut -d'.' -f1)
+++
+++SrcSuf = cc
+++PcmSuf = _rdict.pcm
+++
+++CXXFLAGS += $(ROOTCFLAGS) -Wno-write-strings -D_FILE_OFFSET_BITS=64 -DDROP_CGAL -I. -Iexternal -Iexternal/tcl -I/usr/include/tirpc
+++DELPHES_LIBS = $(shell $(RC) --libs) -lEG $(SYSLIBS)
+++DISPLAY_LIBS = $(shell $(RC) --evelibs) -lGuiHtml $(SYSLIBS)
+++
+++ifneq ($(CMSSW_FWLITE_INCLUDE_PATH),)
+++HAS_CMSSW = true
+++CXXFLAGS += -std=c++0x -I$(subst :, -I,$(CMSSW_FWLITE_INCLUDE_PATH))
+++OPT_LIBS += -L$(subst include,lib,$(subst :, -L,$(CMSSW_FWLITE_INCLUDE_PATH)))
+++ifneq ($(CMSSW_RELEASE_BASE),)
+++CXXFLAGS += -I$(CMSSW_RELEASE_BASE)/src
+++endif
+++ifneq ($(LD_LIBRARY_PATH),)
+++OPT_LIBS += -L$(subst include,lib,$(subst :, -L,$(LD_LIBRARY_PATH)))
+++endif
+++OPT_LIBS += -lGenVector -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsCommon -lDataFormatsPatCandidates -lDataFormatsLuminosity -lSimDataFormatsGeneratorProducts -lCommonToolsUtils -lDataFormatsCommon
+++endif
+++
+++ifneq ($(PROMC),)
+++HAS_PROMC = true
+++CXXFLAGS += -I$(PROMC)/include -I$(PROMC)/src
+++OPT_LIBS += -L$(PROMC)/lib -lpromc -lprotoc -lprotobuf -lprotobuf-lite -lcbook -lz
+++endif
+++
+++ifeq ($(HAS_PYTHIA8),true)
+++ifneq ($(PYTHIA8),)
+++CXXFLAGS += -I$(PYTHIA8)/include
+++CXXFLAGS += -I$(PYTHIA8)/include/Pythia8
+++OPT_LIBS += -L$(PYTHIA8)/lib -lpythia8 -ldl -lz
+++endif
+++endif
+++
+++DELPHES_LIBS += $(OPT_LIBS)
+++DISPLAY_LIBS += $(OPT_LIBS)
+++
+++###
+++
+++NOFASTJET = libDelphesNoFastJet.$(DllSuf)
+++NOFASTJETLIB = libDelphesNoFastJet.lib
+++
+++DELPHES = libDelphes.$(DllSuf)
+++DELPHESLIB = libDelphes.lib
+++
+++DISPLAY = libDelphesDisplay.$(DllSuf)
+++DISPLAYLIB = libDelphesDisplay.lib
+++
+++VERSION = $(shell cat VERSION)
+++DISTDIR = Delphes-$(VERSION)
+++DISTTAR = $(DISTDIR).tar.gz
+++
+++all:
+++
+++
+++hepmc2pileup$(ExeSuf): \
+++	tmp/converters/hepmc2pileup.$(ObjSuf)
+++
+++tmp/converters/hepmc2pileup.$(ObjSuf): \
+++	converters/hepmc2pileup.cpp \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesHepMCReader.h \
+++	classes/DelphesPileUpWriter.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++lhco2root$(ExeSuf): \
+++	tmp/converters/lhco2root.$(ObjSuf)
+++
+++tmp/converters/lhco2root.$(ObjSuf): \
+++	converters/lhco2root.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesStream.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++pileup2root$(ExeSuf): \
+++	tmp/converters/pileup2root.$(ObjSuf)
+++
+++tmp/converters/pileup2root.$(ObjSuf): \
+++	converters/pileup2root.cpp \
+++	classes/DelphesStream.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesPileUpReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++root2lhco$(ExeSuf): \
+++	tmp/converters/root2lhco.$(ObjSuf)
+++
+++tmp/converters/root2lhco.$(ObjSuf): \
+++	converters/root2lhco.cpp \
+++	classes/DelphesClasses.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++root2pileup$(ExeSuf): \
+++	tmp/converters/root2pileup.$(ObjSuf)
+++
+++tmp/converters/root2pileup.$(ObjSuf): \
+++	converters/root2pileup.cpp \
+++	classes/DelphesClasses.h \
+++	classes/DelphesPileUpWriter.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++stdhep2pileup$(ExeSuf): \
+++	tmp/converters/stdhep2pileup.$(ObjSuf)
+++
+++tmp/converters/stdhep2pileup.$(ObjSuf): \
+++	converters/stdhep2pileup.cpp \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesSTDHEPReader.h \
+++	classes/DelphesPileUpWriter.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++CaloGrid$(ExeSuf): \
+++	tmp/examples/CaloGrid.$(ObjSuf)
+++
+++tmp/examples/CaloGrid.$(ObjSuf): \
+++	examples/CaloGrid.cpp \
+++	display/Delphes3DGeometry.h \
+++	classes/DelphesClasses.h \
+++	external/ExRootAnalysis/ExRootConfReader.h
+++Example1$(ExeSuf): \
+++	tmp/examples/Example1.$(ObjSuf)
+++
+++tmp/examples/Example1.$(ObjSuf): \
+++	examples/Example1.cpp \
+++	classes/DelphesClasses.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootUtilities.h
+++DelphesValidation$(ExeSuf): \
+++	tmp/validation/DelphesValidation.$(ObjSuf)
+++
+++tmp/validation/DelphesValidation.$(ObjSuf): \
+++	validation/DelphesValidation.cpp \
+++	classes/DelphesClasses.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootUtilities.h
+++EXECUTABLE +=  \
+++	hepmc2pileup$(ExeSuf) \
+++	lhco2root$(ExeSuf) \
+++	pileup2root$(ExeSuf) \
+++	root2lhco$(ExeSuf) \
+++	root2pileup$(ExeSuf) \
+++	stdhep2pileup$(ExeSuf) \
+++	CaloGrid$(ExeSuf) \
+++	Example1$(ExeSuf) \
+++	DelphesValidation$(ExeSuf)
+++
+++EXECUTABLE_OBJ +=  \
+++	tmp/converters/hepmc2pileup.$(ObjSuf) \
+++	tmp/converters/lhco2root.$(ObjSuf) \
+++	tmp/converters/pileup2root.$(ObjSuf) \
+++	tmp/converters/root2lhco.$(ObjSuf) \
+++	tmp/converters/root2pileup.$(ObjSuf) \
+++	tmp/converters/stdhep2pileup.$(ObjSuf) \
+++	tmp/examples/CaloGrid.$(ObjSuf) \
+++	tmp/examples/Example1.$(ObjSuf) \
+++	tmp/validation/DelphesValidation.$(ObjSuf)
+++
+++DelphesHepMC$(ExeSuf): \
+++	tmp/readers/DelphesHepMC.$(ObjSuf)
+++
+++tmp/readers/DelphesHepMC.$(ObjSuf): \
+++	readers/DelphesHepMC.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesHepMCReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++DelphesLHEF$(ExeSuf): \
+++	tmp/readers/DelphesLHEF.$(ObjSuf)
+++
+++tmp/readers/DelphesLHEF.$(ObjSuf): \
+++	readers/DelphesLHEF.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesLHEFReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++DelphesROOT$(ExeSuf): \
+++	tmp/readers/DelphesROOT.$(ObjSuf)
+++
+++tmp/readers/DelphesROOT.$(ObjSuf): \
+++	readers/DelphesROOT.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesStream.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++DelphesSTDHEP$(ExeSuf): \
+++	tmp/readers/DelphesSTDHEP.$(ObjSuf)
+++
+++tmp/readers/DelphesSTDHEP.$(ObjSuf): \
+++	readers/DelphesSTDHEP.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesSTDHEPReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++EXECUTABLE +=  \
+++	DelphesHepMC$(ExeSuf) \
+++	DelphesLHEF$(ExeSuf) \
+++	DelphesROOT$(ExeSuf) \
+++	DelphesSTDHEP$(ExeSuf)
+++
+++EXECUTABLE_OBJ +=  \
+++	tmp/readers/DelphesHepMC.$(ObjSuf) \
+++	tmp/readers/DelphesLHEF.$(ObjSuf) \
+++	tmp/readers/DelphesROOT.$(ObjSuf) \
+++	tmp/readers/DelphesSTDHEP.$(ObjSuf)
+++
+++ifeq ($(HAS_CMSSW),true)
+++DelphesCMSFWLite$(ExeSuf): \
+++	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
+++
+++tmp/readers/DelphesCMSFWLite.$(ObjSuf): \
+++	readers/DelphesCMSFWLite.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesStream.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++EXECUTABLE +=  \
+++	DelphesCMSFWLite$(ExeSuf)
+++
+++EXECUTABLE_OBJ +=  \
+++	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
+++
+++endif
+++
+++ifeq ($(HAS_PROMC),true)
+++DelphesProMC$(ExeSuf): \
+++	tmp/readers/DelphesProMC.$(ObjSuf)
+++
+++tmp/readers/DelphesProMC.$(ObjSuf): \
+++	readers/DelphesProMC.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesStream.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++EXECUTABLE +=  \
+++	DelphesProMC$(ExeSuf)
+++
+++EXECUTABLE_OBJ +=  \
+++	tmp/readers/DelphesProMC.$(ObjSuf)
+++
+++endif
+++
+++ifeq ($(HAS_PYTHIA8),true)
+++DelphesPythia8$(ExeSuf): \
+++	tmp/readers/DelphesPythia8.$(ObjSuf)
+++
+++tmp/readers/DelphesPythia8.$(ObjSuf): \
+++	readers/DelphesPythia8.cpp \
+++	modules/Delphes.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesLHEFReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++EXECUTABLE +=  \
+++	DelphesPythia8$(ExeSuf)
+++
+++EXECUTABLE_OBJ +=  \
+++	tmp/readers/DelphesPythia8.$(ObjSuf)
+++
+++tmp/modules/Pythia8Dict.$(SrcSuf): \
+++	modules/Pythia8LinkDef.h \
+++	modules/PileUpMergerPythia8.h
+++tmp/modules/Pythia8Dict$(PcmSuf): \
+++	tmp/modules/Pythia8Dict.$(SrcSuf)
+++Pythia8Dict$(PcmSuf): \
+++	tmp/modules/Pythia8Dict$(PcmSuf)
+++DELPHES_DICT_OBJ +=  \
+++	tmp/modules/Pythia8Dict.$(ObjSuf)
+++
+++DELPHES_DICT_PCM +=  \
+++	Pythia8Dict$(PcmSuf)
+++
+++endif
+++
+++tmp/classes/ClassesDict.$(SrcSuf): \
+++	classes/ClassesLinkDef.h \
+++	classes/DelphesModule.h \
+++	classes/DelphesFactory.h \
+++	classes/SortableObject.h \
+++	classes/DelphesClasses.h
+++tmp/classes/ClassesDict$(PcmSuf): \
+++	tmp/classes/ClassesDict.$(SrcSuf)
+++ClassesDict$(PcmSuf): \
+++	tmp/classes/ClassesDict$(PcmSuf)
+++tmp/external/ExRootAnalysis/ExRootAnalysisDict.$(SrcSuf): \
+++	external/ExRootAnalysis/ExRootAnalysisLinkDef.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootUtilities.h \
+++	external/ExRootAnalysis/ExRootClassifier.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootProgressBar.h \
+++	external/ExRootAnalysis/ExRootConfReader.h \
+++	external/ExRootAnalysis/ExRootTask.h
+++tmp/external/ExRootAnalysis/ExRootAnalysisDict$(PcmSuf): \
+++	tmp/external/ExRootAnalysis/ExRootAnalysisDict.$(SrcSuf)
+++ExRootAnalysisDict$(PcmSuf): \
+++	tmp/external/ExRootAnalysis/ExRootAnalysisDict$(PcmSuf)
+++tmp/modules/ModulesDict.$(SrcSuf): \
+++	modules/ModulesLinkDef.h \
+++	modules/Delphes.h \
+++	modules/AngularSmearing.h \
+++	modules/PhotonConversions.h \
+++	modules/ParticlePropagator.h \
+++	modules/Efficiency.h \
+++	modules/IdentificationMap.h \
+++	modules/EnergySmearing.h \
+++	modules/MomentumSmearing.h \
+++	modules/TrackSmearing.h \
+++	modules/ImpactParameterSmearing.h \
+++	modules/TimeSmearing.h \
+++	modules/SimpleCalorimeter.h \
+++	modules/Calorimeter.h \
+++	modules/OldCalorimeter.h \
+++	modules/Isolation.h \
+++	modules/EnergyScale.h \
+++	modules/UniqueObjectFinder.h \
+++	modules/TrackCountingBTagging.h \
+++	modules/BTagging.h \
+++	modules/TauTagging.h \
+++	modules/TrackCountingTauTagging.h \
+++	modules/TreeWriter.h \
+++	modules/Merger.h \
+++	modules/LeptonDressing.h \
+++	modules/PileUpMerger.h \
+++	modules/JetPileUpSubtractor.h \
+++	modules/TrackPileUpSubtractor.h \
+++	modules/TaggingParticlesSkimmer.h \
+++	modules/PileUpJetID.h \
+++	modules/ConstituentFilter.h \
+++	modules/StatusPidFilter.h \
+++	modules/PdgCodeFilter.h \
+++	modules/BeamSpotFilter.h \
+++	modules/RecoPuFilter.h \
+++	modules/Cloner.h \
+++	modules/Weighter.h \
+++	modules/Hector.h \
+++	modules/JetFlavorAssociation.h \
+++	modules/JetFakeParticle.h \
+++	modules/VertexSorter.h \
+++	modules/VertexFinder.h \
+++	modules/VertexFinderDA4D.h \
+++	modules/ExampleModule.h
+++tmp/modules/ModulesDict$(PcmSuf): \
+++	tmp/modules/ModulesDict.$(SrcSuf)
+++ModulesDict$(PcmSuf): \
+++	tmp/modules/ModulesDict$(PcmSuf)
+++DELPHES_DICT_OBJ +=  \
+++	tmp/classes/ClassesDict.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootAnalysisDict.$(ObjSuf) \
+++	tmp/modules/ModulesDict.$(ObjSuf)
+++
+++DELPHES_DICT_PCM +=  \
+++	ClassesDict$(PcmSuf) \
+++	ExRootAnalysisDict$(PcmSuf) \
+++	ModulesDict$(PcmSuf)
+++
+++tmp/modules/FastJetDict.$(SrcSuf): \
+++	modules/FastJetLinkDef.h \
+++	modules/FastJetFinder.h \
+++	modules/FastJetGridMedianEstimator.h \
+++	modules/RunPUPPI.h
+++tmp/modules/FastJetDict$(PcmSuf): \
+++	tmp/modules/FastJetDict.$(SrcSuf)
+++FastJetDict$(PcmSuf): \
+++	tmp/modules/FastJetDict$(PcmSuf)
+++FASTJET_DICT_OBJ +=  \
+++	tmp/modules/FastJetDict.$(ObjSuf)
+++
+++FASTJET_DICT_PCM +=  \
+++	FastJetDict$(PcmSuf)
+++
+++tmp/display/DisplayDict.$(SrcSuf): \
+++	display/DisplayLinkDef.h \
+++	display/DelphesDisplay.h \
+++	display/DelphesCaloData.h \
+++	display/DelphesBranchElement.h \
+++	display/Delphes3DGeometry.h \
+++	display/DelphesEventDisplay.h \
+++	display/DelphesHtmlSummary.h \
+++	display/DelphesPlotSummary.h
+++tmp/display/DisplayDict$(PcmSuf): \
+++	tmp/display/DisplayDict.$(SrcSuf)
+++DisplayDict$(PcmSuf): \
+++	tmp/display/DisplayDict$(PcmSuf)
+++DISPLAY_DICT_OBJ +=  \
+++	tmp/display/DisplayDict.$(ObjSuf)
+++
+++DISPLAY_DICT_PCM +=  \
+++	DisplayDict$(PcmSuf)
+++
+++tmp/classes/DelphesClasses.$(ObjSuf): \
+++	classes/DelphesClasses.$(SrcSuf) \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/SortableObject.h
+++tmp/classes/DelphesCylindricalFormula.$(ObjSuf): \
+++	classes/DelphesCylindricalFormula.$(SrcSuf) \
+++	classes/DelphesCylindricalFormula.h
+++tmp/classes/DelphesFactory.$(ObjSuf): \
+++	classes/DelphesFactory.$(SrcSuf) \
+++	classes/DelphesFactory.h \
+++	classes/DelphesClasses.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h
+++tmp/classes/DelphesFormula.$(ObjSuf): \
+++	classes/DelphesFormula.$(SrcSuf) \
+++	classes/DelphesFormula.h
+++tmp/classes/DelphesHepMCReader.$(ObjSuf): \
+++	classes/DelphesHepMCReader.$(SrcSuf) \
+++	classes/DelphesHepMCReader.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesStream.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h
+++tmp/classes/DelphesLHEFReader.$(ObjSuf): \
+++	classes/DelphesLHEFReader.$(SrcSuf) \
+++	classes/DelphesLHEFReader.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesStream.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h
+++tmp/classes/DelphesModule.$(ObjSuf): \
+++	classes/DelphesModule.$(SrcSuf) \
+++	classes/DelphesModule.h \
+++	classes/DelphesFactory.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootResult.h
+++tmp/classes/DelphesPileUpReader.$(ObjSuf): \
+++	classes/DelphesPileUpReader.$(SrcSuf) \
+++	classes/DelphesPileUpReader.h
+++tmp/classes/DelphesPileUpWriter.$(ObjSuf): \
+++	classes/DelphesPileUpWriter.$(SrcSuf) \
+++	classes/DelphesPileUpWriter.h
+++tmp/classes/DelphesSTDHEPReader.$(ObjSuf): \
+++	classes/DelphesSTDHEPReader.$(SrcSuf) \
+++	classes/DelphesSTDHEPReader.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h
+++tmp/classes/DelphesStream.$(ObjSuf): \
+++	classes/DelphesStream.$(SrcSuf) \
+++	classes/DelphesStream.h
+++tmp/classes/DelphesTF2.$(ObjSuf): \
+++	classes/DelphesTF2.$(SrcSuf) \
+++	classes/DelphesTF2.h
+++tmp/external/ExRootAnalysis/ExRootConfReader.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootConfReader.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootConfReader.h \
+++	external/tcl/tcl.h
+++tmp/external/ExRootAnalysis/ExRootFilter.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootFilter.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/external/ExRootAnalysis/ExRootProgressBar.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootProgressBar.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootProgressBar.h
+++tmp/external/ExRootAnalysis/ExRootResult.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootResult.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootUtilities.h
+++tmp/external/ExRootAnalysis/ExRootTask.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootTask.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootTask.h \
+++	external/ExRootAnalysis/ExRootConfReader.h
+++tmp/external/ExRootAnalysis/ExRootTreeBranch.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootTreeBranch.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootTreeBranch.h
+++tmp/external/ExRootAnalysis/ExRootTreeReader.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootTreeReader.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootTreeReader.h
+++tmp/external/ExRootAnalysis/ExRootTreeWriter.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootTreeWriter.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootTreeWriter.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h
+++tmp/external/ExRootAnalysis/ExRootUtilities.$(ObjSuf): \
+++	external/ExRootAnalysis/ExRootUtilities.$(SrcSuf) \
+++	external/ExRootAnalysis/ExRootUtilities.h
+++tmp/external/Hector/H_AbstractBeamLine.$(ObjSuf): \
+++	external/Hector/H_AbstractBeamLine.$(SrcSuf)
+++tmp/external/Hector/H_Aperture.$(ObjSuf): \
+++	external/Hector/H_Aperture.$(SrcSuf)
+++tmp/external/Hector/H_Beam.$(ObjSuf): \
+++	external/Hector/H_Beam.$(SrcSuf)
+++tmp/external/Hector/H_BeamLine.$(ObjSuf): \
+++	external/Hector/H_BeamLine.$(SrcSuf)
+++tmp/external/Hector/H_BeamLineParser.$(ObjSuf): \
+++	external/Hector/H_BeamLineParser.$(SrcSuf)
+++tmp/external/Hector/H_BeamParticle.$(ObjSuf): \
+++	external/Hector/H_BeamParticle.$(SrcSuf)
+++tmp/external/Hector/H_CircularAperture.$(ObjSuf): \
+++	external/Hector/H_CircularAperture.$(SrcSuf)
+++tmp/external/Hector/H_Dipole.$(ObjSuf): \
+++	external/Hector/H_Dipole.$(SrcSuf)
+++tmp/external/Hector/H_Drift.$(ObjSuf): \
+++	external/Hector/H_Drift.$(SrcSuf)
+++tmp/external/Hector/H_EllipticAperture.$(ObjSuf): \
+++	external/Hector/H_EllipticAperture.$(SrcSuf)
+++tmp/external/Hector/H_HorizontalKicker.$(ObjSuf): \
+++	external/Hector/H_HorizontalKicker.$(SrcSuf)
+++tmp/external/Hector/H_HorizontalQuadrupole.$(ObjSuf): \
+++	external/Hector/H_HorizontalQuadrupole.$(SrcSuf)
+++tmp/external/Hector/H_Kicker.$(ObjSuf): \
+++	external/Hector/H_Kicker.$(SrcSuf)
+++tmp/external/Hector/H_Marker.$(ObjSuf): \
+++	external/Hector/H_Marker.$(SrcSuf)
+++tmp/external/Hector/H_OpticalElement.$(ObjSuf): \
+++	external/Hector/H_OpticalElement.$(SrcSuf)
+++tmp/external/Hector/H_Parameters.$(ObjSuf): \
+++	external/Hector/H_Parameters.$(SrcSuf)
+++tmp/external/Hector/H_Quadrupole.$(ObjSuf): \
+++	external/Hector/H_Quadrupole.$(SrcSuf)
+++tmp/external/Hector/H_RecRPObject.$(ObjSuf): \
+++	external/Hector/H_RecRPObject.$(SrcSuf)
+++tmp/external/Hector/H_RectEllipticAperture.$(ObjSuf): \
+++	external/Hector/H_RectEllipticAperture.$(SrcSuf)
+++tmp/external/Hector/H_RectangularAperture.$(ObjSuf): \
+++	external/Hector/H_RectangularAperture.$(SrcSuf)
+++tmp/external/Hector/H_RectangularCollimator.$(ObjSuf): \
+++	external/Hector/H_RectangularCollimator.$(SrcSuf)
+++tmp/external/Hector/H_RectangularDipole.$(ObjSuf): \
+++	external/Hector/H_RectangularDipole.$(SrcSuf)
+++tmp/external/Hector/H_RomanPot.$(ObjSuf): \
+++	external/Hector/H_RomanPot.$(SrcSuf)
+++tmp/external/Hector/H_SectorDipole.$(ObjSuf): \
+++	external/Hector/H_SectorDipole.$(SrcSuf)
+++tmp/external/Hector/H_TransportMatrices.$(ObjSuf): \
+++	external/Hector/H_TransportMatrices.$(SrcSuf)
+++tmp/external/Hector/H_VerticalKicker.$(ObjSuf): \
+++	external/Hector/H_VerticalKicker.$(SrcSuf)
+++tmp/external/Hector/H_VerticalQuadrupole.$(ObjSuf): \
+++	external/Hector/H_VerticalQuadrupole.$(SrcSuf)
+++tmp/modules/AngularSmearing.$(ObjSuf): \
+++	modules/AngularSmearing.$(SrcSuf) \
+++	modules/AngularSmearing.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/BTagging.$(ObjSuf): \
+++	modules/BTagging.$(SrcSuf) \
+++	modules/BTagging.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h
+++tmp/modules/BeamSpotFilter.$(ObjSuf): \
+++	modules/BeamSpotFilter.$(SrcSuf) \
+++	modules/BeamSpotFilter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/Calorimeter.$(ObjSuf): \
+++	modules/Calorimeter.$(SrcSuf) \
+++	modules/Calorimeter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/Cloner.$(ObjSuf): \
+++	modules/Cloner.$(SrcSuf) \
+++	modules/Cloner.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/ConstituentFilter.$(ObjSuf): \
+++	modules/ConstituentFilter.$(SrcSuf) \
+++	modules/ConstituentFilter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/Delphes.$(ObjSuf): \
+++	modules/Delphes.$(SrcSuf) \
+++	modules/Delphes.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h \
+++	external/ExRootAnalysis/ExRootConfReader.h \
+++	external/ExRootAnalysis/ExRootTreeWriter.h
+++tmp/modules/Efficiency.$(ObjSuf): \
+++	modules/Efficiency.$(SrcSuf) \
+++	modules/Efficiency.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/EnergyScale.$(ObjSuf): \
+++	modules/EnergyScale.$(SrcSuf) \
+++	modules/EnergyScale.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/EnergySmearing.$(ObjSuf): \
+++	modules/EnergySmearing.$(SrcSuf) \
+++	modules/EnergySmearing.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/ExampleModule.$(ObjSuf): \
+++	modules/ExampleModule.$(SrcSuf) \
+++	modules/ExampleModule.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/Hector.$(ObjSuf): \
+++	modules/Hector.$(SrcSuf) \
+++	modules/Hector.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h \
+++	external/Hector/H_BeamLine.h \
+++	external/Hector/H_RecRPObject.h \
+++	external/Hector/H_BeamParticle.h
+++tmp/modules/IdentificationMap.$(ObjSuf): \
+++	modules/IdentificationMap.$(SrcSuf) \
+++	modules/IdentificationMap.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/ImpactParameterSmearing.$(ObjSuf): \
+++	modules/ImpactParameterSmearing.$(SrcSuf) \
+++	modules/ImpactParameterSmearing.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/Isolation.$(ObjSuf): \
+++	modules/Isolation.$(SrcSuf) \
+++	modules/Isolation.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/JetFakeParticle.$(ObjSuf): \
+++	modules/JetFakeParticle.$(SrcSuf) \
+++	modules/JetFakeParticle.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/JetFlavorAssociation.$(ObjSuf): \
+++	modules/JetFlavorAssociation.$(SrcSuf) \
+++	modules/JetFlavorAssociation.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/JetPileUpSubtractor.$(ObjSuf): \
+++	modules/JetPileUpSubtractor.$(SrcSuf) \
+++	modules/JetPileUpSubtractor.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/LeptonDressing.$(ObjSuf): \
+++	modules/LeptonDressing.$(SrcSuf) \
+++	modules/LeptonDressing.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/Merger.$(ObjSuf): \
+++	modules/Merger.$(SrcSuf) \
+++	modules/Merger.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/MomentumSmearing.$(ObjSuf): \
+++	modules/MomentumSmearing.$(SrcSuf) \
+++	modules/MomentumSmearing.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/OldCalorimeter.$(ObjSuf): \
+++	modules/OldCalorimeter.$(SrcSuf) \
+++	modules/OldCalorimeter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/ParticlePropagator.$(ObjSuf): \
+++	modules/ParticlePropagator.$(SrcSuf) \
+++	modules/ParticlePropagator.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/PdgCodeFilter.$(ObjSuf): \
+++	modules/PdgCodeFilter.$(SrcSuf) \
+++	modules/PdgCodeFilter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/PhotonConversions.$(ObjSuf): \
+++	modules/PhotonConversions.$(SrcSuf) \
+++	modules/PhotonConversions.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesCylindricalFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/PileUpJetID.$(ObjSuf): \
+++	modules/PileUpJetID.$(SrcSuf) \
+++	modules/PileUpJetID.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/PileUpMerger.$(ObjSuf): \
+++	modules/PileUpMerger.$(SrcSuf) \
+++	modules/PileUpMerger.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesTF2.h \
+++	classes/DelphesPileUpReader.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/PileUpMergerPythia8.$(ObjSuf): \
+++	modules/PileUpMergerPythia8.$(SrcSuf) \
+++	modules/PileUpMergerPythia8.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesTF2.h \
+++	classes/DelphesPileUpReader.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/RecoPuFilter.$(ObjSuf): \
+++	modules/RecoPuFilter.$(SrcSuf) \
+++	modules/RecoPuFilter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/SimpleCalorimeter.$(ObjSuf): \
+++	modules/SimpleCalorimeter.$(SrcSuf) \
+++	modules/SimpleCalorimeter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/StatusPidFilter.$(ObjSuf): \
+++	modules/StatusPidFilter.$(SrcSuf) \
+++	modules/StatusPidFilter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/TaggingParticlesSkimmer.$(ObjSuf): \
+++	modules/TaggingParticlesSkimmer.$(SrcSuf) \
+++	modules/TaggingParticlesSkimmer.h \
+++	modules/TauTagging.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/TauTagging.$(ObjSuf): \
+++	modules/TauTagging.$(SrcSuf) \
+++	modules/TauTagging.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h
+++tmp/modules/TimeSmearing.$(ObjSuf): \
+++	modules/TimeSmearing.$(SrcSuf) \
+++	modules/TimeSmearing.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/TrackCountingBTagging.$(ObjSuf): \
+++	modules/TrackCountingBTagging.$(SrcSuf) \
+++	modules/TrackCountingBTagging.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h
+++tmp/modules/TrackCountingTauTagging.$(ObjSuf): \
+++	modules/TrackCountingTauTagging.$(SrcSuf) \
+++	modules/TrackCountingTauTagging.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/TrackPileUpSubtractor.$(ObjSuf): \
+++	modules/TrackPileUpSubtractor.$(SrcSuf) \
+++	modules/TrackPileUpSubtractor.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/TrackSmearing.$(ObjSuf): \
+++	modules/TrackSmearing.$(SrcSuf) \
+++	modules/TrackSmearing.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/TreeWriter.$(ObjSuf): \
+++	modules/TreeWriter.$(SrcSuf) \
+++	modules/TreeWriter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h \
+++	external/ExRootAnalysis/ExRootTreeBranch.h
+++tmp/modules/UniqueObjectFinder.$(ObjSuf): \
+++	modules/UniqueObjectFinder.$(SrcSuf) \
+++	modules/UniqueObjectFinder.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/VertexFinder.$(ObjSuf): \
+++	modules/VertexFinder.$(SrcSuf) \
+++	modules/VertexFinder.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	classes/DelphesPileUpReader.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/VertexFinderDA4D.$(ObjSuf): \
+++	modules/VertexFinderDA4D.$(SrcSuf) \
+++	modules/VertexFinderDA4D.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	classes/DelphesPileUpReader.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/VertexSorter.$(ObjSuf): \
+++	modules/VertexSorter.$(SrcSuf) \
+++	modules/VertexSorter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	classes/DelphesPileUpReader.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++tmp/modules/Weighter.$(ObjSuf): \
+++	modules/Weighter.$(SrcSuf) \
+++	modules/Weighter.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++DELPHES_OBJ +=  \
+++	tmp/classes/DelphesClasses.$(ObjSuf) \
+++	tmp/classes/DelphesCylindricalFormula.$(ObjSuf) \
+++	tmp/classes/DelphesFactory.$(ObjSuf) \
+++	tmp/classes/DelphesFormula.$(ObjSuf) \
+++	tmp/classes/DelphesHepMCReader.$(ObjSuf) \
+++	tmp/classes/DelphesLHEFReader.$(ObjSuf) \
+++	tmp/classes/DelphesModule.$(ObjSuf) \
+++	tmp/classes/DelphesPileUpReader.$(ObjSuf) \
+++	tmp/classes/DelphesPileUpWriter.$(ObjSuf) \
+++	tmp/classes/DelphesSTDHEPReader.$(ObjSuf) \
+++	tmp/classes/DelphesStream.$(ObjSuf) \
+++	tmp/classes/DelphesTF2.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootConfReader.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootFilter.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootProgressBar.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootResult.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootTask.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootTreeBranch.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootTreeReader.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootTreeWriter.$(ObjSuf) \
+++	tmp/external/ExRootAnalysis/ExRootUtilities.$(ObjSuf) \
+++	tmp/external/Hector/H_AbstractBeamLine.$(ObjSuf) \
+++	tmp/external/Hector/H_Aperture.$(ObjSuf) \
+++	tmp/external/Hector/H_Beam.$(ObjSuf) \
+++	tmp/external/Hector/H_BeamLine.$(ObjSuf) \
+++	tmp/external/Hector/H_BeamLineParser.$(ObjSuf) \
+++	tmp/external/Hector/H_BeamParticle.$(ObjSuf) \
+++	tmp/external/Hector/H_CircularAperture.$(ObjSuf) \
+++	tmp/external/Hector/H_Dipole.$(ObjSuf) \
+++	tmp/external/Hector/H_Drift.$(ObjSuf) \
+++	tmp/external/Hector/H_EllipticAperture.$(ObjSuf) \
+++	tmp/external/Hector/H_HorizontalKicker.$(ObjSuf) \
+++	tmp/external/Hector/H_HorizontalQuadrupole.$(ObjSuf) \
+++	tmp/external/Hector/H_Kicker.$(ObjSuf) \
+++	tmp/external/Hector/H_Marker.$(ObjSuf) \
+++	tmp/external/Hector/H_OpticalElement.$(ObjSuf) \
+++	tmp/external/Hector/H_Parameters.$(ObjSuf) \
+++	tmp/external/Hector/H_Quadrupole.$(ObjSuf) \
+++	tmp/external/Hector/H_RecRPObject.$(ObjSuf) \
+++	tmp/external/Hector/H_RectEllipticAperture.$(ObjSuf) \
+++	tmp/external/Hector/H_RectangularAperture.$(ObjSuf) \
+++	tmp/external/Hector/H_RectangularCollimator.$(ObjSuf) \
+++	tmp/external/Hector/H_RectangularDipole.$(ObjSuf) \
+++	tmp/external/Hector/H_RomanPot.$(ObjSuf) \
+++	tmp/external/Hector/H_SectorDipole.$(ObjSuf) \
+++	tmp/external/Hector/H_TransportMatrices.$(ObjSuf) \
+++	tmp/external/Hector/H_VerticalKicker.$(ObjSuf) \
+++	tmp/external/Hector/H_VerticalQuadrupole.$(ObjSuf) \
+++	tmp/modules/AngularSmearing.$(ObjSuf) \
+++	tmp/modules/BTagging.$(ObjSuf) \
+++	tmp/modules/BeamSpotFilter.$(ObjSuf) \
+++	tmp/modules/Calorimeter.$(ObjSuf) \
+++	tmp/modules/Cloner.$(ObjSuf) \
+++	tmp/modules/ConstituentFilter.$(ObjSuf) \
+++	tmp/modules/Delphes.$(ObjSuf) \
+++	tmp/modules/Efficiency.$(ObjSuf) \
+++	tmp/modules/EnergyScale.$(ObjSuf) \
+++	tmp/modules/EnergySmearing.$(ObjSuf) \
+++	tmp/modules/ExampleModule.$(ObjSuf) \
+++	tmp/modules/Hector.$(ObjSuf) \
+++	tmp/modules/IdentificationMap.$(ObjSuf) \
+++	tmp/modules/ImpactParameterSmearing.$(ObjSuf) \
+++	tmp/modules/Isolation.$(ObjSuf) \
+++	tmp/modules/JetFakeParticle.$(ObjSuf) \
+++	tmp/modules/JetFlavorAssociation.$(ObjSuf) \
+++	tmp/modules/JetPileUpSubtractor.$(ObjSuf) \
+++	tmp/modules/LeptonDressing.$(ObjSuf) \
+++	tmp/modules/Merger.$(ObjSuf) \
+++	tmp/modules/MomentumSmearing.$(ObjSuf) \
+++	tmp/modules/OldCalorimeter.$(ObjSuf) \
+++	tmp/modules/ParticlePropagator.$(ObjSuf) \
+++	tmp/modules/PdgCodeFilter.$(ObjSuf) \
+++	tmp/modules/PhotonConversions.$(ObjSuf) \
+++	tmp/modules/PileUpJetID.$(ObjSuf) \
+++	tmp/modules/PileUpMerger.$(ObjSuf) \
+++	tmp/modules/RecoPuFilter.$(ObjSuf) \
+++	tmp/modules/SimpleCalorimeter.$(ObjSuf) \
+++	tmp/modules/StatusPidFilter.$(ObjSuf) \
+++	tmp/modules/TaggingParticlesSkimmer.$(ObjSuf) \
+++	tmp/modules/TauTagging.$(ObjSuf) \
+++	tmp/modules/TimeSmearing.$(ObjSuf) \
+++	tmp/modules/TrackCountingBTagging.$(ObjSuf) \
+++	tmp/modules/TrackCountingTauTagging.$(ObjSuf) \
+++	tmp/modules/TrackPileUpSubtractor.$(ObjSuf) \
+++	tmp/modules/TrackSmearing.$(ObjSuf) \
+++	tmp/modules/TreeWriter.$(ObjSuf) \
+++	tmp/modules/UniqueObjectFinder.$(ObjSuf) \
+++	tmp/modules/VertexFinder.$(ObjSuf) \
+++	tmp/modules/VertexFinderDA4D.$(ObjSuf) \
+++	tmp/modules/VertexSorter.$(ObjSuf) \
+++	tmp/modules/Weighter.$(ObjSuf)
+++
+++ifeq ($(HAS_PYTHIA8),true)
+++DELPHES_OBJ +=  \
+++	tmp/modules/PileUpMergerPythia8.$(ObjSuf)
+++endif
+++
+++tmp/external/PUPPI/PuppiAlgo.$(ObjSuf): \
+++	external/PUPPI/PuppiAlgo.$(SrcSuf)
+++tmp/external/PUPPI/PuppiContainer.$(ObjSuf): \
+++	external/PUPPI/PuppiContainer.$(SrcSuf) \
+++	external/fastjet/Selector.hh
+++tmp/external/PUPPI/puppiCleanContainer.$(ObjSuf): \
+++	external/PUPPI/puppiCleanContainer.$(SrcSuf) \
+++	external/fastjet/Selector.hh
+++tmp/external/fastjet/AreaDefinition.$(ObjSuf): \
+++	external/fastjet/AreaDefinition.$(SrcSuf) \
+++	external/fastjet/AreaDefinition.hh
+++tmp/external/fastjet/BasicRandom.$(ObjSuf): \
+++	external/fastjet/BasicRandom.$(SrcSuf) \
+++	external/fastjet/internal/BasicRandom.hh
+++tmp/external/fastjet/ClosestPair2D.$(ObjSuf): \
+++	external/fastjet/ClosestPair2D.$(SrcSuf) \
+++	external/fastjet/internal/ClosestPair2D.hh
+++tmp/external/fastjet/ClusterSequence.$(ObjSuf): \
+++	external/fastjet/ClusterSequence.$(SrcSuf) \
+++	external/fastjet/Error.hh \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/ClusterSequenceStructure.hh \
+++	external/fastjet/version.hh \
+++	external/fastjet/internal/LazyTiling9Alt.hh \
+++	external/fastjet/internal/LazyTiling9.hh \
+++	external/fastjet/internal/LazyTiling25.hh \
+++	external/fastjet/internal/LazyTiling9SeparateGhosts.hh
+++tmp/external/fastjet/ClusterSequence1GhostPassiveArea.$(ObjSuf): \
+++	external/fastjet/ClusterSequence1GhostPassiveArea.$(SrcSuf) \
+++	external/fastjet/ClusterSequence1GhostPassiveArea.hh
+++tmp/external/fastjet/ClusterSequenceActiveArea.$(ObjSuf): \
+++	external/fastjet/ClusterSequenceActiveArea.$(SrcSuf) \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/ClusterSequenceActiveArea.hh \
+++	external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.hh
+++tmp/external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.$(ObjSuf): \
+++	external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.$(SrcSuf) \
+++	external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.hh
+++tmp/external/fastjet/ClusterSequenceArea.$(ObjSuf): \
+++	external/fastjet/ClusterSequenceArea.$(SrcSuf) \
+++	external/fastjet/ClusterSequenceArea.hh
+++tmp/external/fastjet/ClusterSequenceAreaBase.$(ObjSuf): \
+++	external/fastjet/ClusterSequenceAreaBase.$(SrcSuf) \
+++	external/fastjet/ClusterSequenceAreaBase.hh
+++tmp/external/fastjet/ClusterSequencePassiveArea.$(ObjSuf): \
+++	external/fastjet/ClusterSequencePassiveArea.$(SrcSuf) \
+++	external/fastjet/ClusterSequencePassiveArea.hh \
+++	external/fastjet/ClusterSequenceVoronoiArea.hh
+++tmp/external/fastjet/ClusterSequenceStructure.$(ObjSuf): \
+++	external/fastjet/ClusterSequenceStructure.$(SrcSuf) \
+++	external/fastjet/ClusterSequenceStructure.hh \
+++	external/fastjet/Error.hh \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh
+++tmp/external/fastjet/ClusterSequenceVoronoiArea.$(ObjSuf): \
+++	external/fastjet/ClusterSequenceVoronoiArea.$(SrcSuf) \
+++	external/fastjet/ClusterSequenceVoronoiArea.hh \
+++	external/fastjet/internal/Voronoi.hh
+++tmp/external/fastjet/ClusterSequence_CP2DChan.$(ObjSuf): \
+++	external/fastjet/ClusterSequence_CP2DChan.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/internal/ClosestPair2D.hh
+++tmp/external/fastjet/ClusterSequence_Delaunay.$(ObjSuf): \
+++	external/fastjet/ClusterSequence_Delaunay.$(SrcSuf) \
+++	external/fastjet/Error.hh \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/internal/DynamicNearestNeighbours.hh \
+++	external/fastjet/internal/Dnn4piCylinder.hh \
+++	external/fastjet/internal/Dnn3piCylinder.hh \
+++	external/fastjet/internal/Dnn2piCylinder.hh
+++tmp/external/fastjet/ClusterSequence_DumbN3.$(ObjSuf): \
+++	external/fastjet/ClusterSequence_DumbN3.$(SrcSuf) \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/ClusterSequence_N2.$(ObjSuf): \
+++	external/fastjet/ClusterSequence_N2.$(SrcSuf)
+++tmp/external/fastjet/ClusterSequence_TiledN2.$(ObjSuf): \
+++	external/fastjet/ClusterSequence_TiledN2.$(SrcSuf) \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/internal/MinHeap.hh \
+++	external/fastjet/internal/TilingExtent.hh
+++tmp/external/fastjet/CompositeJetStructure.$(ObjSuf): \
+++	external/fastjet/CompositeJetStructure.$(SrcSuf)
+++tmp/external/fastjet/Dnn2piCylinder.$(ObjSuf): \
+++	external/fastjet/Dnn2piCylinder.$(SrcSuf) \
+++	external/fastjet/internal/Dnn2piCylinder.hh
+++tmp/external/fastjet/Dnn3piCylinder.$(ObjSuf): \
+++	external/fastjet/Dnn3piCylinder.$(SrcSuf) \
+++	external/fastjet/internal/Dnn3piCylinder.hh
+++tmp/external/fastjet/Dnn4piCylinder.$(ObjSuf): \
+++	external/fastjet/Dnn4piCylinder.$(SrcSuf) \
+++	external/fastjet/internal/Dnn4piCylinder.hh
+++tmp/external/fastjet/DnnPlane.$(ObjSuf): \
+++	external/fastjet/DnnPlane.$(SrcSuf) \
+++	external/fastjet/internal/DnnPlane.hh
+++tmp/external/fastjet/Error.$(ObjSuf): \
+++	external/fastjet/Error.$(SrcSuf) \
+++	external/fastjet/Error.hh \
+++	external/fastjet/config.h
+++tmp/external/fastjet/FunctionOfPseudoJet.$(ObjSuf): \
+++	external/fastjet/FunctionOfPseudoJet.$(SrcSuf)
+++tmp/external/fastjet/GhostedAreaSpec.$(ObjSuf): \
+++	external/fastjet/GhostedAreaSpec.$(SrcSuf) \
+++	external/fastjet/GhostedAreaSpec.hh \
+++	external/fastjet/Error.hh
+++tmp/external/fastjet/JetDefinition.$(ObjSuf): \
+++	external/fastjet/JetDefinition.$(SrcSuf) \
+++	external/fastjet/JetDefinition.hh \
+++	external/fastjet/Error.hh \
+++	external/fastjet/CompositeJetStructure.hh
+++tmp/external/fastjet/LazyTiling25.$(ObjSuf): \
+++	external/fastjet/LazyTiling25.$(SrcSuf) \
+++	external/fastjet/internal/LazyTiling25.hh \
+++	external/fastjet/internal/TilingExtent.hh
+++tmp/external/fastjet/LazyTiling9.$(ObjSuf): \
+++	external/fastjet/LazyTiling9.$(SrcSuf) \
+++	external/fastjet/internal/LazyTiling9.hh \
+++	external/fastjet/internal/TilingExtent.hh
+++tmp/external/fastjet/LazyTiling9Alt.$(ObjSuf): \
+++	external/fastjet/LazyTiling9Alt.$(SrcSuf) \
+++	external/fastjet/internal/LazyTiling9Alt.hh \
+++	external/fastjet/internal/TilingExtent.hh
+++tmp/external/fastjet/LazyTiling9SeparateGhosts.$(ObjSuf): \
+++	external/fastjet/LazyTiling9SeparateGhosts.$(SrcSuf) \
+++	external/fastjet/internal/LazyTiling9SeparateGhosts.hh \
+++	external/fastjet/internal/TilingExtent.hh
+++tmp/external/fastjet/LimitedWarning.$(ObjSuf): \
+++	external/fastjet/LimitedWarning.$(SrcSuf) \
+++	external/fastjet/LimitedWarning.hh
+++tmp/external/fastjet/MinHeap.$(ObjSuf): \
+++	external/fastjet/MinHeap.$(SrcSuf) \
+++	external/fastjet/internal/MinHeap.hh
+++tmp/external/fastjet/PseudoJet.$(ObjSuf): \
+++	external/fastjet/PseudoJet.$(SrcSuf) \
+++	external/fastjet/Error.hh \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh \
+++	external/fastjet/CompositeJetStructure.hh
+++tmp/external/fastjet/PseudoJetStructureBase.$(ObjSuf): \
+++	external/fastjet/PseudoJetStructureBase.$(SrcSuf) \
+++	external/fastjet/PseudoJetStructureBase.hh \
+++	external/fastjet/Error.hh \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh
+++tmp/external/fastjet/RangeDefinition.$(ObjSuf): \
+++	external/fastjet/RangeDefinition.$(SrcSuf) \
+++	external/fastjet/RangeDefinition.hh
+++tmp/external/fastjet/RectangularGrid.$(ObjSuf): \
+++	external/fastjet/RectangularGrid.$(SrcSuf) \
+++	external/fastjet/RectangularGrid.hh
+++tmp/external/fastjet/Selector.$(ObjSuf): \
+++	external/fastjet/Selector.$(SrcSuf) \
+++	external/fastjet/Selector.hh \
+++	external/fastjet/GhostedAreaSpec.hh
+++tmp/external/fastjet/TilingExtent.$(ObjSuf): \
+++	external/fastjet/TilingExtent.$(SrcSuf) \
+++	external/fastjet/internal/TilingExtent.hh
+++tmp/external/fastjet/Voronoi.$(ObjSuf): \
+++	external/fastjet/Voronoi.$(SrcSuf) \
+++	external/fastjet/internal/Voronoi.hh
+++tmp/external/fastjet/contribs/Nsubjettiness/AxesDefinition.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/AxesDefinition.$(SrcSuf)
+++tmp/external/fastjet/contribs/Nsubjettiness/ExtraRecombiners.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/ExtraRecombiners.$(SrcSuf)
+++tmp/external/fastjet/contribs/Nsubjettiness/MeasureDefinition.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/MeasureDefinition.$(SrcSuf)
+++tmp/external/fastjet/contribs/Nsubjettiness/Njettiness.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/Njettiness.$(SrcSuf)
+++tmp/external/fastjet/contribs/Nsubjettiness/NjettinessPlugin.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/NjettinessPlugin.$(SrcSuf)
+++tmp/external/fastjet/contribs/Nsubjettiness/Nsubjettiness.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/Nsubjettiness.$(SrcSuf)
+++tmp/external/fastjet/contribs/Nsubjettiness/TauComponents.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/TauComponents.$(SrcSuf)
+++tmp/external/fastjet/contribs/Nsubjettiness/XConePlugin.$(ObjSuf): \
+++	external/fastjet/contribs/Nsubjettiness/XConePlugin.$(SrcSuf)
+++tmp/external/fastjet/contribs/RecursiveTools/ModifiedMassDropTagger.$(ObjSuf): \
+++	external/fastjet/contribs/RecursiveTools/ModifiedMassDropTagger.$(SrcSuf) \
+++	external/fastjet/JetDefinition.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh
+++tmp/external/fastjet/contribs/RecursiveTools/Recluster.$(ObjSuf): \
+++	external/fastjet/contribs/RecursiveTools/Recluster.$(SrcSuf)
+++tmp/external/fastjet/contribs/RecursiveTools/RecursiveSymmetryCutBase.$(ObjSuf): \
+++	external/fastjet/contribs/RecursiveTools/RecursiveSymmetryCutBase.$(SrcSuf) \
+++	external/fastjet/JetDefinition.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh
+++tmp/external/fastjet/contribs/RecursiveTools/SoftDrop.$(ObjSuf): \
+++	external/fastjet/contribs/RecursiveTools/SoftDrop.$(SrcSuf)
+++tmp/external/fastjet/contribs/SoftKiller/SoftKiller.$(ObjSuf): \
+++	external/fastjet/contribs/SoftKiller/SoftKiller.$(SrcSuf)
+++tmp/external/fastjet/plugins/ATLASCone/ATLASConePlugin.$(ObjSuf): \
+++	external/fastjet/plugins/ATLASCone/ATLASConePlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/plugins/ATLASCone/Jet.$(ObjSuf): \
+++	external/fastjet/plugins/ATLASCone/Jet.$(SrcSuf)
+++tmp/external/fastjet/plugins/ATLASCone/JetConeFinderTool.$(ObjSuf): \
+++	external/fastjet/plugins/ATLASCone/JetConeFinderTool.$(SrcSuf)
+++tmp/external/fastjet/plugins/ATLASCone/JetSplitMergeTool.$(ObjSuf): \
+++	external/fastjet/plugins/ATLASCone/JetSplitMergeTool.$(SrcSuf)
+++tmp/external/fastjet/plugins/CDFCones/CDFJetCluPlugin.$(ObjSuf): \
+++	external/fastjet/plugins/CDFCones/CDFJetCluPlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/plugins/CDFCones/CDFMidPointPlugin.$(ObjSuf): \
+++	external/fastjet/plugins/CDFCones/CDFMidPointPlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/Error.hh
+++tmp/external/fastjet/plugins/CDFCones/JetCluAlgorithm.$(ObjSuf): \
+++	external/fastjet/plugins/CDFCones/JetCluAlgorithm.$(SrcSuf)
+++tmp/external/fastjet/plugins/CDFCones/MidPointAlgorithm.$(ObjSuf): \
+++	external/fastjet/plugins/CDFCones/MidPointAlgorithm.$(SrcSuf)
+++tmp/external/fastjet/plugins/CMSIterativeCone/CMSIterativeConePlugin.$(ObjSuf): \
+++	external/fastjet/plugins/CMSIterativeCone/CMSIterativeConePlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/plugins/D0RunICone/D0RunIBaseConePlugin.$(ObjSuf): \
+++	external/fastjet/plugins/D0RunICone/D0RunIBaseConePlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/Error.hh
+++tmp/external/fastjet/plugins/D0RunIICone/D0RunIIConePlugin.$(ObjSuf): \
+++	external/fastjet/plugins/D0RunIICone/D0RunIIConePlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/Error.hh
+++tmp/external/fastjet/plugins/EECambridge/EECambridgePlugin.$(ObjSuf): \
+++	external/fastjet/plugins/EECambridge/EECambridgePlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/NNH.hh
+++tmp/external/fastjet/plugins/GridJet/GridJetPlugin.$(ObjSuf): \
+++	external/fastjet/plugins/GridJet/GridJetPlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/plugins/Jade/JadePlugin.$(ObjSuf): \
+++	external/fastjet/plugins/Jade/JadePlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/NNH.hh \
+++	external/fastjet/NNFJN2Plain.hh
+++tmp/external/fastjet/plugins/NestedDefs/NestedDefsPlugin.$(ObjSuf): \
+++	external/fastjet/plugins/NestedDefs/NestedDefsPlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/plugins/SISCone/SISConePlugin.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/SISConePlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/plugins/SISCone/area.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/area.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/geom_2d.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/geom_2d.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/hash.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/hash.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/momentum.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/momentum.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/protocones.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/protocones.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/quadtree.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/quadtree.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/ranlux.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/ranlux.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/reference.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/reference.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/siscone.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/siscone.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/siscone_error.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/siscone_error.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/split_merge.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/split_merge.$(SrcSuf)
+++tmp/external/fastjet/plugins/SISCone/vicinity.$(ObjSuf): \
+++	external/fastjet/plugins/SISCone/vicinity.$(SrcSuf)
+++tmp/external/fastjet/plugins/TrackJet/TrackJetPlugin.$(ObjSuf): \
+++	external/fastjet/plugins/TrackJet/TrackJetPlugin.$(SrcSuf) \
+++	external/fastjet/ClusterSequence.hh
+++tmp/external/fastjet/tools/BackgroundEstimatorBase.$(ObjSuf): \
+++	external/fastjet/tools/BackgroundEstimatorBase.$(SrcSuf) \
+++	external/fastjet/tools/BackgroundEstimatorBase.hh
+++tmp/external/fastjet/tools/CASubJetTagger.$(ObjSuf): \
+++	external/fastjet/tools/CASubJetTagger.$(SrcSuf)
+++tmp/external/fastjet/tools/Filter.$(ObjSuf): \
+++	external/fastjet/tools/Filter.$(SrcSuf) \
+++	external/fastjet/tools/Filter.hh \
+++	external/fastjet/tools/Recluster.hh \
+++	external/fastjet/tools/Subtractor.hh
+++tmp/external/fastjet/tools/GridMedianBackgroundEstimator.$(ObjSuf): \
+++	external/fastjet/tools/GridMedianBackgroundEstimator.$(SrcSuf) \
+++	external/fastjet/tools/GridMedianBackgroundEstimator.hh
+++tmp/external/fastjet/tools/JHTopTagger.$(ObjSuf): \
+++	external/fastjet/tools/JHTopTagger.$(SrcSuf)
+++tmp/external/fastjet/tools/JetMedianBackgroundEstimator.$(ObjSuf): \
+++	external/fastjet/tools/JetMedianBackgroundEstimator.$(SrcSuf) \
+++	external/fastjet/tools/JetMedianBackgroundEstimator.hh
+++tmp/external/fastjet/tools/MassDropTagger.$(ObjSuf): \
+++	external/fastjet/tools/MassDropTagger.$(SrcSuf)
+++tmp/external/fastjet/tools/Pruner.$(ObjSuf): \
+++	external/fastjet/tools/Pruner.$(SrcSuf) \
+++	external/fastjet/tools/Pruner.hh \
+++	external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.hh \
+++	external/fastjet/Selector.hh
+++tmp/external/fastjet/tools/Recluster.$(ObjSuf): \
+++	external/fastjet/tools/Recluster.$(SrcSuf) \
+++	external/fastjet/tools/Recluster.hh \
+++	external/fastjet/CompositeJetStructure.hh
+++tmp/external/fastjet/tools/RestFrameNSubjettinessTagger.$(ObjSuf): \
+++	external/fastjet/tools/RestFrameNSubjettinessTagger.$(SrcSuf)
+++tmp/external/fastjet/tools/Subtractor.$(ObjSuf): \
+++	external/fastjet/tools/Subtractor.$(SrcSuf) \
+++	external/fastjet/tools/Subtractor.hh
+++tmp/external/fastjet/tools/TopTaggerBase.$(ObjSuf): \
+++	external/fastjet/tools/TopTaggerBase.$(SrcSuf)
+++tmp/modules/FastJetFinder.$(ObjSuf): \
+++	modules/FastJetFinder.$(SrcSuf) \
+++	modules/FastJetFinder.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/JetDefinition.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/Selector.hh \
+++	external/fastjet/ClusterSequenceArea.hh \
+++	external/fastjet/tools/JetMedianBackgroundEstimator.hh \
+++	external/fastjet/plugins/SISCone/fastjet/SISConePlugin.hh \
+++	external/fastjet/plugins/CDFCones/fastjet/CDFMidPointPlugin.hh \
+++	external/fastjet/plugins/CDFCones/fastjet/CDFJetCluPlugin.hh \
+++	external/fastjet/contribs/Nsubjettiness/Nsubjettiness.hh \
+++	external/fastjet/contribs/Nsubjettiness/Njettiness.hh \
+++	external/fastjet/contribs/Nsubjettiness/NjettinessPlugin.hh \
+++	external/fastjet/contribs/Nsubjettiness/ExtraRecombiners.hh \
+++	external/fastjet/tools/Filter.hh \
+++	external/fastjet/tools/Pruner.hh \
+++	external/fastjet/contribs/RecursiveTools/SoftDrop.hh
+++tmp/modules/FastJetGridMedianEstimator.$(ObjSuf): \
+++	modules/FastJetGridMedianEstimator.$(SrcSuf) \
+++	modules/FastJetGridMedianEstimator.h \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/JetDefinition.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/Selector.hh \
+++	external/fastjet/RectangularGrid.hh \
+++	external/fastjet/ClusterSequenceArea.hh \
+++	external/fastjet/tools/JetMedianBackgroundEstimator.hh \
+++	external/fastjet/tools/GridMedianBackgroundEstimator.hh \
+++	external/fastjet/plugins/SISCone/fastjet/SISConePlugin.hh \
+++	external/fastjet/plugins/CDFCones/fastjet/CDFMidPointPlugin.hh \
+++	external/fastjet/plugins/CDFCones/fastjet/CDFJetCluPlugin.hh \
+++	external/fastjet/contribs/Nsubjettiness/Nsubjettiness.hh \
+++	external/fastjet/contribs/Nsubjettiness/Njettiness.hh \
+++	external/fastjet/contribs/Nsubjettiness/NjettinessPlugin.hh \
+++	external/fastjet/contribs/Nsubjettiness/ExtraRecombiners.hh
+++tmp/modules/RunPUPPI.$(ObjSuf): \
+++	modules/RunPUPPI.$(SrcSuf) \
+++	modules/RunPUPPI.h \
+++	external/PUPPI/RecoObj2.hh \
+++	external/PUPPI/AlgoObj.hh \
+++	external/PUPPI/PuppiContainer.hh \
+++	external/fastjet/PseudoJet.hh \
+++	classes/DelphesClasses.h \
+++	classes/DelphesFactory.h \
+++	classes/DelphesFormula.h
+++FASTJET_OBJ +=  \
+++	tmp/external/PUPPI/PuppiAlgo.$(ObjSuf) \
+++	tmp/external/PUPPI/PuppiContainer.$(ObjSuf) \
+++	tmp/external/PUPPI/puppiCleanContainer.$(ObjSuf) \
+++	tmp/external/fastjet/AreaDefinition.$(ObjSuf) \
+++	tmp/external/fastjet/BasicRandom.$(ObjSuf) \
+++	tmp/external/fastjet/ClosestPair2D.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequence.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequence1GhostPassiveArea.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequenceActiveArea.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequenceArea.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequenceAreaBase.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequencePassiveArea.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequenceStructure.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequenceVoronoiArea.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequence_CP2DChan.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequence_Delaunay.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequence_DumbN3.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequence_N2.$(ObjSuf) \
+++	tmp/external/fastjet/ClusterSequence_TiledN2.$(ObjSuf) \
+++	tmp/external/fastjet/CompositeJetStructure.$(ObjSuf) \
+++	tmp/external/fastjet/Dnn2piCylinder.$(ObjSuf) \
+++	tmp/external/fastjet/Dnn3piCylinder.$(ObjSuf) \
+++	tmp/external/fastjet/Dnn4piCylinder.$(ObjSuf) \
+++	tmp/external/fastjet/DnnPlane.$(ObjSuf) \
+++	tmp/external/fastjet/Error.$(ObjSuf) \
+++	tmp/external/fastjet/FunctionOfPseudoJet.$(ObjSuf) \
+++	tmp/external/fastjet/GhostedAreaSpec.$(ObjSuf) \
+++	tmp/external/fastjet/JetDefinition.$(ObjSuf) \
+++	tmp/external/fastjet/LazyTiling25.$(ObjSuf) \
+++	tmp/external/fastjet/LazyTiling9.$(ObjSuf) \
+++	tmp/external/fastjet/LazyTiling9Alt.$(ObjSuf) \
+++	tmp/external/fastjet/LazyTiling9SeparateGhosts.$(ObjSuf) \
+++	tmp/external/fastjet/LimitedWarning.$(ObjSuf) \
+++	tmp/external/fastjet/MinHeap.$(ObjSuf) \
+++	tmp/external/fastjet/PseudoJet.$(ObjSuf) \
+++	tmp/external/fastjet/PseudoJetStructureBase.$(ObjSuf) \
+++	tmp/external/fastjet/RangeDefinition.$(ObjSuf) \
+++	tmp/external/fastjet/RectangularGrid.$(ObjSuf) \
+++	tmp/external/fastjet/Selector.$(ObjSuf) \
+++	tmp/external/fastjet/TilingExtent.$(ObjSuf) \
+++	tmp/external/fastjet/Voronoi.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/AxesDefinition.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/ExtraRecombiners.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/MeasureDefinition.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/Njettiness.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/NjettinessPlugin.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/Nsubjettiness.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/TauComponents.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/Nsubjettiness/XConePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/RecursiveTools/ModifiedMassDropTagger.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/RecursiveTools/Recluster.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/RecursiveTools/RecursiveSymmetryCutBase.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/RecursiveTools/SoftDrop.$(ObjSuf) \
+++	tmp/external/fastjet/contribs/SoftKiller/SoftKiller.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/ATLASCone/ATLASConePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/ATLASCone/Jet.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/ATLASCone/JetConeFinderTool.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/ATLASCone/JetSplitMergeTool.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/CDFCones/CDFJetCluPlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/CDFCones/CDFMidPointPlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/CDFCones/JetCluAlgorithm.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/CDFCones/MidPointAlgorithm.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/CMSIterativeCone/CMSIterativeConePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/D0RunICone/D0RunIBaseConePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/D0RunIICone/D0RunIIConePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/EECambridge/EECambridgePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/GridJet/GridJetPlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/Jade/JadePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/NestedDefs/NestedDefsPlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/SISConePlugin.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/area.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/geom_2d.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/hash.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/momentum.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/protocones.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/quadtree.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/ranlux.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/reference.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/siscone.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/siscone_error.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/split_merge.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/SISCone/vicinity.$(ObjSuf) \
+++	tmp/external/fastjet/plugins/TrackJet/TrackJetPlugin.$(ObjSuf) \
+++	tmp/external/fastjet/tools/BackgroundEstimatorBase.$(ObjSuf) \
+++	tmp/external/fastjet/tools/CASubJetTagger.$(ObjSuf) \
+++	tmp/external/fastjet/tools/Filter.$(ObjSuf) \
+++	tmp/external/fastjet/tools/GridMedianBackgroundEstimator.$(ObjSuf) \
+++	tmp/external/fastjet/tools/JHTopTagger.$(ObjSuf) \
+++	tmp/external/fastjet/tools/JetMedianBackgroundEstimator.$(ObjSuf) \
+++	tmp/external/fastjet/tools/MassDropTagger.$(ObjSuf) \
+++	tmp/external/fastjet/tools/Pruner.$(ObjSuf) \
+++	tmp/external/fastjet/tools/Recluster.$(ObjSuf) \
+++	tmp/external/fastjet/tools/RestFrameNSubjettinessTagger.$(ObjSuf) \
+++	tmp/external/fastjet/tools/Subtractor.$(ObjSuf) \
+++	tmp/external/fastjet/tools/TopTaggerBase.$(ObjSuf) \
+++	tmp/modules/FastJetFinder.$(ObjSuf) \
+++	tmp/modules/FastJetGridMedianEstimator.$(ObjSuf) \
+++	tmp/modules/RunPUPPI.$(ObjSuf)
+++
+++ifeq ($(HAS_PYTHIA8),true)
+++FASTJET_OBJ +=  \
+++	
+++endif
+++
+++tmp/display/Delphes3DGeometry.$(ObjSuf): \
+++	display/Delphes3DGeometry.$(SrcSuf) \
+++	display/Delphes3DGeometry.h \
+++	classes/DelphesClasses.h \
+++	external/ExRootAnalysis/ExRootConfReader.h
+++tmp/display/DelphesBranchElement.$(ObjSuf): \
+++	display/DelphesBranchElement.$(SrcSuf) \
+++	display/DelphesBranchElement.h \
+++	classes/DelphesClasses.h
+++tmp/display/DelphesCaloData.$(ObjSuf): \
+++	display/DelphesCaloData.$(SrcSuf) \
+++	display/DelphesCaloData.h
+++tmp/display/DelphesDisplay.$(ObjSuf): \
+++	display/DelphesDisplay.$(SrcSuf) \
+++	display/DelphesDisplay.h
+++tmp/display/DelphesEventDisplay.$(ObjSuf): \
+++	display/DelphesEventDisplay.$(SrcSuf) \
+++	display/DelphesCaloData.h \
+++	display/DelphesBranchElement.h \
+++	display/Delphes3DGeometry.h \
+++	display/DelphesEventDisplay.h \
+++	display/DelphesDisplay.h \
+++	display/Delphes3DGeometry.h \
+++	display/DelphesHtmlSummary.h \
+++	display/DelphesPlotSummary.h \
+++	classes/DelphesClasses.h \
+++	external/ExRootAnalysis/ExRootConfReader.h \
+++	external/ExRootAnalysis/ExRootTreeReader.h
+++tmp/display/DelphesHtmlSummary.$(ObjSuf): \
+++	display/DelphesHtmlSummary.$(SrcSuf) \
+++	display/DelphesHtmlSummary.h
+++tmp/display/DelphesPlotSummary.$(ObjSuf): \
+++	display/DelphesPlotSummary.$(SrcSuf) \
+++	display/DelphesPlotSummary.h
+++DISPLAY_OBJ +=  \
+++	tmp/display/Delphes3DGeometry.$(ObjSuf) \
+++	tmp/display/DelphesBranchElement.$(ObjSuf) \
+++	tmp/display/DelphesCaloData.$(ObjSuf) \
+++	tmp/display/DelphesDisplay.$(ObjSuf) \
+++	tmp/display/DelphesEventDisplay.$(ObjSuf) \
+++	tmp/display/DelphesHtmlSummary.$(ObjSuf) \
+++	tmp/display/DelphesPlotSummary.$(ObjSuf)
+++
+++ifeq ($(HAS_PYTHIA8),true)
+++DISPLAY_OBJ +=  \
+++	
+++endif
+++
+++tmp/external/tcl/panic.$(ObjSuf): \
+++	external/tcl/panic.c
+++tmp/external/tcl/tclAlloc.$(ObjSuf): \
+++	external/tcl/tclAlloc.c
+++tmp/external/tcl/tclAsync.$(ObjSuf): \
+++	external/tcl/tclAsync.c
+++tmp/external/tcl/tclBasic.$(ObjSuf): \
+++	external/tcl/tclBasic.c
+++tmp/external/tcl/tclCkalloc.$(ObjSuf): \
+++	external/tcl/tclCkalloc.c
+++tmp/external/tcl/tclCmdAH.$(ObjSuf): \
+++	external/tcl/tclCmdAH.c
+++tmp/external/tcl/tclCmdIL.$(ObjSuf): \
+++	external/tcl/tclCmdIL.c
+++tmp/external/tcl/tclCmdMZ.$(ObjSuf): \
+++	external/tcl/tclCmdMZ.c
+++tmp/external/tcl/tclCompExpr.$(ObjSuf): \
+++	external/tcl/tclCompExpr.c
+++tmp/external/tcl/tclCompile.$(ObjSuf): \
+++	external/tcl/tclCompile.c
+++tmp/external/tcl/tclExecute.$(ObjSuf): \
+++	external/tcl/tclExecute.c
+++tmp/external/tcl/tclGet.$(ObjSuf): \
+++	external/tcl/tclGet.c
+++tmp/external/tcl/tclHash.$(ObjSuf): \
+++	external/tcl/tclHash.c
+++tmp/external/tcl/tclIndexObj.$(ObjSuf): \
+++	external/tcl/tclIndexObj.c
+++tmp/external/tcl/tclLink.$(ObjSuf): \
+++	external/tcl/tclLink.c
+++tmp/external/tcl/tclListObj.$(ObjSuf): \
+++	external/tcl/tclListObj.c
+++tmp/external/tcl/tclNamesp.$(ObjSuf): \
+++	external/tcl/tclNamesp.c
+++tmp/external/tcl/tclObj.$(ObjSuf): \
+++	external/tcl/tclObj.c
+++tmp/external/tcl/tclParse.$(ObjSuf): \
+++	external/tcl/tclParse.c
+++tmp/external/tcl/tclPreserve.$(ObjSuf): \
+++	external/tcl/tclPreserve.c
+++tmp/external/tcl/tclProc.$(ObjSuf): \
+++	external/tcl/tclProc.c
+++tmp/external/tcl/tclResolve.$(ObjSuf): \
+++	external/tcl/tclResolve.c
+++tmp/external/tcl/tclStringObj.$(ObjSuf): \
+++	external/tcl/tclStringObj.c
+++tmp/external/tcl/tclUtil.$(ObjSuf): \
+++	external/tcl/tclUtil.c
+++tmp/external/tcl/tclVar.$(ObjSuf): \
+++	external/tcl/tclVar.c
+++TCL_OBJ +=  \
+++	tmp/external/tcl/panic.$(ObjSuf) \
+++	tmp/external/tcl/tclAlloc.$(ObjSuf) \
+++	tmp/external/tcl/tclAsync.$(ObjSuf) \
+++	tmp/external/tcl/tclBasic.$(ObjSuf) \
+++	tmp/external/tcl/tclCkalloc.$(ObjSuf) \
+++	tmp/external/tcl/tclCmdAH.$(ObjSuf) \
+++	tmp/external/tcl/tclCmdIL.$(ObjSuf) \
+++	tmp/external/tcl/tclCmdMZ.$(ObjSuf) \
+++	tmp/external/tcl/tclCompExpr.$(ObjSuf) \
+++	tmp/external/tcl/tclCompile.$(ObjSuf) \
+++	tmp/external/tcl/tclExecute.$(ObjSuf) \
+++	tmp/external/tcl/tclGet.$(ObjSuf) \
+++	tmp/external/tcl/tclHash.$(ObjSuf) \
+++	tmp/external/tcl/tclIndexObj.$(ObjSuf) \
+++	tmp/external/tcl/tclLink.$(ObjSuf) \
+++	tmp/external/tcl/tclListObj.$(ObjSuf) \
+++	tmp/external/tcl/tclNamesp.$(ObjSuf) \
+++	tmp/external/tcl/tclObj.$(ObjSuf) \
+++	tmp/external/tcl/tclParse.$(ObjSuf) \
+++	tmp/external/tcl/tclPreserve.$(ObjSuf) \
+++	tmp/external/tcl/tclProc.$(ObjSuf) \
+++	tmp/external/tcl/tclResolve.$(ObjSuf) \
+++	tmp/external/tcl/tclStringObj.$(ObjSuf) \
+++	tmp/external/tcl/tclUtil.$(ObjSuf) \
+++	tmp/external/tcl/tclVar.$(ObjSuf)
+++
+++modules/VertexFinderDA4D.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/TrackSmearing.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/ClusterSequence.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/Error.hh \
+++	external/fastjet/JetDefinition.hh \
+++	external/fastjet/SharedPtr.hh \
+++	external/fastjet/LimitedWarning.hh \
+++	external/fastjet/FunctionOfPseudoJet.hh \
+++	external/fastjet/ClusterSequenceStructure.hh \
+++	external/fastjet/internal/deprecated.hh
+++	@touch $@
+++
+++external/fastjet/internal/ClosestPair2D.hh: \
+++	external/fastjet/internal/ClosestPair2DBase.hh \
+++	external/fastjet/internal/SearchTree.hh \
+++	external/fastjet/internal/MinHeap.hh \
+++	external/fastjet/SharedPtr.hh
+++	@touch $@
+++
+++modules/FastJetGridMedianEstimator.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/internal/MinHeap.hh: \
+++	external/fastjet/internal/base.hh
+++	@touch $@
+++
+++modules/EnergySmearing.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/LeptonDressing.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/internal/Voronoi.hh: \
+++	external/fastjet/LimitedWarning.hh
+++	@touch $@
+++
+++external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh \
+++	external/fastjet/GhostedAreaSpec.hh \
+++	external/fastjet/LimitedWarning.hh
+++	@touch $@
+++
+++external/fastjet/JetDefinition.hh: \
+++	external/fastjet/internal/numconsts.hh \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/internal/deprecated.hh \
+++	external/fastjet/ClusterSequence.hh
+++	@touch $@
+++
+++modules/ConstituentFilter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/Calorimeter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++classes/DelphesModule.h: \
+++	external/ExRootAnalysis/ExRootTask.h
+++	@touch $@
+++
+++modules/AngularSmearing.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/IdentificationMap.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/ExampleModule.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/Isolation.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/EnergyScale.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/Merger.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/internal/Dnn2piCylinder.hh: \
+++	external/fastjet/internal/DynamicNearestNeighbours.hh \
+++	external/fastjet/internal/DnnPlane.hh \
+++	external/fastjet/internal/numconsts.hh
+++	@touch $@
+++
+++external/fastjet/Selector.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/RangeDefinition.hh
+++	@touch $@
+++
+++modules/JetPileUpSubtractor.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/contribs/Nsubjettiness/Njettiness.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/SharedPtr.hh
+++	@touch $@
+++
+++external/fastjet/internal/LazyTiling25.hh: \
+++	external/fastjet/internal/MinHeap.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/internal/LazyTiling9Alt.hh \
+++	external/fastjet/internal/LazyTiling9.hh
+++	@touch $@
+++
+++external/fastjet/Error.hh: \
+++	external/fastjet/internal/base.hh \
+++	external/fastjet/config.h \
+++	external/fastjet/LimitedWarning.hh
+++	@touch $@
+++
+++external/fastjet/internal/TilingExtent.hh: \
+++	external/fastjet/ClusterSequence.hh
+++	@touch $@
+++
+++modules/TrackPileUpSubtractor.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/Efficiency.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/tools/GridMedianBackgroundEstimator.hh: \
+++	external/fastjet/tools/BackgroundEstimatorBase.hh \
+++	external/fastjet/RectangularGrid.hh
+++	@touch $@
+++
+++external/fastjet/internal/DnnPlane.hh: \
+++	external/fastjet/internal/Triangulation.hh \
+++	external/fastjet/internal/DynamicNearestNeighbours.hh
+++	@touch $@
+++
+++external/fastjet/ClusterSequenceArea.hh: \
+++	external/fastjet/ClusterSequenceAreaBase.hh \
+++	external/fastjet/ClusterSequenceActiveArea.hh \
+++	external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.hh \
+++	external/fastjet/ClusterSequencePassiveArea.hh \
+++	external/fastjet/ClusterSequenceVoronoiArea.hh \
+++	external/fastjet/AreaDefinition.hh
+++	@touch $@
+++
+++modules/JetFakeParticle.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/OldCalorimeter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/ClusterSequence1GhostPassiveArea.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh \
+++	external/fastjet/ClusterSequenceActiveArea.hh
+++	@touch $@
+++
+++external/fastjet/internal/LazyTiling9Alt.hh: \
+++	external/fastjet/internal/MinHeap.hh \
+++	external/fastjet/ClusterSequence.hh
+++	@touch $@
+++
+++modules/TrackCountingTauTagging.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/RectangularGrid.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/Selector.hh
+++	@touch $@
+++
+++modules/PileUpMerger.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/contribs/Nsubjettiness/ExtraRecombiners.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/JetDefinition.hh
+++	@touch $@
+++
+++display/DelphesBranchElement.h: \
+++	display/DelphesCaloData.h
+++	@touch $@
+++
+++external/fastjet/contribs/Nsubjettiness/NjettinessPlugin.hh: \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/JetDefinition.hh
+++	@touch $@
+++
+++external/fastjet/internal/DynamicNearestNeighbours.hh: \
+++	external/fastjet/internal/numconsts.hh \
+++	external/fastjet/Error.hh
+++	@touch $@
+++
+++modules/RunPUPPI.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/Cloner.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/PseudoJet.hh: \
+++	external/fastjet/internal/numconsts.hh \
+++	external/fastjet/internal/IsBase.hh \
+++	external/fastjet/SharedPtr.hh \
+++	external/fastjet/Error.hh \
+++	external/fastjet/PseudoJetStructureBase.hh
+++	@touch $@
+++
+++external/fastjet/tools/Pruner.hh: \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/WrappedStructure.hh \
+++	external/fastjet/tools/Transformer.hh
+++	@touch $@
+++
+++external/fastjet/internal/LazyTiling9.hh: \
+++	external/fastjet/internal/MinHeap.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/internal/LazyTiling9Alt.hh
+++	@touch $@
+++
+++modules/PileUpJetID.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/version.hh: \
+++	external/fastjet/config.h
+++	@touch $@
+++
+++modules/MomentumSmearing.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/TauTagging.h: \
+++	classes/DelphesModule.h \
+++	external/ExRootAnalysis/ExRootResult.h \
+++	external/ExRootAnalysis/ExRootFilter.h \
+++	external/ExRootAnalysis/ExRootClassifier.h
+++	@touch $@
+++
+++external/fastjet/GhostedAreaSpec.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/internal/BasicRandom.hh \
+++	external/fastjet/Selector.hh \
+++	external/fastjet/LimitedWarning.hh \
+++	external/fastjet/internal/deprecated.hh
+++	@touch $@
+++
+++external/fastjet/internal/Dnn4piCylinder.hh: \
+++	external/fastjet/internal/DynamicNearestNeighbours.hh \
+++	external/fastjet/internal/DnnPlane.hh \
+++	external/fastjet/internal/numconsts.hh
+++	@touch $@
+++
+++modules/VertexSorter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/Delphes.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/VertexFinder.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/UniqueObjectFinder.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/TrackCountingBTagging.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/PileUpMergerPythia8.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/ClusterSequenceActiveArea.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh \
+++	external/fastjet/ClusterSequenceActiveAreaExplicitGhosts.hh
+++	@touch $@
+++
+++modules/JetFlavorAssociation.h: \
+++	classes/DelphesModule.h \
+++	classes/DelphesClasses.h
+++	@touch $@
+++
+++modules/ParticlePropagator.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/PdgCodeFilter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/plugins/CDFCones/fastjet/CDFMidPointPlugin.hh: \
+++	external/fastjet/JetDefinition.hh
+++	@touch $@
+++
+++external/PUPPI/PuppiContainer.hh: \
+++	external/fastjet/PseudoJet.hh
+++	@touch $@
+++
+++external/fastjet/RangeDefinition.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/Error.hh \
+++	external/fastjet/LimitedWarning.hh \
+++	external/fastjet/internal/deprecated.hh
+++	@touch $@
+++
+++external/fastjet/PseudoJetStructureBase.hh: \
+++	external/fastjet/internal/base.hh
+++	@touch $@
+++
+++external/fastjet/ClusterSequenceAreaBase.hh: \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/LimitedWarning.hh \
+++	external/fastjet/Selector.hh \
+++	external/fastjet/internal/deprecated.hh
+++	@touch $@
+++
+++modules/PhotonConversions.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/ClusterSequenceVoronoiArea.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/AreaDefinition.hh \
+++	external/fastjet/ClusterSequenceAreaBase.hh
+++	@touch $@
+++
+++modules/BTagging.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/RecoPuFilter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/Hector.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/ImpactParameterSmearing.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++display/DelphesPlotSummary.h: \
+++	external/ExRootAnalysis/ExRootTreeReader.h
+++	@touch $@
+++
+++modules/Weighter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/TaggingParticlesSkimmer.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/internal/BasicRandom.hh: \
+++	external/fastjet/internal/base.hh
+++	@touch $@
+++
+++modules/SimpleCalorimeter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/plugins/CDFCones/fastjet/CDFJetCluPlugin.hh: \
+++	external/fastjet/JetDefinition.hh \
+++	external/fastjet/PseudoJet.hh
+++	@touch $@
+++
+++external/ExRootAnalysis/ExRootTask.h: \
+++	external/ExRootAnalysis/ExRootConfReader.h
+++	@touch $@
+++
+++external/fastjet/tools/Subtractor.hh: \
+++	external/fastjet/internal/base.hh \
+++	external/fastjet/tools/Transformer.hh \
+++	external/fastjet/tools/BackgroundEstimatorBase.hh
+++	@touch $@
+++
+++external/fastjet/internal/LazyTiling9SeparateGhosts.hh: \
+++	external/fastjet/internal/MinHeap.hh \
+++	external/fastjet/ClusterSequence.hh \
+++	external/fastjet/internal/LazyTiling9Alt.hh
+++	@touch $@
+++
+++external/fastjet/internal/Dnn3piCylinder.hh: \
+++	external/fastjet/internal/DynamicNearestNeighbours.hh \
+++	external/fastjet/internal/DnnPlane.hh \
+++	external/fastjet/internal/numconsts.hh
+++	@touch $@
+++
+++external/fastjet/AreaDefinition.hh: \
+++	external/fastjet/GhostedAreaSpec.hh
+++	@touch $@
+++
+++modules/TimeSmearing.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/TreeWriter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/contribs/Nsubjettiness/Nsubjettiness.hh: \
+++	external/fastjet/FunctionOfPseudoJet.hh
+++	@touch $@
+++
+++external/fastjet/ClusterSequenceStructure.hh: \
+++	external/fastjet/internal/base.hh \
+++	external/fastjet/SharedPtr.hh \
+++	external/fastjet/PseudoJetStructureBase.hh
+++	@touch $@
+++
+++modules/StatusPidFilter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++external/fastjet/LimitedWarning.hh: \
+++	external/fastjet/internal/base.hh
+++	@touch $@
+++
+++external/fastjet/config.h: \
+++	external/fastjet/config_win.h
+++	@touch $@
+++
+++classes/DelphesClasses.h: \
+++	classes/SortableObject.h
+++	@touch $@
+++
+++external/fastjet/ClusterSequencePassiveArea.hh: \
+++	external/fastjet/PseudoJet.hh \
+++	external/fastjet/ClusterSequence1GhostPassiveArea.hh
+++	@touch $@
+++
+++modules/FastJetFinder.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++modules/BeamSpotFilter.h: \
+++	classes/DelphesModule.h
+++	@touch $@
+++
+++
+++
+++###
+++
+++ifeq ($(ROOT_MAJOR),6)
+++all: $(NOFASTJET) $(DELPHES) $(DELPHES_DICT_PCM) $(FASTJET_DICT_PCM) $(EXECUTABLE)
+++display: $(DISPLAY) $(DISPLAY_DICT_PCM)
+++else
+++all: $(NOFASTJET) $(DELPHES) $(EXECUTABLE)
+++display: $(DISPLAY)
+++endif
+++
+++$(NOFASTJET): $(DELPHES_DICT_OBJ) $(DELPHES_OBJ) $(TCL_OBJ)
+++	@mkdir -p $(@D)
+++	@echo ">> Building $@"
+++ifeq ($(ARCH),aix5)
+++	@$(MAKESHARED) $(OutPutOpt) $@ $(DELPHES_LIBS) -p 0 $^
+++else
+++ifeq ($(PLATFORM),macosx)
+++# We need to make both the .dylib and the .so
+++	@$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
+++ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
+++ifeq ($(MACOSX_MINOR),4)
+++	@ln -sf $@ $(subst .$(DllSuf),.so,$@)
+++endif
+++endif
+++else
+++ifeq ($(PLATFORM),win32)
+++	@bindexplib $* $^ > $*.def
+++	@lib -nologo -MACHINE:IX86 $^ -def:$*.def $(OutPutOpt)$(NOFASTJETLIB)
+++	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $*.exp $(DELPHES_LIBS) $(OutPutOpt)$@
+++	@$(MT_DLL)
+++else
+++	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
+++	@$(MT_DLL)
+++endif
+++endif
+++endif
+++
+++$(DELPHES): $(DELPHES_DICT_OBJ) $(FASTJET_DICT_OBJ) $(DELPHES_OBJ) $(FASTJET_OBJ) $(TCL_OBJ)
+++	@mkdir -p $(@D)
+++	@echo ">> Building $@"
+++ifeq ($(ARCH),aix5)
+++	@$(MAKESHARED) $(OutPutOpt) $@ $(DELPHES_LIBS) -p 0 $^
+++else
+++ifeq ($(PLATFORM),macosx)
+++# We need to make both the .dylib and the .so
+++	@$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
+++ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
+++ifeq ($(MACOSX_MINOR),4)
+++	@ln -sf $@ $(subst .$(DllSuf),.so,$@)
+++endif
+++endif
+++else
+++ifeq ($(PLATFORM),win32)
+++	@bindexplib $* $^ > $*.def
+++	@lib -nologo -MACHINE:IX86 $^ -def:$*.def $(OutPutOpt)$(DELPHESLIB)
+++	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $*.exp $(DELPHES_LIBS) $(OutPutOpt)$@
+++	@$(MT_DLL)
+++else
+++	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
+++	@$(MT_DLL)
+++endif
+++endif
+++endif
+++
+++$(DISPLAY): $(DELPHES_DICT_OBJ) $(FASTJET_DICT_OBJ) $(DISPLAY_DICT_OBJ) $(DELPHES_OBJ) $(FASTJET_OBJ) $(DISPLAY_OBJ) $(TCL_OBJ)
+++	@mkdir -p $(@D)
+++	@echo ">> Building $@"
+++ifeq ($(ARCH),aix5)
+++	@$(MAKESHARED) $(OutPutOpt) $@ $(DISPLAY_LIBS) -p 0 $^
+++else
+++ifeq ($(PLATFORM),macosx)
+++# We need to make both the .dylib and the .so
+++	@$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(DISPLAY_LIBS)
+++ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
+++ifeq ($(MACOSX_MINOR),4)
+++	@ln -sf $@ $(subst .$(DllSuf),.so,$@)
+++endif
+++endif
+++else
+++ifeq ($(PLATFORM),win32)
+++	@bindexplib $* $^ > $*.def
+++	@lib -nologo -MACHINE:IX86 $^ -def:$*.def $(OutPutOpt)$(DISPLAYLIB)
+++	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $*.exp $(DISPLAY_LIBS) $(OutPutOpt)$@
+++	@$(MT_DLL)
+++else
+++	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(DISPLAY_LIBS)
+++	@$(MT_DLL)
+++endif
+++endif
+++endif
+++
+++clean:
+++	@rm -f $(DELPHES_DICT_OBJ) $(DISPLAY_DICT_OBJ) $(DELPHES_OBJ) $(FASTJET_OBJ) $(DISPLAY_OBJ) $(TCL_OBJ) core
+++	@rm -rf tmp
+++
+++distclean: clean
+++	@rm -f $(NOFASTJET) $(NOFASTJETLIB) $(DELPHES) $(DELPHESLIB) $(DELPHES_DICT_PCM) $(FASTJET_DICT_PCM) $(DISPLAY) $(DISPLAYLIB) $(DISPLAY_DICT_PCM) $(EXECUTABLE)
+++
+++dist:
+++	@echo ">> Building $(DISTTAR)"
+++	@mkdir -p $(DISTDIR)
+++	@cp -a CHANGELOG CMakeLists.txt COPYING CREDITS DelphesEnv.sh README README_4LHCb VERSION Makefile MinBias.pileup configure cards classes converters display doc examples external modules python readers validation $(DISTDIR)
+++	@find $(DISTDIR) -depth -name .\* -exec rm -rf {} \;
+++	@tar -czf $(DISTTAR) $(DISTDIR)
+++	@rm -rf $(DISTDIR)
+++
+++###
+++
+++.SUFFIXES: .$(SrcSuf) .$(ObjSuf) .$(DllSuf) $(PcmSuf)
+++
+++%Dict.$(SrcSuf):
+++	@mkdir -p $(@D)
+++	@echo ">> Generating $@"
+++	@rootcint -f $@ -c -Iexternal $<
+++	@mv $@ $@.base
+++	@cat $< $@.base > $@
+++	@rm $@.base
+++
+++$(DELPHES_DICT_PCM): %Dict$(PcmSuf):
+++	@echo ">> Copying $@"
+++	@cp $< $@
+++
+++$(FASTJET_DICT_PCM): %Dict$(PcmSuf):
+++	@echo ">> Copying $@"
+++	@cp $< $@
+++
+++$(DISPLAY_DICT_PCM): %Dict$(PcmSuf):
+++	@echo ">> Copying $@"
+++	@cp $< $@
+++
+++$(DELPHES_OBJ): tmp/%.$(ObjSuf): %.$(SrcSuf)
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CXX) $(CXXFLAGS) -c $< $(OutPutOpt)$@
+++
+++$(FASTJET_OBJ): tmp/%.$(ObjSuf): %.$(SrcSuf)
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CXX) $(CXXFLAGS) -c $< $(OutPutOpt)$@
+++
+++$(DISPLAY_OBJ): tmp/%.$(ObjSuf): %.$(SrcSuf)
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CXX) $(CXXFLAGS) -c $< $(OutPutOpt)$@
+++
+++$(DELPHES_DICT_OBJ): %.$(ObjSuf): %.$(SrcSuf)
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CXX) $(CXXFLAGS) -c $< $(OutPutOpt)$@
+++
+++$(FASTJET_DICT_OBJ): %.$(ObjSuf): %.$(SrcSuf)
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CXX) $(CXXFLAGS) -c $< $(OutPutOpt)$@
+++
+++$(DISPLAY_DICT_OBJ): %.$(ObjSuf): %.$(SrcSuf)
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CXX) $(CXXFLAGS) -c $< $(OutPutOpt)$@
+++
+++$(TCL_OBJ): tmp/%.$(ObjSuf): %.c
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CC) $(patsubst -std=%,,$(CXXFLAGS)) -c $< $(OutPutOpt)$@
+++
+++$(EXECUTABLE_OBJ): tmp/%.$(ObjSuf): %.cpp
+++	@mkdir -p $(@D)
+++	@echo ">> Compiling $<"
+++	@$(CXX) $(CXXFLAGS) -c $< $(OutPutOpt)$@
+++
+++$(EXECUTABLE): %$(ExeSuf): $(DELPHES_DICT_OBJ) $(FASTJET_DICT_OBJ) $(DELPHES_OBJ) $(FASTJET_OBJ) $(TCL_OBJ)
+++	@echo ">> Building $@"
+++	@$(LD) $(LDFLAGS) $^ $(DELPHES_LIBS) $(OutPutOpt)$@
+++
+++###
+++
+++
++diff -rNup Delphes-3.4.1.orig/classes/DelphesPileUpReader.cc Delphes-3.4.1/classes/DelphesPileUpReader.cc
++--- Delphes-3.4.1.orig/classes/DelphesPileUpReader.cc	2015-10-09 21:50:19.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesPileUpReader.cc	2020-02-13 23:52:36.544432821 +0900
++@@ -32,8 +32,9 @@
++ #include <sstream>
++ 
++ #include <stdio.h>
++-#include <rpc/types.h>
++-#include <rpc/xdr.h>
+++#include <stdint.h>
+++
+++#include "classes/DelphesXDRReader.h"
++ 
++ using namespace std;
++ 
++@@ -46,17 +47,18 @@ static const int kRecordSize = 9;
++ DelphesPileUpReader::DelphesPileUpReader(const char *fileName) :
++   fEntries(0), fEntrySize(0), fCounter(0),
++   fPileUpFile(0), fIndex(0), fBuffer(0),
++-  fInputXDR(0), fIndexXDR(0), fBufferXDR(0)
+++  fInputReader(0), fIndexReader(0), fBufferReader(0)
++ {
++   stringstream message;
++ 
++-  fIndex = new char[kIndexSize*8];
++-  fBuffer = new char[kBufferSize*kRecordSize*4];
++-  fInputXDR = new XDR;
++-  fIndexXDR = new XDR;
++-  fBufferXDR = new XDR;
++-  xdrmem_create(fIndexXDR, fIndex, kIndexSize*8, XDR_DECODE);
++-  xdrmem_create(fBufferXDR, fBuffer, kBufferSize*kRecordSize*4, XDR_DECODE);
+++  fIndex = new uint8_t[kIndexSize*8];
+++  fBuffer = new uint8_t[kBufferSize*kRecordSize*4];
+++  fInputReader = new DelphesXDRReader;
+++  fIndexReader = new DelphesXDRReader;
+++  fBufferReader = new DelphesXDRReader;
+++
+++  fIndexReader->SetBuffer(fIndex);
+++  fBufferReader->SetBuffer(fBuffer);
++ 
++   fPileUpFile = fopen(fileName, "r");
++ 
++@@ -66,11 +68,11 @@ DelphesPileUpReader::DelphesPileUpReader
++     throw runtime_error(message.str());
++   }
++ 
++-  xdrstdio_create(fInputXDR, fPileUpFile, XDR_DECODE);
+++  fInputReader->SetFile(fPileUpFile);
++ 
++   // read number of events
++   fseeko(fPileUpFile, -8, SEEK_END);
++-  xdr_hyper(fInputXDR, &fEntries);
+++  fInputReader->ReadValue(&fEntries, 8);
++ 
++   if(fEntries >= kIndexSize)
++   {
++@@ -80,41 +82,38 @@ DelphesPileUpReader::DelphesPileUpReader
++ 
++   // read index of events
++   fseeko(fPileUpFile, -8 - 8*fEntries, SEEK_END);
++-  xdr_opaque(fInputXDR, fIndex, fEntries*8);
+++  fInputReader->ReadRaw(fIndex, fEntries*8);
++ }
++ 
++ //------------------------------------------------------------------------------
++ 
++ DelphesPileUpReader::~DelphesPileUpReader()
++ {
++-  xdr_destroy(fInputXDR);
++   if(fPileUpFile) fclose(fPileUpFile);
++-  xdr_destroy(fBufferXDR);
++-  xdr_destroy(fIndexXDR);
++-  if(fBufferXDR) delete fBufferXDR;
++-  if(fIndexXDR) delete fIndexXDR;
++-  if(fInputXDR) delete fInputXDR;
+++  if(fBufferReader) delete fBufferReader;
+++  if(fIndexReader) delete fIndexReader;
+++  if(fInputReader) delete fInputReader;
++   if(fBuffer) delete[] fBuffer;
++   if(fIndex) delete[] fIndex;
++ }
++ 
++ //------------------------------------------------------------------------------
++ 
++-bool DelphesPileUpReader::ReadParticle(int &pid,
+++bool DelphesPileUpReader::ReadParticle(int32_t &pid,
++   float &x, float &y, float &z, float &t,
++   float &px, float &py, float &pz, float &e)
++ {
++   if(fCounter >= fEntrySize) return false;
++ 
++-  xdr_int(fBufferXDR, &pid);
++-  xdr_float(fBufferXDR, &x);
++-  xdr_float(fBufferXDR, &y);
++-  xdr_float(fBufferXDR, &z);
++-  xdr_float(fBufferXDR, &t);
++-  xdr_float(fBufferXDR, &px);
++-  xdr_float(fBufferXDR, &py);
++-  xdr_float(fBufferXDR, &pz);
++-  xdr_float(fBufferXDR, &e);
+++  fBufferReader->ReadValue(&pid, 4);
+++  fBufferReader->ReadValue(&x, 4);
+++  fBufferReader->ReadValue(&y, 4);
+++  fBufferReader->ReadValue(&z, 4);
+++  fBufferReader->ReadValue(&t, 4);
+++  fBufferReader->ReadValue(&px, 4);
+++  fBufferReader->ReadValue(&py, 4);
+++  fBufferReader->ReadValue(&pz, 4);
+++  fBufferReader->ReadValue(&e, 4);
++ 
++   ++fCounter;
++ 
++@@ -123,27 +122,27 @@ bool DelphesPileUpReader::ReadParticle(i
++ 
++ //------------------------------------------------------------------------------
++ 
++-bool DelphesPileUpReader::ReadEntry(quad_t entry)
+++bool DelphesPileUpReader::ReadEntry(int64_t entry)
++ {
++-  quad_t offset;
+++  int64_t offset;
++ 
++   if(entry >= fEntries) return false;
++ 
++   // read event position
++-  xdr_setpos(fIndexXDR, 8*entry);
++-  xdr_hyper(fIndexXDR, &offset);
+++  fIndexReader->SetOffset(8*entry);
+++  fIndexReader->ReadValue(&offset, 8);
++ 
++   // read event
++   fseeko(fPileUpFile, offset, SEEK_SET);
++-  xdr_int(fInputXDR, &fEntrySize);
+++  fInputReader->ReadValue(&fEntrySize, 4);
++ 
++   if(fEntrySize >= kBufferSize)
++   {
++     throw runtime_error("too many particles in pile-up event");
++   }
++ 
++-  xdr_opaque(fInputXDR, fBuffer, fEntrySize*kRecordSize*4);
++-  xdr_setpos(fBufferXDR, 0);
+++  fInputReader->ReadRaw(fBuffer, fEntrySize*kRecordSize*4);
+++  fBufferReader->SetOffset(0);
++   fCounter = 0;
++ 
++   return true;
++diff -rNup Delphes-3.4.1.orig/classes/DelphesPileUpReader.h Delphes-3.4.1/classes/DelphesPileUpReader.h
++--- Delphes-3.4.1.orig/classes/DelphesPileUpReader.h	2015-10-09 21:50:19.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesPileUpReader.h	2020-02-13 23:52:36.544432821 +0900
++@@ -28,8 +28,9 @@
++  */
++ 
++ #include <stdio.h>
++-#include <rpc/types.h>
++-#include <rpc/xdr.h>
+++#include <stdint.h>
+++
+++class DelphesXDRReader;
++ 
++ class DelphesPileUpReader
++ {
++@@ -39,30 +40,28 @@ public:
++ 
++   ~DelphesPileUpReader();
++ 
++-  bool ReadParticle(int &pid,
+++  bool ReadParticle(int32_t &pid,
++     float &x, float &y, float &z, float &t,
++     float &px, float &py, float &pz, float &e);
++ 
++-  bool ReadEntry(quad_t entry);
+++  bool ReadEntry(int64_t entry);
++ 
++-  quad_t GetEntries() const { return fEntries; }
+++  int64_t GetEntries() const { return fEntries; }
++ 
++ private:
++ 
++-  quad_t fEntries;
+++  int64_t fEntries;
++ 
++-  int fEntrySize;
++-  int fCounter;
+++  int32_t fEntrySize;
+++  int32_t fCounter;
++ 
++   FILE *fPileUpFile;
++-  char *fIndex;
++-  char *fBuffer;
+++  uint8_t *fIndex;
+++  uint8_t *fBuffer;
++ 
++-  XDR *fInputXDR;
++-  XDR *fIndexXDR;
++-  XDR *fBufferXDR;
+++  DelphesXDRReader *fInputReader;
+++  DelphesXDRReader *fIndexReader;
+++  DelphesXDRReader *fBufferReader;
++ };
++ 
++ #endif // DelphesPileUpReader_h
++-
++-
++diff -rNup Delphes-3.4.1.orig/classes/DelphesPileUpWriter.cc Delphes-3.4.1/classes/DelphesPileUpWriter.cc
++--- Delphes-3.4.1.orig/classes/DelphesPileUpWriter.cc	2015-10-09 21:50:19.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesPileUpWriter.cc	2020-02-13 23:52:36.544432821 +0900
++@@ -32,8 +32,9 @@
++ #include <sstream>
++ 
++ #include <stdio.h>
++-#include <rpc/types.h>
++-#include <rpc/xdr.h>
+++#include <stdint.h>
+++
+++#include "classes/DelphesXDRWriter.h"
++ 
++ using namespace std;
++ 
++@@ -46,17 +47,18 @@ static const int kRecordSize = 9;
++ DelphesPileUpWriter::DelphesPileUpWriter(const char *fileName) :
++   fEntries(0), fEntrySize(0), fOffset(0),
++   fPileUpFile(0), fIndex(0), fBuffer(0),
++-  fOutputXDR(0), fIndexXDR(0), fBufferXDR(0)
+++  fOutputWriter(0), fIndexWriter(0), fBufferWriter(0)
++ {
++   stringstream message;
++ 
++-  fIndex = new char[kIndexSize*8];
++-  fBuffer = new char[kBufferSize*kRecordSize*4];
++-  fOutputXDR = new XDR;
++-  fIndexXDR = new XDR;
++-  fBufferXDR = new XDR;
++-  xdrmem_create(fIndexXDR, fIndex, kIndexSize*8, XDR_ENCODE);
++-  xdrmem_create(fBufferXDR, fBuffer, kBufferSize*kRecordSize*4, XDR_ENCODE);
+++  fIndex = new uint8_t[kIndexSize*8];
+++  fBuffer = new uint8_t[kBufferSize*kRecordSize*4];
+++  fOutputWriter = new DelphesXDRWriter;
+++  fIndexWriter = new DelphesXDRWriter;
+++  fBufferWriter = new DelphesXDRWriter;
+++
+++  fIndexWriter->SetBuffer(fIndex);
+++  fBufferWriter->SetBuffer(fBuffer);
++ 
++   fPileUpFile = fopen(fileName, "w+");
++ 
++@@ -66,27 +68,24 @@ DelphesPileUpWriter::DelphesPileUpWriter
++     throw runtime_error(message.str());
++   }
++ 
++-  xdrstdio_create(fOutputXDR, fPileUpFile, XDR_ENCODE);
+++  fOutputWriter->SetFile(fPileUpFile);
++ }
++ 
++ //------------------------------------------------------------------------------
++ 
++ DelphesPileUpWriter::~DelphesPileUpWriter()
++ {
++-  xdr_destroy(fOutputXDR);
++   if(fPileUpFile) fclose(fPileUpFile);
++-  xdr_destroy(fBufferXDR);
++-  xdr_destroy(fIndexXDR);
++-  if(fBufferXDR) delete fBufferXDR;
++-  if(fIndexXDR) delete fIndexXDR;
++-  if(fOutputXDR) delete fOutputXDR;
+++  if(fBufferWriter) delete fBufferWriter;
+++  if(fIndexWriter) delete fIndexWriter;
+++  if(fOutputWriter) delete fOutputWriter;
++   if(fBuffer) delete[] fBuffer;
++   if(fIndex) delete[] fIndex;
++ }
++ 
++ //------------------------------------------------------------------------------
++ 
++-void DelphesPileUpWriter::WriteParticle(int pid,
+++void DelphesPileUpWriter::WriteParticle(int32_t pid,
++   float x, float y, float z, float t,
++   float px, float py, float pz, float e)
++ {
++@@ -95,15 +94,15 @@ void DelphesPileUpWriter::WriteParticle(
++     throw runtime_error("too many particles in pile-up event");
++   }
++ 
++-  xdr_int(fBufferXDR, &pid);
++-  xdr_float(fBufferXDR, &x);
++-  xdr_float(fBufferXDR, &y);
++-  xdr_float(fBufferXDR, &z);
++-  xdr_float(fBufferXDR, &t);
++-  xdr_float(fBufferXDR, &px);
++-  xdr_float(fBufferXDR, &py);
++-  xdr_float(fBufferXDR, &pz);
++-  xdr_float(fBufferXDR, &e);
+++  fBufferWriter->WriteValue(&pid, 4);
+++  fBufferWriter->WriteValue(&x, 4);
+++  fBufferWriter->WriteValue(&y, 4);
+++  fBufferWriter->WriteValue(&z, 4);
+++  fBufferWriter->WriteValue(&t, 4);
+++  fBufferWriter->WriteValue(&px, 4);
+++  fBufferWriter->WriteValue(&py, 4);
+++  fBufferWriter->WriteValue(&pz, 4);
+++  fBufferWriter->WriteValue(&e, 4);
++ 
++   ++fEntrySize;
++ }
++@@ -117,15 +116,15 @@ void DelphesPileUpWriter::WriteEntry()
++     throw runtime_error("too many pile-up events");
++   }
++ 
++-  xdr_int(fOutputXDR, &fEntrySize);
++-  xdr_opaque(fOutputXDR, fBuffer, fEntrySize*kRecordSize*4);
+++  fOutputWriter->WriteValue(&fEntrySize, 4);
+++  fOutputWriter->WriteRaw(fBuffer, fEntrySize*kRecordSize*4);
++ 
++-  xdr_hyper(fIndexXDR, &fOffset);
+++  fIndexWriter->WriteValue(&fOffset, 8);
++   fOffset += fEntrySize*kRecordSize*4 + 4;
++ 
++-  xdr_setpos(fBufferXDR, 0);
+++  fBufferWriter->SetOffset(0);
++   fEntrySize = 0;
++-        
+++
++   ++fEntries;
++ }
++ 
++@@ -133,8 +132,8 @@ void DelphesPileUpWriter::WriteEntry()
++ 
++ void DelphesPileUpWriter::WriteIndex()
++ {
++-  xdr_opaque(fOutputXDR, fIndex, fEntries*8);
++-  xdr_hyper(fOutputXDR, &fEntries);
+++  fOutputWriter->WriteRaw(fIndex, fEntries*8);
+++  fOutputWriter->WriteValue(&fEntries, 8);
++ }
++ 
++ //------------------------------------------------------------------------------
++diff -rNup Delphes-3.4.1.orig/classes/DelphesPileUpWriter.h Delphes-3.4.1/classes/DelphesPileUpWriter.h
++--- Delphes-3.4.1.orig/classes/DelphesPileUpWriter.h	2015-10-09 21:50:19.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesPileUpWriter.h	2020-02-13 23:52:36.544432821 +0900
++@@ -28,8 +28,9 @@
++  */
++ 
++ #include <stdio.h>
++-#include <rpc/types.h>
++-#include <rpc/xdr.h>
+++#include <stdint.h>
+++
+++class DelphesXDRWriter;
++ 
++ class DelphesPileUpWriter
++ {
++@@ -39,7 +40,7 @@ public:
++ 
++   ~DelphesPileUpWriter();
++ 
++-  void WriteParticle(int pid,
+++  void WriteParticle(int32_t pid,
++     float x, float y, float z, float t,
++     float px, float py, float pz, float e);
++ 
++@@ -49,19 +50,17 @@ public:
++ 
++ private:
++ 
++-  quad_t fEntries;
++-  int fEntrySize;
++-  quad_t fOffset;
+++  int64_t fEntries;
+++  int32_t fEntrySize;
+++  int64_t fOffset;
++ 
++   FILE *fPileUpFile;
++-  char *fIndex;
++-  char *fBuffer;
+++  uint8_t *fIndex;
+++  uint8_t *fBuffer;
++ 
++-  XDR *fOutputXDR;
++-  XDR *fIndexXDR;
++-  XDR *fBufferXDR;
+++  DelphesXDRWriter *fOutputWriter;
+++  DelphesXDRWriter *fIndexWriter;
+++  DelphesXDRWriter *fBufferWriter;
++ };
++ 
++ #endif // DelphesPileUpWriter_h
++-
++-
++diff -rNup Delphes-3.4.1.orig/classes/DelphesSTDHEPReader.cc Delphes-3.4.1/classes/DelphesSTDHEPReader.cc
++--- Delphes-3.4.1.orig/classes/DelphesSTDHEPReader.cc	2016-06-08 23:53:34.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesSTDHEPReader.cc	2020-02-13 23:52:36.544432821 +0900
++@@ -33,8 +33,8 @@
++ 
++ #include <stdio.h>
++ #include <errno.h>
++-#include <rpc/types.h>
++-#include <rpc/xdr.h>
+++#include <stdint.h>
+++#include <string.h>
++ 
++ #include "TObjArray.h"
++ #include "TStopwatch.h"
++@@ -44,6 +44,7 @@
++ 
++ #include "classes/DelphesClasses.h"
++ #include "classes/DelphesFactory.h"
+++#include "classes/DelphesXDRReader.h"
++ 
++ #include "ExRootAnalysis/ExRootTreeBranch.h"
++ 
++@@ -54,10 +55,9 @@ static const int kBufferSize  = 1000000;
++ //---------------------------------------------------------------------------
++ 
++ DelphesSTDHEPReader::DelphesSTDHEPReader() :
++-  fInputFile(0), fInputXDR(0), fBuffer(0), fPDG(0), fBlockType(-1)
+++  fInputFile(0), fBuffer(0), fPDG(0), fBlockType(-1)
++ {
++-  fInputXDR = new XDR;
++-  fBuffer = new char[kBufferSize*96 + 24];
+++  fBuffer = new uint8_t[kBufferSize*96 + 24];
++ 
++   fPDG = TDatabasePDG::Instance();
++ }
++@@ -67,7 +67,6 @@ DelphesSTDHEPReader::DelphesSTDHEPReader
++ DelphesSTDHEPReader::~DelphesSTDHEPReader()
++ {
++   if(fBuffer) delete fBuffer;
++-  if(fInputXDR) delete fInputXDR;
++ }
++ 
++ //---------------------------------------------------------------------------
++@@ -75,7 +74,7 @@ DelphesSTDHEPReader::~DelphesSTDHEPReade
++ void DelphesSTDHEPReader::SetInputFile(FILE *inputFile)
++ {
++   fInputFile = inputFile;
++-  xdrstdio_create(fInputXDR, inputFile, XDR_DECODE);
+++  fReader[0].SetFile(inputFile);
++ }
++ 
++ //---------------------------------------------------------------------------
++@@ -99,9 +98,9 @@ bool DelphesSTDHEPReader::ReadBlock(Delp
++   TObjArray *stableParticleOutputArray,
++   TObjArray *partonOutputArray)
++ {
++-  if(feof(fInputFile)) return kFALSE;
+++  fReader[0].ReadValue(&fBlockType, 4);
++ 
++-  xdr_int(fInputXDR, &fBlockType);
+++  if(feof(fInputFile)) return kFALSE;
++ 
++   SkipBytes(4);
++ 
++@@ -145,10 +144,10 @@ bool DelphesSTDHEPReader::ReadBlock(Delp
++ 
++ //---------------------------------------------------------------------------
++ 
++-void DelphesSTDHEPReader::SkipBytes(u_int size)
+++void DelphesSTDHEPReader::SkipBytes(int size)
++ {
++   int rc;
++-  u_int rndup;
+++  int rndup;
++ 
++   rndup = size % 4;
++   if(rndup > 0)
++@@ -160,16 +159,16 @@ void DelphesSTDHEPReader::SkipBytes(u_in
++ 
++   if(rc != 0 && errno == ESPIPE)
++   {
++-    xdr_opaque(fInputXDR, fBuffer, size);
+++    fReader[0].ReadRaw(fBuffer, size);
++   }
++ }
++ 
++ //---------------------------------------------------------------------------
++ 
++-void DelphesSTDHEPReader::SkipArray(u_int elsize)
+++void DelphesSTDHEPReader::SkipArray(int elsize)
++ {
++-  u_int size;
++-  xdr_u_int(fInputXDR, &size);
+++  uint32_t size;
+++  fReader[0].ReadValue(&size, 4);
++   SkipBytes(size*elsize);
++ }
++ 
++@@ -177,14 +176,14 @@ void DelphesSTDHEPReader::SkipArray(u_in
++ 
++ void DelphesSTDHEPReader::ReadFileHeader()
++ {
++-  u_int i;
+++  uint32_t i;
++   enum STDHEPVersion {UNKNOWN, V1, V2, V21} version;
++ 
++   // version
++-  xdr_string(fInputXDR, &fBuffer, 100);
+++  fReader[0].ReadString(fBuffer, 100);
++   if(fBuffer[0] == '\0' || fBuffer[1] == '\0') version = UNKNOWN;
++   else if(fBuffer[0] == '1') version = V1;
++-  else if(strncmp(fBuffer, "2.01", 4) == 0) version = V21;
+++  else if(strncmp((char *)fBuffer, "2.01", 4) == 0) version = V21;
++   else if(fBuffer[0] == '2') version = V2;
++   else version = UNKNOWN;
++ 
++@@ -206,19 +205,19 @@ void DelphesSTDHEPReader::ReadFileHeader
++   SkipBytes(4);
++ 
++   // Number of events
++-  xdr_u_int(fInputXDR, &fEntries);
+++  fReader[0].ReadValue(&fEntries, 4);
++ 
++   SkipBytes(8);
++ 
++   // Number of blocks
++-  u_int nBlocks = 0;
++-  xdr_u_int(fInputXDR, &nBlocks);
+++  uint32_t nBlocks = 0;
+++  fReader[0].ReadValue(&nBlocks, 4);
++ 
++   // Number of NTuples
++-  u_int nNTuples = 0;
+++  uint32_t nNTuples = 0;
++   if(version != V1)
++   {
++-    xdr_u_int(fInputXDR, &nNTuples);
+++    fReader[0].ReadValue(&nNTuples, 4);
++   }
++ 
++   if(nNTuples != 0)
++@@ -243,8 +242,8 @@ void DelphesSTDHEPReader::ReadFileHeader
++ void DelphesSTDHEPReader::ReadEventTable()
++ {
++   // version
++-  xdr_string(fInputXDR, &fBuffer, 100);
++-  if(strncmp(fBuffer, "1.00", 4) == 0)
+++  fReader[0].ReadString(fBuffer, 100);
+++  if(strncmp((char *)fBuffer, "1.00", 4) == 0)
++   {
++     SkipBytes(8);
++ 
++@@ -254,7 +253,7 @@ void DelphesSTDHEPReader::ReadEventTable
++     SkipArray(4);
++     SkipArray(4);
++   }
++-  else if(strncmp(fBuffer, "2.00", 4) == 0)
+++  else if(strncmp((char *)fBuffer, "2.00", 4) == 0)
++   {
++     SkipBytes(12);
++ 
++@@ -271,15 +270,15 @@ void DelphesSTDHEPReader::ReadEventTable
++ void DelphesSTDHEPReader::ReadEventHeader()
++ {
++   bool skipNTuples = false;
++-  u_int skipSize = 4;
+++  int skipSize = 4;
++ 
++   // version
++-  xdr_string(fInputXDR, &fBuffer, 100);
++-  if(strncmp(fBuffer, "2.00", 4) == 0)
+++  fReader[0].ReadString(fBuffer, 100);
+++  if(strncmp((char *)fBuffer, "2.00", 4) == 0)
++   {
++     skipNTuples = true;
++   }
++-  else if(strncmp(fBuffer, "3.00", 4) == 0)
+++  else if(strncmp((char *)fBuffer, "3.00", 4) == 0)
++   {
++     skipNTuples = true;
++     skipSize = 8;
++@@ -287,14 +286,14 @@ void DelphesSTDHEPReader::ReadEventHeade
++ 
++   SkipBytes(20);
++ 
++-  u_int dimBlocks = 0;
++-  xdr_u_int(fInputXDR, &dimBlocks);
+++  uint32_t dimBlocks = 0;
+++  fReader[0].ReadValue(&dimBlocks, 4);
++ 
++-  u_int dimNTuples = 0;
+++  uint32_t dimNTuples = 0;
++   if(skipNTuples)
++   {
++     SkipBytes(4);
++-    xdr_u_int(fInputXDR, &dimNTuples);
+++    fReader[0].ReadValue(&dimNTuples, 4);
++   }
++ 
++   // Processing blocks extraction
++@@ -317,14 +316,14 @@ void DelphesSTDHEPReader::ReadEventHeade
++ void DelphesSTDHEPReader::ReadSTDCM1()
++ {
++   // version
++-  xdr_string(fInputXDR, &fBuffer, 100);
+++  fReader[0].ReadString(fBuffer, 100);
++ 
++   // skip 5*4 + 2*8 = 36 bytes
++   SkipBytes(36);
++ 
++-  if((strncmp(fBuffer, "1.", 2) == 0) || (strncmp(fBuffer, "2.", 2) == 0) ||
++-     (strncmp(fBuffer, "3.", 2) == 0) || (strncmp(fBuffer, "4.", 2) == 0) ||
++-     (strncmp(fBuffer, "5.00", 4) == 0))
+++  if((strncmp((char *)fBuffer, "1.", 2) == 0) || (strncmp((char *)fBuffer, "2.", 2) == 0) ||
+++     (strncmp((char *)fBuffer, "3.", 2) == 0) || (strncmp((char *)fBuffer, "4.", 2) == 0) ||
+++     (strncmp((char *)fBuffer, "5.00", 4) == 0))
++   {
++     return;
++   }
++@@ -332,7 +331,7 @@ void DelphesSTDHEPReader::ReadSTDCM1()
++   SkipArray(1);
++   SkipArray(1);
++ 
++-  if(strncmp(fBuffer, "5.01", 4) == 0)
+++  if(strncmp((char *)fBuffer, "5.01", 4) == 0)
++   {
++     return;
++   }
++@@ -344,16 +343,16 @@ void DelphesSTDHEPReader::ReadSTDCM1()
++ 
++ void DelphesSTDHEPReader::ReadSTDHEP()
++ {
++-  u_int idhepSize, isthepSize, jmohepSize, jdahepSize, phepSize, vhepSize;
+++  uint32_t idhepSize, isthepSize, jmohepSize, jdahepSize, phepSize, vhepSize;
++ 
++   // version
++-  xdr_string(fInputXDR, &fBuffer, 100);
+++  fReader[0].ReadString(fBuffer, 100);
++ 
++   // Extracting the event number
++-  xdr_int(fInputXDR, &fEventNumber);
+++  fReader[0].ReadValue(&fEventNumber, 4);
++ 
++   // Extracting the number of particles
++-  xdr_int(fInputXDR, &fEventSize);
+++  fReader[0].ReadValue(&fEventSize, 4);
++ 
++   if(fEventSize >= kBufferSize)
++   {
++@@ -363,14 +362,21 @@ void DelphesSTDHEPReader::ReadSTDHEP()
++   // 4*n + 4*n + 8*n + 8*n + 40*n + 32*n +
++   // 4 + 4 + 4 + 4 + 4 + 4 = 96*n + 24
++ 
++-  xdr_opaque(fInputXDR, fBuffer, 96*fEventSize + 24);
+++  fReader[0].ReadRaw(fBuffer, 96*fEventSize + 24);
++ 
++-  idhepSize = ntohl(*(u_int*)(fBuffer));
++-  isthepSize = ntohl(*(u_int*)(fBuffer + 4*1 + 4*1*fEventSize));
++-  jmohepSize = ntohl(*(u_int*)(fBuffer + 4*2 + 4*2*fEventSize));
++-  jdahepSize = ntohl(*(u_int*)(fBuffer + 4*3 + 4*4*fEventSize));
++-  phepSize = ntohl(*(u_int*)(fBuffer + 4*4 + 4*6*fEventSize));
++-  vhepSize = ntohl(*(u_int*)(fBuffer + 4*5 + 4*16*fEventSize));
+++  fReader[1].SetBuffer(fBuffer);
+++  fReader[2].SetBuffer(fBuffer + 4*1 + 4*1*fEventSize);
+++  fReader[3].SetBuffer(fBuffer + 4*2 + 4*2*fEventSize);
+++  fReader[4].SetBuffer(fBuffer + 4*3 + 4*4*fEventSize);
+++  fReader[5].SetBuffer(fBuffer + 4*4 + 4*6*fEventSize);
+++  fReader[6].SetBuffer(fBuffer + 4*5 + 4*16*fEventSize);
+++
+++  fReader[1].ReadValue(&idhepSize, 4);
+++  fReader[2].ReadValue(&isthepSize, 4);
+++  fReader[3].ReadValue(&jmohepSize, 4);
+++  fReader[4].ReadValue(&jdahepSize, 4);
+++  fReader[5].ReadValue(&phepSize, 4);
+++  fReader[6].ReadValue(&vhepSize, 4);
++ 
++   if(fEventSize < 0 ||
++      fEventSize != (int)idhepSize      || fEventSize != (int)isthepSize     ||
++@@ -391,22 +397,22 @@ void DelphesSTDHEPReader::ReadSTDHEP()
++ 
++ void DelphesSTDHEPReader::ReadSTDHEP4()
++ {
++-  u_int number;
+++  uint32_t number;
++ 
++   // Extracting the event weight
++-  xdr_double(fInputXDR, &fWeight);
+++  fReader[0].ReadValue(&fWeight, 8);
++ 
++   // Extracting alpha QED
++-  xdr_double(fInputXDR, &fAlphaQED);
+++  fReader[0].ReadValue(&fAlphaQED, 8);
++ 
++   // Extracting alpha QCD
++-  xdr_double(fInputXDR, &fAlphaQCD);
+++  fReader[0].ReadValue(&fAlphaQCD, 8);
++ 
++   // Extracting the event scale
++-  xdr_u_int(fInputXDR, &fScaleSize);
+++  fReader[0].ReadValue(&fScaleSize, 4);
++   for(number = 0; number < fScaleSize; ++number)
++   {
++-    xdr_double(fInputXDR, &fScale[number]);
+++    fReader[0].ReadValue(&fScale[number], 8);
++   }
++ 
++   SkipArray(8);
++@@ -449,37 +455,29 @@ void DelphesSTDHEPReader::AnalyzeParticl
++   int pdgCode;
++ 
++   int number;
++-  int pid, status, m1, m2, d1, d2;
+++  int32_t pid, status, m1, m2, d1, d2;
++   double px, py, pz, e, mass;
++   double x, y, z, t;
++ 
++-  XDR bufferXDR[6];
++-  xdrmem_create(&bufferXDR[0], fBuffer + 4*1, 4*fEventSize, XDR_DECODE);
++-  xdrmem_create(&bufferXDR[1], fBuffer + 4*2 + 4*1*fEventSize, 4*fEventSize, XDR_DECODE);
++-  xdrmem_create(&bufferXDR[2], fBuffer + 4*3 + 4*2*fEventSize, 8*fEventSize, XDR_DECODE);
++-  xdrmem_create(&bufferXDR[3], fBuffer + 4*4 + 4*4*fEventSize, 8*fEventSize, XDR_DECODE);
++-  xdrmem_create(&bufferXDR[4], fBuffer + 4*5 + 4*6*fEventSize, 40*fEventSize, XDR_DECODE);
++-  xdrmem_create(&bufferXDR[5], fBuffer + 4*6 + 4*16*fEventSize, 32*fEventSize, XDR_DECODE);
++-
++   for(number = 0; number < fEventSize; ++number)
++   {
++-    xdr_int(&bufferXDR[0], &status);
++-    xdr_int(&bufferXDR[1], &pid);
++-    xdr_int(&bufferXDR[2], &m1);
++-    xdr_int(&bufferXDR[2], &m2);
++-    xdr_int(&bufferXDR[3], &d1);
++-    xdr_int(&bufferXDR[3], &d2);
++-
++-    xdr_double(&bufferXDR[4], &px);
++-    xdr_double(&bufferXDR[4], &py);
++-    xdr_double(&bufferXDR[4], &pz);
++-    xdr_double(&bufferXDR[4], &e);
++-    xdr_double(&bufferXDR[4], &mass);
++-
++-    xdr_double(&bufferXDR[5], &x);
++-    xdr_double(&bufferXDR[5], &y);
++-    xdr_double(&bufferXDR[5], &z);
++-    xdr_double(&bufferXDR[5], &t);
+++    fReader[1].ReadValue(&status, 4);
+++    fReader[2].ReadValue(&pid, 4);
+++    fReader[3].ReadValue(&m1, 4);
+++    fReader[3].ReadValue(&m2, 4);
+++    fReader[4].ReadValue(&d1, 4);
+++    fReader[4].ReadValue(&d2, 4);
+++
+++    fReader[5].ReadValue(&px, 8);
+++    fReader[5].ReadValue(&py, 8);
+++    fReader[5].ReadValue(&pz, 8);
+++    fReader[5].ReadValue(&e, 8);
+++    fReader[5].ReadValue(&mass, 8);
+++
+++    fReader[6].ReadValue(&x, 8);
+++    fReader[6].ReadValue(&y, 8);
+++    fReader[6].ReadValue(&z, 8);
+++    fReader[6].ReadValue(&t, 8);
++ 
++     candidate = factory->NewCandidate();
++ 
++diff -rNup Delphes-3.4.1.orig/classes/DelphesSTDHEPReader.h Delphes-3.4.1/classes/DelphesSTDHEPReader.h
++--- Delphes-3.4.1.orig/classes/DelphesSTDHEPReader.h	2015-10-09 21:50:19.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesSTDHEPReader.h	2020-02-13 23:52:36.544432821 +0900
++@@ -28,14 +28,16 @@
++  */
++ 
++ #include <stdio.h>
++-#include <rpc/types.h>
++-#include <rpc/xdr.h>
+++#include <stdint.h>
+++
+++#include "classes/DelphesXDRReader.h"
++ 
++ class TObjArray;
++ class TStopwatch;
++ class TDatabasePDG;
++ class ExRootTreeBranch;
++ class DelphesFactory;
+++class DelphesXDRReader;
++ 
++ class DelphesSTDHEPReader
++ {
++@@ -75,8 +77,8 @@ private:
++     TObjArray *stableParticleOutputArray,
++     TObjArray *partonOutputArray);
++ 
++-  void SkipBytes(u_int size);
++-  void SkipArray(u_int elsize);
+++  void SkipBytes(int size);
+++  void SkipArray(int elsize);
++ 
++   void ReadFileHeader();
++   void ReadEventTable();
++@@ -87,20 +89,18 @@ private:
++ 
++   FILE *fInputFile;
++ 
++-  XDR *fInputXDR;
+++  DelphesXDRReader fReader[7];
++ 
++-  char *fBuffer;
+++  uint8_t *fBuffer;
++ 
++   TDatabasePDG *fPDG;
++ 
++-  u_int fEntries;
++-  int fBlockType, fEventNumber, fEventSize;
+++  uint32_t fEntries;
+++  int32_t fBlockType, fEventNumber, fEventSize;
++   double fWeight, fAlphaQCD, fAlphaQED;
++ 
++-  u_int fScaleSize;
+++  uint32_t fScaleSize;
++   double fScale[10];
++ };
++ 
++ #endif // DelphesSTDHEPReader_h
++-
++-
++diff -rNup Delphes-3.4.1.orig/classes/DelphesXDRReader.cc Delphes-3.4.1/classes/DelphesXDRReader.cc
++--- Delphes-3.4.1.orig/classes/DelphesXDRReader.cc	1970-01-01 09:00:00.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesXDRReader.cc	2020-02-13 23:52:36.544432821 +0900
++@@ -0,0 +1,123 @@
+++/*
+++ *  Delphes: a framework for fast simulation of a generic collider experiment
+++ *  Copyright (C) 2018  Universite catholique de Louvain (UCL), Belgium
+++ *
+++ *  This program is free software: you can redistribute it and/or modify
+++ *  it under the terms of the GNU General Public License as published by
+++ *  the Free Software Foundation, either version 3 of the License, or
+++ *  (at your option) any later version.
+++ *
+++ *  This program is distributed in the hope that it will be useful,
+++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++ *  GNU General Public License for more details.
+++ *
+++ *  You should have received a copy of the GNU General Public License
+++ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+++ */
+++
+++
+++/** \class DelphesXDRReader
+++ *
+++ *  Reads XDR
+++ *
+++ *  \author P. Demin - UCL, Louvain-la-Neuve
+++ *
+++ */
+++
+++#include "classes/DelphesXDRReader.h"
+++
+++#include <stdio.h>
+++#include <stdint.h>
+++#include <string.h>
+++
+++//------------------------------------------------------------------------------
+++
+++DelphesXDRReader::DelphesXDRReader() :
+++  fFile(0), fBuffer(0), fOffset(0)
+++{
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRReader::SetFile(FILE *file)
+++{
+++  fFile = file;
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRReader::SetBuffer(void *buffer)
+++{
+++  fBuffer = (uint8_t *)buffer;
+++  fOffset = 0;
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRReader::SetOffset(int offset)
+++{
+++  fOffset = offset;
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRReader::ReadRaw(void *value, int size)
+++{
+++  int rndup;
+++
+++  rndup = size % 4;
+++  if(rndup > 0)
+++  {
+++    rndup = 4 - rndup;
+++  }
+++
+++  if(fFile)
+++  {
+++    fread(value, 1, size + rndup, fFile);
+++  }
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRReader::ReadValue(void *value, int size)
+++{
+++  int i;
+++  uint8_t *dst, buffer[8];
+++
+++  dst = (uint8_t *)value;
+++
+++  if(fBuffer)
+++  {
+++    fOffset += size;
+++    for(i = 0; i < size; ++i) dst[i] = fBuffer[fOffset - 1 - i];
+++  }
+++  else if(fFile)
+++  {
+++    ReadRaw(buffer, size);
+++    for(i = 0; i < size; ++i) dst[i] = buffer[size - 1 - i];
+++  }
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRReader::ReadString(void *value, int maxSize)
+++{
+++  int32_t size;
+++
+++  ReadValue(&size, 4);
+++
+++  if(size > maxSize) size = maxSize;
+++    
+++  if(fBuffer)
+++  {
+++    memcpy(value, fBuffer + fOffset, size);
+++    fOffset += size;
+++  }
+++  else if(fFile)
+++  {
+++    ReadRaw(value, size);
+++  }
+++}
+++
+++//------------------------------------------------------------------------------
++diff -rNup Delphes-3.4.1.orig/classes/DelphesXDRReader.h Delphes-3.4.1/classes/DelphesXDRReader.h
++--- Delphes-3.4.1.orig/classes/DelphesXDRReader.h	1970-01-01 09:00:00.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesXDRReader.h	2020-02-13 23:52:36.544432821 +0900
++@@ -0,0 +1,55 @@
+++/*
+++ *  Delphes: a framework for fast simulation of a generic collider experiment
+++ *  Copyright (C) 2018  Universite catholique de Louvain (UCL), Belgium
+++ *
+++ *  This program is free software: you can redistribute it and/or modify
+++ *  it under the terms of the GNU General Public License as published by
+++ *  the Free Software Foundation, either version 3 of the License, or
+++ *  (at your option) any later version.
+++ *
+++ *  This program is distributed in the hope that it will be useful,
+++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++ *  GNU General Public License for more details.
+++ *
+++ *  You should have received a copy of the GNU General Public License
+++ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+++ */
+++
+++#ifndef DelphesXDRReader_h
+++#define DelphesXDRReader_h
+++
+++/** \class DelphesXDRReader
+++ *
+++ *  Reads XDR
+++ *
+++ *  \author P. Demin - UCL, Louvain-la-Neuve
+++ *
+++ */
+++
+++#include <stdio.h>
+++#include <stdint.h>
+++
+++class DelphesXDRReader
+++{
+++public:
+++
+++  DelphesXDRReader();
+++
+++  void SetFile(FILE *file);
+++  void SetBuffer(void *buffer);
+++  void SetOffset(int offset);
+++
+++  void ReadRaw(void *value, int size);
+++  void ReadValue(void *value, int size);
+++  void ReadString(void *value, int maxSize);
+++
+++private:
+++
+++  FILE *fFile;
+++  uint8_t *fBuffer;
+++
+++  int fOffset;
+++};
+++
+++#endif // DelphesXDRReader_h
++diff -rNup Delphes-3.4.1.orig/classes/DelphesXDRWriter.cc Delphes-3.4.1/classes/DelphesXDRWriter.cc
++--- Delphes-3.4.1.orig/classes/DelphesXDRWriter.cc	1970-01-01 09:00:00.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesXDRWriter.cc	2020-02-13 23:52:36.544432821 +0900
++@@ -0,0 +1,106 @@
+++/*
+++ *  Delphes: a framework for fast simulation of a generic collider experiment
+++ *  Copyright (C) 2018  Universite catholique de Louvain (UCL), Belgium
+++ *
+++ *  This program is free software: you can redistribute it and/or modify
+++ *  it under the terms of the GNU General Public License as published by
+++ *  the Free Software Foundation, either version 3 of the License, or
+++ *  (at your option) any later version.
+++ *
+++ *  This program is distributed in the hope that it will be useful,
+++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++ *  GNU General Public License for more details.
+++ *
+++ *  You should have received a copy of the GNU General Public License
+++ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+++ */
+++
+++
+++/** \class DelphesXDRWriter
+++ *
+++ *  Writes XDR
+++ *
+++ *  \author P. Demin - UCL, Louvain-la-Neuve
+++ *
+++ */
+++
+++#include "classes/DelphesXDRWriter.h"
+++
+++#include <stdio.h>
+++#include <stdint.h>
+++#include <string.h>
+++
+++//------------------------------------------------------------------------------
+++
+++DelphesXDRWriter::DelphesXDRWriter() :
+++  fFile(0), fBuffer(0), fOffset(0)
+++{
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRWriter::SetFile(FILE *file)
+++{
+++  fFile = file;
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRWriter::SetBuffer(void *buffer)
+++{
+++  fBuffer = (uint8_t *)buffer;
+++  fOffset = 0;
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRWriter::SetOffset(int offset)
+++{
+++  fOffset = offset;
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRWriter::WriteRaw(void *value, int size)
+++{
+++  int rndup;
+++
+++  rndup = size % 4;
+++  if(rndup > 0)
+++  {
+++    rndup = 4 - rndup;
+++  }
+++
+++  if(fFile)
+++  {
+++    fwrite(value, 1, size + rndup, fFile);
+++  }
+++}
+++
+++//------------------------------------------------------------------------------
+++
+++void DelphesXDRWriter::WriteValue(void *value, int size)
+++{
+++  int i;
+++  uint8_t *src, buffer[8];
+++
+++  src = (uint8_t *)value;
+++
+++  if(fBuffer)
+++  {
+++    for(i = 0; i < size; ++i) fBuffer[fOffset + i] = src[size - 1 - i];
+++    fOffset += size;
+++  }
+++  else if(fFile)
+++  {
+++    for(i = 0; i < size; ++i) buffer[i] = src[size - 1 - i];
+++    WriteRaw(buffer, size);
+++  }
+++  else
+++  {
+++    return;
+++  }
+++}
+++
+++//------------------------------------------------------------------------------
++diff -rNup Delphes-3.4.1.orig/classes/DelphesXDRWriter.h Delphes-3.4.1/classes/DelphesXDRWriter.h
++--- Delphes-3.4.1.orig/classes/DelphesXDRWriter.h	1970-01-01 09:00:00.000000000 +0900
+++++ Delphes-3.4.1/classes/DelphesXDRWriter.h	2020-02-13 23:52:36.544432821 +0900
++@@ -0,0 +1,54 @@
+++/*
+++ *  Delphes: a framework for fast simulation of a generic collider experiment
+++ *  Copyright (C) 2018  Universite catholique de Louvain (UCL), Belgium
+++ *
+++ *  This program is free software: you can redistribute it and/or modify
+++ *  it under the terms of the GNU General Public License as published by
+++ *  the Free Software Foundation, either version 3 of the License, or
+++ *  (at your option) any later version.
+++ *
+++ *  This program is distributed in the hope that it will be useful,
+++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++ *  GNU General Public License for more details.
+++ *
+++ *  You should have received a copy of the GNU General Public License
+++ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+++ */
+++
+++#ifndef DelphesXDRWriter_h
+++#define DelphesXDRWriter_h
+++
+++/** \class DelphesXDRWriter
+++ *
+++ *  Writes XDR
+++ *
+++ *  \author P. Demin - UCL, Louvain-la-Neuve
+++ *
+++ */
+++
+++#include <stdio.h>
+++#include <stdint.h>
+++
+++class DelphesXDRWriter
+++{
+++public:
+++
+++  DelphesXDRWriter();
+++
+++  void SetFile(FILE *file);
+++  void SetBuffer(void *buffer);
+++  void SetOffset(int offset);
+++
+++  void WriteRaw(void *value, int size);
+++  void WriteValue(void *value, int size);
+++
+++private:
+++
+++  FILE *fFile;
+++  uint8_t *fBuffer;
+++
+++  int fOffset;
+++};
+++
+++#endif // DelphesXDRWriter_h
++diff -rNup Delphes-3.4.1.orig/converters/pileup2root.cpp Delphes-3.4.1/converters/pileup2root.cpp
++--- Delphes-3.4.1.orig/converters/pileup2root.cpp	2015-10-09 21:50:19.000000000 +0900
+++++ Delphes-3.4.1/converters/pileup2root.cpp	2019-02-15 01:59:19.000000000 +0900
++@@ -16,36 +16,32 @@
++  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
++  */
++ 
++-
++-#include <stdexcept>
++ #include <iostream>
++ #include <sstream>
+++#include <stdexcept>
++ 
++-#include <stdlib.h>
++ #include <signal.h>
++ #include <stdio.h>
+++#include <stdlib.h>
++ 
++-#include <rpc/types.h>
++-#include <rpc/xdr.h>
++-
++-#include "TROOT.h"
++ #include "TApplication.h"
+++#include "TROOT.h"
++ 
+++#include "TDatabasePDG.h"
++ #include "TFile.h"
+++#include "TLorentzVector.h"
++ #include "TObjArray.h"
++-#include "TStopwatch.h"
++-#include "TDatabasePDG.h"
++ #include "TParticlePDG.h"
++-#include "TLorentzVector.h"
+++#include "TStopwatch.h"
++ 
++-#include "classes/DelphesStream.h"
++ #include "classes/DelphesClasses.h"
++ #include "classes/DelphesFactory.h"
++ #include "classes/DelphesPileUpReader.h"
+++#include "classes/DelphesStream.h"
++ 
++-#include "ExRootAnalysis/ExRootTreeWriter.h"
++-#include "ExRootAnalysis/ExRootTreeBranch.h"
++ #include "ExRootAnalysis/ExRootProgressBar.h"
+++#include "ExRootAnalysis/ExRootTreeBranch.h"
+++#include "ExRootAnalysis/ExRootTreeWriter.h"
++ 
++ using namespace std;
++ 
++@@ -64,7 +60,7 @@ void ProcessEvent(DelphesPileUpReader *r
++ 
++   while(reader->ReadParticle(pid, x, y, z, t, px, py, pz, e))
++   {
++-    particle = static_cast<GenParticle*>(branch->NewEntry());
+++    particle = static_cast<GenParticle *>(branch->NewEntry());
++ 
++     particle->PID = pid;
++     particle->X = x;
++@@ -86,7 +82,7 @@ void ProcessEvent(DelphesPileUpReader *r
++     particle->D2 = -1;
++ 
++     pdgParticle = pdg->GetParticle(pid);
++-    particle->Charge = pdgParticle ? Int_t(pdgParticle->Charge()/3.0) : -999;
+++    particle->Charge = pdgParticle ? Int_t(pdgParticle->Charge() / 3.0) : -999;
++ 
++     particle->Mass = pdgParticle ? pdgParticle->Mass() : -999.9;
++ 
++@@ -94,8 +90,8 @@ void ProcessEvent(DelphesPileUpReader *r
++     pt = momentum.Pt();
++     cosTheta = TMath::Abs(momentum.CosTheta());
++     signPz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
++-    eta = (cosTheta == 1.0 ? signPz*999.9 : momentum.Eta());
++-    rapidity = (cosTheta == 1.0 ? signPz*999.9 : momentum.Rapidity());
+++    eta = (cosTheta == 1.0 ? signPz * 999.9 : momentum.Eta());
+++    rapidity = (cosTheta == 1.0 ? signPz * 999.9 : momentum.Rapidity());
++ 
++     particle->Eta = eta;
++     particle->Phi = momentum.Phi();
++@@ -128,7 +124,8 @@ int main(int argc, char *argv[])
++ 
++   if(argc != 3)
++   {
++-    cout << " Usage: " << appName << " output_file" << " input_file" << endl;
+++    cout << " Usage: " << appName << " output_file"
+++         << " input_file" << endl;
++     cout << " output_file - output file in ROOT format," << endl;
++     cout << " input_file - input binary pile-up file." << endl;
++     return 1;
++@@ -201,5 +198,3 @@ int main(int argc, char *argv[])
++     return 1;
++   }
++ }
++-
++-
