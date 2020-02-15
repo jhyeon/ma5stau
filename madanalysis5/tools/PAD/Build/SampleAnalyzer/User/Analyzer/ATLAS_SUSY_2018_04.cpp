@@ -46,11 +46,10 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ========================= //
 
   Manager()->AddRegionSelection("SRlow");
-
   Manager()->AddRegionSelection("SRhigh");
 
   std::string SRlow[]     = {"SRlow"};
-  std::string SRhigh[]     = {"SRhigh"};
+  std::string SRhigh[]    = {"SRhigh"};
   std::string SRlowhigh[] = {"SRlow","SRhigh"};
 
   // ====================== //
@@ -58,27 +57,27 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ====================== //
 
   // Common selections
-  Manager()->AddCut("2 medium $\\tau$ (OS)",       SRlowhigh);
-  Manager()->AddCut("3rd medium $\\tau$ veto",     SRlowhigh);
-  Manager()->AddCut("b-jet veto",                  SRlowhigh);
-  Manager()->AddCut("light lepton veto",           SRlowhigh);
-  Manager()->AddCut("Z/H veto",                    SRlowhigh);
+  Manager()->AddCut("2 medium $\\tau$ (OS)",   SRlowhigh);
+  Manager()->AddCut("3rd medium $\\tau$ veto", SRlowhigh);
+  Manager()->AddCut("b-jet veto",              SRlowhigh);
+  Manager()->AddCut("light lepton veto",       SRlowhigh);
+  Manager()->AddCut("Z/H veto",                SRlowhigh);
 
   // SR low Mass selections
-  Manager()->AddCut("asymmetric di-$\\tau$ trigger",     SRlow);
-  Manager()->AddCut("$75 < E^{miss}_{T} < 150$ GeV",     SRlow);
-  Manager()->AddCut("2 tight $\\tau$ (OS)",              SRlow);
-  Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]",     SRlow);
-  Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$",     SRlow);
-  Manager()->AddCut("$m_{T2}>70$ GeV",                   SRlow);
+  Manager()->AddCut("asymmetric di-$\\tau$ trigger",  SRlow);
+  Manager()->AddCut("$75 < E^{miss}_{T} < 150$ GeV",  SRlow);
+  Manager()->AddCut("2 tight $\\tau$ (OS)",           SRlow);
+  Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]", SRlow);
+  Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$",            SRlow);
+  Manager()->AddCut("$m_{T2}>70$ GeV",                                 SRlow);
 
   // SR high Mass selections
-  Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",     SRhigh);
-  Manager()->AddCut("$E^{miss}_{T} > 150$ GeV",             SRhigh);
-  Manager()->AddCut("$\\geq 1$ tight $\\tau$",              SRhigh);
-  Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]",     SRhigh);
-  Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$",     SRhigh);
-  Manager()->AddCut("$m_{T2}>70$ GeV",                      SRhigh);
+  Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
+  Manager()->AddCut("$E^{miss}_{T} > 150$ GeV",          SRhigh);
+  Manager()->AddCut("$\\geq 1$ tight $\\tau$",           SRhigh);
+  Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]", SRhigh);
+  Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$",            SRhigh);
+  Manager()->AddCut("$m_{T2}>70$ GeV",                                 SRhigh);
 
   // ====================== //
   // ===== Histograms ===== //
@@ -87,8 +86,8 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   Manager()->AddHisto("SRlow_MET", 10,0.0,150., "SRlow");
   Manager()->AddHisto("SRlow_mT2", 5,30.0,70.,  "SRlow");
 
-  Manager()->AddHisto("SRhigh_MET", 10,50.0,100.,  "SRhigh");
-  Manager()->AddHisto("SRhigh_mT2", 2.5,50.0,70.,  "SRhigh");
+  Manager()->AddHisto("SRhigh_MET", 10,50.0,100., "SRhigh");
+  Manager()->AddHisto("SRhigh_mT2", 2.5,50.0,70., "SRhigh");
 
   return true;
 }
@@ -108,12 +107,13 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   // Event weight
   double myWeight;
   
-  if(Configuration().IsNoEventWeight()) myWeight=1.;
-  else if(event.mc()->weight()!=0.) myWeight=event.mc()->weight();
-  else { return false; }
+  if      ( Configuration().IsNoEventWeight() ) myWeight=1.;
+  else if ( event.mc()->weight()!=0. ) myWeight=event.mc()->weight();
+  else return false;
   Manager()->InitializeForNewEvent(myWeight);
+
   // Security for empty events
-  if (event.rec()==0) {return true;}
+  if ( event.rec()==0 ) return true;
 //  event_num++;
 
 //  std::vector<const RecJetFormat*>    BaseJets,  SignalBJets,   SignalnonBJets, SignalJets;
@@ -129,82 +129,73 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// Jets ////
   std::vector <const RecJetFormat*> Jets;
-  unsigned int nb =0;
-  double HT=0.;
-  for(unsigned int ij=0; ij<event.rec()->jets().size(); ij++)
-{
-  const RecJetFormat *Jet = &(event.rec()->jets()[ij]);
-  double eta = Jet->abseta();
-  double pt = Jet->pt();
-  if(pt>20. && eta<2.8) { 
-    Jets.push_back(Jet);
-  if(Jet->btag()) {
-    nb++;
-    HT += Jet->pt();
+  unsigned int nb = 0;
+  double HT = 0.;
+  for( unsigned int ij=0; ij<event.rec()->jets().size(); ij++ ){
+    const RecJetFormat *Jet = &(event.rec()->jets()[ij]);
+    double eta = Jet->abseta();
+    double pt = Jet->pt();
 
-   }
- }
-}
+    if( pt>20. && eta < 2.8 ) { 
+      Jets.push_back(Jet);
 
-  //// b-tagging ////
-//  unsigned int nb =0;
-//  double HT=0.;
-//  for (unsigned int ij=0; ij<Jets.size(); ij++)
-//  {
-//    if(Jet[ij]->btag()) { nb++; }
-//    HT += Jet[ij]->pt();
-//  }
+      if( Jet->btag() ){
+        nb++;
+        HT += Jet->pt();
+      }
+    }
+  }
 
 
   //// Electrons ////
   std::vector<const RecLeptonFormat*> SignalElectrons;
-  for(unsigned int ie=0; ie<event.rec()->electrons().size(); ie++)
-  {
+  for( unsigned int ie=0; ie<event.rec()->electrons().size(); ie++ ){
+
     const RecLeptonFormat *Lep = &(event.rec()->electrons()[ie]);
 
-  // Kinematics
-  double eta = Lep->abseta();
-  double pt = Lep->pt();
+    // Kinematics
+    double eta = Lep->abseta();
+    double pt = Lep->pt();
 
-  // Isolation
-  double iso_dR = std::min(10./pt,0.2);
-  double iso_tracks = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), iso_dR, 0., IsolationEFlow::TRACK_COMPONENT);
-  double iso_all    = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), 0.2, 0., IsolationEFlow::ALL_COMPONENTS);
-  bool iso = (iso_tracks<0.15 && iso_all<0.20);
-  if(pt>200.) { iso = (iso_all<std::max(0.015, 3.5/pt)); }
+    // Isolation
+    double iso_dR = std::min(10./pt,0.2);
+    double iso_tracks = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), iso_dR, 0., IsolationEFlow::TRACK_COMPONENT);
+    double iso_all    = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), 0.2, 0., IsolationEFlow::ALL_COMPONENTS);
+    bool iso = (iso_tracks<0.15 && iso_all<0.20);
+    if( pt>200. ) iso = (iso_all<std::max(0.015, 3.5/pt));
 
-  // Signal leptons
-  if(eta<2.47 && pt>17. && iso) {SignalElectrons.push_back(Lep);}
+    // Signal leptons
+    if( eta < 2.47 && pt > 17. && iso) SignalElectrons.push_back(Lep);
   }
 
 
   //// Muons ////
   std::vector<const RecLeptonFormat*> SignalMuons;
-  for(unsigned int im=0; im<event.rec()->muons().size(); im++)
-  {
+  for( unsigned int im=0; im<event.rec()->muons().size(); im++ ){
     const RecLeptonFormat *Lep = &(event.rec()->muons()[im]);
 
-  // Kinematics
-  double eta = Lep->abseta();
-  double pt = Lep->pt();
+    // Kinematics
+    double eta = Lep->abseta();
+    double pt = Lep->pt();
 
-  // Isolation
-  double iso_dR = std::min(10./pt,0.3);
-  double iso_tracks = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), iso_dR, 0., IsolationEFlow::TRACK_COMPONENT);
-  double iso_all    = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), 0.2, 0., IsolationEFlow::ALL_COMPONENTS);
-  bool iso = (iso_tracks<0.15 && iso_all<0.30);
+    // Isolation
+    double iso_dR = std::min(10./pt,0.3);
+    double iso_tracks = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), iso_dR, 0., IsolationEFlow::TRACK_COMPONENT);
+    double iso_all    = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), 0.2, 0., IsolationEFlow::ALL_COMPONENTS);
+    bool iso = (iso_tracks<0.15 && iso_all<0.30);
 
-  // Signal leptons
-  if(eta<2.47 && pt>14. && iso) {SignalMuons.push_back(Lep);}
+    // Signal leptons
+    if( eta < 2.47 && pt > 14. && iso ) SignalMuons.push_back(Lep);
   }
 
 
   // Taus
   std::vector<const RecTauFormat*> SignalTaus;
-  for(unsigned int it=0; it<event.rec()->taus().size(); it++)
-  {
+  for( unsigned int it=0; it<event.rec()->taus().size(); it++ ){
     const RecTauFormat * CurrentTau = &(event.rec()->taus()[it]);
-    if(CurrentTau->pt()>20.&& (abs(CurrentTau->eta())<1.37 || (abs(CurrentTau->eta())>1.52 && abs(CurrentTau->eta())<2.5) ) )
+
+    if( CurrentTau->pt() > 20. &&
+        (abs(CurrentTau->eta()) < 1.37 || (abs(CurrentTau->eta()) > 1.52 && abs(CurrentTau->eta()) < 2.5)) )
       SignalTaus.push_back(CurrentTau);
   }
 
@@ -224,11 +215,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   DEBUG << "    * Event reconstructed properly..." << endmsg;
-
-
-
-
-
 
 
   return true;
