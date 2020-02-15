@@ -8,3 +8,9 @@ Stau production analysis at 2nd MadAnalysis 5 workshop on LHC recasting @ Korea
 ## Packages in use
 
 - [MA5_v1.8beta.tgz](https://launchpad.net/madanalysis5)
+
+## github How-to
+git init
+git remote add origin git@github.com:jhyeon/ma5stau.git
+mv madanalysis5/tools/PAD/Build/SampleAnalyzer/User/Analyzer/analysisList.h ~/
+git pull origin master
