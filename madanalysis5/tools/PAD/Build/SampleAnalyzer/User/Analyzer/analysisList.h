@@ -1,3 +1,4 @@
+#include "SampleAnalyzer/User/Analyzer/ATLAS_SUSY_2018_04.h"
 #include "SampleAnalyzer/User/Analyzer/cms_exo_16_022.h"
 #include "SampleAnalyzer/User/Analyzer/cms_top_17_009.h"
 #include "SampleAnalyzer/User/Analyzer/cms_sus_17_001.h"
@@ -53,4 +54,5 @@ void BuildUserTable(MA5::AnalyzerManager& manager)
   manager.Add("cms_sus_17_001",new cms_sus_17_001);
   manager.Add("cms_top_17_009",new cms_top_17_009);
   manager.Add("cms_exo_16_022",new cms_exo_16_022);
+  manager.Add("ATLAS_SUSY_2018_04",new ATLAS_SUSY_2018_04);
 }
