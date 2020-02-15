@@ -1,6 +1,7 @@
 #ifndef analysis_ATLAS_SUSY_2018_04_h
 #define analysis_ATLAS_SUSY_2018_04_h
 
+#include "SampleAnalyzer/Interfaces/root/RootMainHeaders.h"
 #include "SampleAnalyzer/Process/Analyzer/AnalyzerBase.h"
 
 namespace MA5
