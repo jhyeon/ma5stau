@@ -31,7 +31,7 @@ template<typename T1, typename T2> std::vector<const T1*>
 bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::map<std::string,std::string>& parameters)
 {
   INFO << "    <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>" << endmsg;
-  INFO << "    <>    Analysis: ATLAS SUSY 2018 031                                 <>" << endmsg;
+  INFO << "    <>    Analysis: ATLAS SUSY 2018 04                                  <>" << endmsg;
   INFO << "    <>    SUSY, stau, hadronic decaying ditau + MET @ 13 TeV, 139 fb^-1 <>" << endmsg;
   INFO << "    <>    arXiv:1911.06660                                              <>" << endmsg;
   INFO << "    <>    Recasted by : Chih-Ting Lu                                    <>" << endmsg;
