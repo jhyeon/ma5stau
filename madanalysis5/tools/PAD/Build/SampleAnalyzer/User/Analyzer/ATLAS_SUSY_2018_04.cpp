@@ -32,9 +32,9 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
 {
   INFO << "    <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>" << endmsg;
   INFO << "    <>    Analysis: ATLAS SUSY 2018 031                                 <>" << endmsg;
-  INFO << "    <>    SUSY, stau, hadronic decaying ditau + MET @ 13 TeV, 139 fb^-1               <>" << endmsg;
+  INFO << "    <>    SUSY, stau, hadronic decaying ditau + MET @ 13 TeV, 139 fb^-1 <>" << endmsg;
   INFO << "    <>    arXiv:1911.06660                                              <>" << endmsg;
-  INFO << "    <>    Recasted by : Chih-Ting Lu         <>" << endmsg;
+  INFO << "    <>    Recasted by : Chih-Ting Lu                                    <>" << endmsg;
   INFO << "    <>    Contact     : jack.araz@concordia.ca                          <>" << endmsg;
   INFO << "    <>    Based on MadAnalysis 5 v1.8 and above                         <>" << endmsg;
   INFO << "    <>    For more information, see                                     <>" << endmsg;
@@ -226,89 +226,50 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   // =========================== //
 
   //// Common cut-1 : 2 medium taus (OS). ////
-
-      int tau_charge_sum=0;
-      for(unsigned int i=0;i<SignalTaus.size();i++)
-      {
-          if(SignalTaus[i]->charge()>0) tau_charge_sum++;
-          if(SignalTaus[i]->charge()<0) tau_charge_sum--;
-      }
-
-      if(!Manager()->ApplyCut((SignalTaus.size()==2)&&tau_charge_sum==0,"2 medium $\\tau$ (OS)")){
-          return true;
-      }
+  int tau_charge_sum=0;
+  for( unsigned int i=0; i<SignalTaus.size(); i++ ){
+    if( SignalTaus[i]->charge() > 0 ) tau_charge_sum++;
+    if( SignalTaus[i]->charge() < 0 ) tau_charge_sum--;
+  }
+  if( !Manager()->ApplyCut((SignalTaus.size()==2) && tau_charge_sum==0, "2 medium $\\tau$ (OS)") ) return true;
 
 
   //// Common cut-2 : 3rd medium tau veto. ////
-
-      if(!Manager()->ApplyCut(SignalTaus.size()>2,"3rd medium $\\tau$ veto"))
-      {
-          return true;
-      }
+  if( !Manager()->ApplyCut(SignalTaus.size() > 2 ,"3rd medium $\\tau$ veto") ) return true;
 
 
   //// Common cut-3 : b-jet veto. ////
-
-      if(!Manager()->ApplyCut(nb>0,"b-jet veto"))
-      {
-          return true;
-      }
+  if( !Manager()->ApplyCut(nb > 0,"b-jet veto") ) return true;
 
 
   //// Common cut-4 : light lepton veto. ////  
-    
-      if(!Manager()->ApplyCut(SignalElectrons.size()>0 && SignalMuons.size()>0,"light lepton veto"))
-      {
-          return true;
-      }
-
+  if( !Manager()->ApplyCut(SignalElectrons.size() > 0 && SignalMuons.size() > 0, "light lepton veto") ) return true;
 
   //// Common cut-5 : Z/H veto. //// 
-
-      double mtata=0;
-      if(SignalTaus.size()==2)
-
-          mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
-
-      if(!Manager()->ApplyCut(mtata>120.0,"Z/H veto"))
-      {
-          return true;
-      }
-
-
+  double mtata=0;
+  if(SignalTaus.size()==2) mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
+  if( !Manager()->ApplyCut(mtata > 120.0, "Z/H veto") ) return true;
 
   //// SRlow cut-1 : asymmetric di-tau trigger. ////
 
   
   //// SRLow cut-2 : 75 < ETmiss < 150 GeV. ////
-  
-      if(!Manager()->ApplyCut((MET > 75. && MET < 150.),"$75 < E^{miss}_{T} < 150$ GeV"))
-          return true;
+  if( !Manager()->ApplyCut((MET > 75. && MET < 150.), "$75 < E^{miss}_{T} < 150$ GeV") ) return true;
 
 
   //// SRLow cut-3 : 2 tight tau (OS). //// 
-
-  if(!Manager()->ApplyCut(SignalTaus.size()==2 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"2 tight $\\tau$ (OS)")){     
-      return true;    
-    }
-
+  if(!Manager()->ApplyCut(SignalTaus.size()==2 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"2 tight $\\tau$ (OS)"))
+    return true;
 
   //// SRLow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
-
-   double DeltaPhiTau = 999999.9;
-      if( SignalTaus.size()==2)
-   {DeltaPhiTau= SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
-   }
-
-  if(!Manager()->ApplyCut((fabs(DeltaPhiTau))>0.8,"$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]"))
-    return true;
+  double DeltaPhiTau = 999999.9;
+  if( SignalTaus.size()==2 ) DeltaPhiTau = SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
+  if( !Manager()->ApplyCut((fabs(DeltaPhiTau)) > 0.8, "$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]") ) return true;
 
 
   //// SRLow cut-5 : dR(ta1,ta2)<3.2. ////
-  
-    if(!Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$")) 
-       return true;
-
+  if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$") ) 
+    return true;
 
   //// SRLow cut-6 : mT2>70 GeV. ////
 
@@ -320,33 +281,19 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRhigh cut-2 : ETmiss > 150 GeV. ////
-  
-      if(!Manager()->ApplyCut((MET > 150.),"E^{miss}_{T} > 150$ GeV"))
-          return true;
-
+  if( !Manager()->ApplyCut((MET > 150.),"E^{miss}_{T} > 150$ GeV") ) return true;
 
   //// SRhigh cut-3 : >= 1 tight tau. //// 
-
-  if(!Manager()->ApplyCut(SignalTaus.size()==2 && SignalTaus[0]->pt()>75 && SignalTaus[1]->pt()>40,"\\geq 1$ tight $\\tau")){     
-      return true;    
-    }
-
-
-  //// SRhigh cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
-
-      if( SignalTaus.size() > 1)
-   {DeltaPhiTau= SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
-   }
-
-  if(!Manager()->ApplyCut((fabs(DeltaPhiTau))>0.8,"$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]"))
+  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "\\geq 1$ tight $\\tau") )
     return true;
 
+  //// SRhigh cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
+  if( SignalTaus.size() > 1 ) DeltaPhiTau = SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
+  if( !Manager()->ApplyCut((fabs(DeltaPhiTau)) > 0.8, "$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]") ) return true;
 
   //// SRhigh cut-5 : dR(ta1,ta2)<3.2. ////
-
-    if(!Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$"))  
-       return true;
-
+  if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$"))  
+    return true;
 
   //// SRhigh cut-6 : mT2>70 GeV. ////
 
