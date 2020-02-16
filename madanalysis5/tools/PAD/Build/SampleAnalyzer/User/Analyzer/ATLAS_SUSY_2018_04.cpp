@@ -35,7 +35,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   INFO << "    <>    SUSY, stau, hadronic decaying ditau + MET @ 13 TeV, 139 fb^-1 <>" << endmsg;
   INFO << "    <>    arXiv:1911.06660                                              <>" << endmsg;
   INFO << "    <>    Recasted by : Chih-Ting Lu                                    <>" << endmsg;
-  INFO << "    <>    Contact     : jack.araz@concordia.ca                          <>" << endmsg;
+  INFO << "    <>    Contact     : timluyu@gmail.com                               <>" << endmsg;
   INFO << "    <>    Based on MadAnalysis 5 v1.8 and above                         <>" << endmsg;
   INFO << "    <>    For more information, see                                     <>" << endmsg;
   INFO << "    <>    http://madanalysis.irmp.ucl.ac.be/wiki/PublicAnalysisDatabase <>" << endmsg;
