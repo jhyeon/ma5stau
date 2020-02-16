@@ -35,7 +35,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   INFO << "    <>    Analysis: ATLAS SUSY 2018 04                                  <>" << endmsg;
   INFO << "    <>    SUSY, stau, hadronic decaying ditau + MET @ 13 TeV, 139 fb^-1 <>" << endmsg;
   INFO << "    <>    arXiv:1911.06660                                              <>" << endmsg;
-  INFO << "    <>    Recasted by : Chih-Ting Lu                                    <>" << endmsg;
+  INFO << "    <>    Recasted by : Jongwon Lim, Chih-Ting Lu, Jae-Hyeon Park, Jiwon Park                    <>" << endmsg;
   INFO << "    <>    Contact     : timluyu@gmail.com                               <>" << endmsg;
   INFO << "    <>    Based on MadAnalysis 5 v1.8 and above                         <>" << endmsg;
   INFO << "    <>    For more information, see                                     <>" << endmsg;
@@ -64,7 +64,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   Manager()->AddCut("light lepton veto",       SRlowhigh);
   Manager()->AddCut("Z/H veto",                SRlowhigh);
 
-  // SR low Mass selections
+  // SR Low Mass selections
   Manager()->AddCut("asymmetric di-$\\tau$ trigger",  SRlow);
   Manager()->AddCut("$75 < E^{miss}_{T} < 150$ GeV",  SRlow);
   Manager()->AddCut("2 tight $\\tau$ (OS)",           SRlow);
@@ -72,7 +72,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$",            SRlow);
   Manager()->AddCut("$m_{T2}>70$ GeV",                                 SRlow);
 
-  // SR high Mass selections
+  // SR High Mass selections
   Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
   Manager()->AddCut("$E^{miss}_{T} > 150$ GeV",          SRhigh);
   Manager()->AddCut("$\\geq 1$ tight $\\tau$",           SRhigh);
@@ -117,9 +117,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   if ( event.rec()==0 ) return true;
   event_num++;
 
-//  std::vector<const RecJetFormat*>    BaseJets,  SignalBJets,   SignalnonBJets, SignalJets;
-//  std::vector<const RecLeptonFormat*> BaseMuons, BaseElectrons, SignalMuons,    SignalElectrons;
-//  std::vector<const RecTauFormat*>    BaseTaus,  SignalTaus;
   DEBUG << "============== Event " << event_num << endmsg;
 
 
@@ -248,33 +245,38 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //// Common cut-4 : light lepton veto. ////  
   if( !Manager()->ApplyCut(SignalElectrons.size() < 1 && SignalMuons.size() < 1, "light lepton veto") ) return true;
 
+
   //// Common cut-5 : Z/H veto. //// 
   double mtata=0;
   if( SignalTaus.size()==2 ) mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
   if( !Manager()->ApplyCut(mtata > 120.0, "Z/H veto") ) return true;
 
-  //// SRlow cut-1 : asymmetric di-tau trigger. ////
 
+  //// SRlow cut-1 : asymmetric di-tau trigger. ////
+  if( !Manager()->ApplyCut(SignalTaus.size()==2 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"2 tight $\\tau$ (OS)") )
+    return true;
   
-  //// SRLow cut-2 : 75 < ETmiss < 150 GeV. ////
+
+  //// SRlow cut-2 : 75 < ETmiss < 150 GeV. ////
   if( !Manager()->ApplyCut((MET > 75. && MET < 150.), "$75 < E^{miss}_{T} < 150$ GeV") ) return true;
 
 
-  //// SRLow cut-3 : 2 tight tau (OS). //// 
-  if( !Manager()->ApplyCut(SignalTaus.size()==2 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"2 tight $\\tau$ (OS)") )
-    return true;
+  //// SRlow cut-3 : 2 tight taus (OS). //// 
+  // I suggest that we directly rescale our event rate with the ratio of P(2 tight taus (OS))/P(2 medium taus (OS)) here.
 
-  //// SRLow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
+
+  //// SRlow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
   double DeltaPhiTau = 999999.9;
   if( SignalTaus.size()==2 ) DeltaPhiTau = SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
   if( !Manager()->ApplyCut((fabs(DeltaPhiTau)) > 0.8, "$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]") ) return true;
 
 
-  //// SRLow cut-5 : dR(ta1,ta2)<3.2. ////
+  //// SRlow cut-5 : dR(ta1,ta2)<3.2. ////
   if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$") ) 
     return true;
 
-  //// SRLow cut-6 : mT2>70 GeV. ////LorentzVector tau_low1 = SignalTaus[0]->momentum();
+
+  //// SRlow cut-6 : mT2>70 GeV. ////LorentzVector tau_low1 = SignalTaus[0]->momentum();
   MALorentzVector tau_low1 = SignalTaus[0]->momentum();
   MALorentzVector tau_low2 = SignalTaus[1]->momentum();
   double mt2_low = asymm_mt2_lester_bisect::get_mT2(tau_low1.M(), tau_low1.Px(), tau_low1.Py(),
@@ -285,22 +287,27 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRhigh cut-1 : di-tau +mET trigger. ////
+  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "\\geq 1$ tight $\\tau") )
+    return true;
 
 
   //// SRhigh cut-2 : ETmiss > 150 GeV. ////
   if( !Manager()->ApplyCut((MET > 150.),"E^{miss}_{T} > 150$ GeV") ) return true;
 
+
   //// SRhigh cut-3 : >= 1 tight tau. //// 
-  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "\\geq 1$ tight $\\tau") )
-    return true;
+  // I suggest that we directly rescale our event rate with the ratio of P(>= 1 tight tau)/P(2 medium taus (OS)) here.
+
 
   //// SRhigh cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
   if( SignalTaus.size() > 1 ) DeltaPhiTau = SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
   if( !Manager()->ApplyCut((fabs(DeltaPhiTau)) > 0.8, "$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]") ) return true;
 
+
   //// SRhigh cut-5 : dR(ta1,ta2)<3.2. ////
   if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$"))  
     return true;
+
 
   //// SRhigh cut-6 : mT2>70 GeV. ////
   MALorentzVector tau_high1 = SignalTaus[0]->momentum();
