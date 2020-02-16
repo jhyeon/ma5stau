@@ -8,7 +8,7 @@ template<typename T1, typename T2> std::vector<const T1*>
   Removal(std::vector<const T1*> &v1, std::vector<const T2*> &v2,
   const double &drmin)
 {
-  // Determining with objects should be removed
+  // Determining which objects should be removed
   std::vector<bool> mask(v1.size(),false);
   for (unsigned int j=0;j<v1.size();j++)
     for (unsigned int i=0;i<v2.size();i++)
