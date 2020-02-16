@@ -114,12 +114,12 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   // Security for empty events
   if ( event.rec()==0 ) return true;
-//  event_num++;
+  event_num++;
 
 //  std::vector<const RecJetFormat*>    BaseJets,  SignalBJets,   SignalnonBJets, SignalJets;
 //  std::vector<const RecLeptonFormat*> BaseMuons, BaseElectrons, SignalMuons,    SignalElectrons;
 //  std::vector<const RecTauFormat*>    BaseTaus,  SignalTaus;
-//  DEBUG << "============== Event " << event_num << endmsg;
+  DEBUG << "============== Event " << event_num << endmsg;
 
 
 

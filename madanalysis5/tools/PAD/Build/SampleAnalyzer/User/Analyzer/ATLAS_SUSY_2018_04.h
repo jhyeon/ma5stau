@@ -16,6 +16,7 @@ class ATLAS_SUSY_2018_04 : public AnalyzerBase
   virtual bool Execute(SampleFormat& sample, const EventFormat& event);
 
  private:
+   MAint32 event_num = 0;
 };
 }
 
