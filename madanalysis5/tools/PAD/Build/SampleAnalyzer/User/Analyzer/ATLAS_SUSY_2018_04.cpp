@@ -1,4 +1,5 @@
 #include "SampleAnalyzer/User/Analyzer/ATLAS_SUSY_2018_04.h"
+#include "SampleAnalyzer/User/Analyzer/lester_mt2_bisect.h"
 using namespace MA5;
 using namespace std;
 
@@ -216,6 +217,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// MET ////
   MALorentzVector pTmiss = event.rec()->MET().momentum();
+  pTmiss.SetPz(0.); // Remove eta component
   double MET = pTmiss.Pt();
 
   DEBUG << "    * Event reconstructed properly..." << endmsg;
@@ -247,7 +249,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// Common cut-5 : Z/H veto. //// 
   double mtata=0;
-  if(SignalTaus.size()==2) mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
+  if( SignalTaus.size()==2 ) mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
   if( !Manager()->ApplyCut(mtata > 120.0, "Z/H veto") ) return true;
 
   //// SRlow cut-1 : asymmetric di-tau trigger. ////
@@ -258,7 +260,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRLow cut-3 : 2 tight tau (OS). //// 
-  if(!Manager()->ApplyCut(SignalTaus.size()==2 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"2 tight $\\tau$ (OS)"))
+  if( !Manager()->ApplyCut(SignalTaus.size()==2 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"2 tight $\\tau$ (OS)") )
     return true;
 
   //// SRLow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
@@ -271,9 +273,13 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$") ) 
     return true;
 
-  //// SRLow cut-6 : mT2>70 GeV. ////
-
-  // Ref : CMS-SUS-16-039
+  //// SRLow cut-6 : mT2>70 GeV. ////LorentzVector tau_low1 = SignalTaus[0]->momentum();
+  MALorentzVector tau_low1 = SignalTaus[0]->momentum();
+  MALorentzVector tau_low2 = SignalTaus[1]->momentum();
+  double mt2_low = asymm_mt2_lester_bisect::get_mT2(tau_low1.M(), tau_low1.Px(), tau_low1.Py(),
+                                                    tau_low2.M(), tau_low2.Px(), tau_low2.Py(),
+                                                    pTmiss.Px(), pTmiss.Py(), 1., 1.);
+  if( !Manager()->ApplyCut(mt2_low > 70, "$m_{T2}>70$ GeV") ) return true;
 
 
 
@@ -296,6 +302,12 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     return true;
 
   //// SRhigh cut-6 : mT2>70 GeV. ////
+  MALorentzVector tau_high1 = SignalTaus[0]->momentum();
+  MALorentzVector tau_high2 = SignalTaus[1]->momentum();
+  double mt2_high = asymm_mt2_lester_bisect::get_mT2(tau_high1.M(), tau_high1.Px(), tau_high1.Py(),
+                                                     tau_high2.M(), tau_high2.Px(), tau_high2.Py(),
+                                                     pTmiss.Px(), pTmiss.Py(), 1., 1.);
+  if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV") ) return true;
 
   // Ref : CMS-SUS-16-039
 
