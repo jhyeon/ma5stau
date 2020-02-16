@@ -137,10 +137,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     double eta = Jet->abseta();
     double pt = Jet->pt();
 
-    if( pt>20. && eta < 2.8 ) { 
+    if( pt>20. && eta<2.8 ) { 
       Jets.push_back(Jet);
 
-      if( Jet->btag() ){
+      if( Jet->btag() && pt>20.0 && eta<2.5 ){
         nb++;
         HT += Jet->pt();
       }
@@ -195,8 +195,8 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   for( unsigned int it=0; it<event.rec()->taus().size(); it++ ){
     const RecTauFormat * CurrentTau = &(event.rec()->taus()[it]);
 
-    if( CurrentTau->pt() > 20. &&
-        (abs(CurrentTau->eta()) < 1.37 || (abs(CurrentTau->eta()) > 1.52 && abs(CurrentTau->eta()) < 2.5)) )
+    if( CurrentTau->pt() > 10. &&
+        (abs(CurrentTau->eta()) < 2.5) )
       SignalTaus.push_back(CurrentTau);
   }
 
@@ -233,19 +233,20 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     if( SignalTaus[i]->charge() > 0 ) tau_charge_sum++;
     if( SignalTaus[i]->charge() < 0 ) tau_charge_sum--;
   }
-  if( !Manager()->ApplyCut((SignalTaus.size()==2) && tau_charge_sum==0, "2 medium $\\tau$ (OS)") ) return true;
+  for( unsigned int ii=0; ii<SignalTaus.size(); ii++ ){
+  if( !Manager()->ApplyCut((SignalTaus.size() > 1) && tau_charge_sum==0 && SignalTaus[ii]->pt() > 20. && (abs(SignalTaus[ii]->eta()) < 1.37 || (abs(SignalTaus[ii]->eta()) > 1.52 && abs(SignalTaus[ii]->eta()) < 2.5)), "2 medium $\\tau$ (OS)") ) return true; }
 
 
   //// Common cut-2 : 3rd medium tau veto. ////
-  if( !Manager()->ApplyCut(SignalTaus.size() > 2 ,"3rd medium $\\tau$ veto") ) return true;
+  if( !Manager()->ApplyCut(SignalTaus.size() < 3, "3rd medium $\\tau$ veto") ) return true;
 
 
   //// Common cut-3 : b-jet veto. ////
-  if( !Manager()->ApplyCut(nb > 0,"b-jet veto") ) return true;
+  if( !Manager()->ApplyCut(nb < 1,"b-jet veto") ) return true;
 
 
   //// Common cut-4 : light lepton veto. ////  
-  if( !Manager()->ApplyCut(SignalElectrons.size() > 0 && SignalMuons.size() > 0, "light lepton veto") ) return true;
+  if( !Manager()->ApplyCut(SignalElectrons.size() < 1 && SignalMuons.size() < 1, "light lepton veto") ) return true;
 
   //// Common cut-5 : Z/H veto. //// 
   double mtata=0;
@@ -309,7 +310,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
                                                      pTmiss.Px(), pTmiss.Py(), 1., 1.);
   if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV") ) return true;
 
-  // Ref : CMS-SUS-16-039
 
   return true;
 }
