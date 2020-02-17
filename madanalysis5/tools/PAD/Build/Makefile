@@ -3,7 +3,7 @@
 ################################################################################
 
 # Compilers
-CXX = x86_64-pc-linux-gnu-g++
+CXX = c++
 
 # C++ Compilation options
 CXXFLAGS  = -Wall -O3 -fPIC -I$(MA5_BASE)/tools/
@@ -24,9 +24,11 @@ REQUIRED2 = $(MA5_BASE)/tools/SampleAnalyzer/Lib/libprocess_for_ma5.so
 
 # Files
 SRCS  = $(wildcard Main/*.cpp)
-SRCS += $(wildcard SampleAnalyzer/User/*/*.cpp)
+#SRCS += $(wildcard SampleAnalyzer/User/*/*.cpp)
+SRCS += $(wildcard SampleAnalyzer/User/*/ATLAS_SUSY_2018_04.cpp)
 HDRS  = $(wildcard Main/*.h)
-HDRS += $(wildcard SampleAnalyzer/User/*/*.h)
+#HDRS += $(wildcard SampleAnalyzer/User/*/*.h)
+HDRS += $(wildcard SampleAnalyzer/User/*/ATLAS_SUSY_2018_04.h)
 OBJS  = $(SRCS:.cpp=.o)
 
 # Name of the executable
