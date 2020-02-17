@@ -65,7 +65,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   Manager()->AddCut("Z/H veto",                SRlowhigh);
 
   // SR Low Mass selections
-  Manager()->AddCut("asymmetric di-$\\tau$ trigger",  SRlow);
+//  Manager()->AddCut("asymmetric di-$\\tau$ trigger",  SRlow);
   Manager()->AddCut("$75 < E^{miss}_{T} < 150$ GeV",  SRlow);
   Manager()->AddCut("2 tight $\\tau$ (OS)",           SRlow);
   Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]", SRlow);
@@ -73,7 +73,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   Manager()->AddCut("$m_{T2}>70$ GeV",                                 SRlow);
 
   // SR High Mass selections
-  Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
+//  Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
   Manager()->AddCut("$E^{miss}_{T} > 150$ GeV",          SRhigh);
   Manager()->AddCut("$\\geq 1$ tight $\\tau$",           SRhigh);
   Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]", SRhigh);
@@ -194,8 +194,8 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   for( unsigned int it=0; it<event.rec()->taus().size(); it++ ){
     const RecTauFormat * CurrentTau = &(event.rec()->taus()[it]);
 
-    if( CurrentTau->pt() > 10. &&
-        (abs(CurrentTau->eta()) < 2.5) )
+    if( CurrentTau->pt() > 40. && abs(CurrentTau->eta()) < 2.5
+        && (abs(CurrentTau->eta()) < 1.37 || abs(CurrentTau->eta()) > 1.52))
       SignalTaus.push_back(CurrentTau);
   }
 
@@ -232,8 +232,8 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     if( SignalTaus[i]->charge() > 0 ) tau_charge_sum++;
     if( SignalTaus[i]->charge() < 0 ) tau_charge_sum--;
   }
-  for( unsigned int ii=0; ii<SignalTaus.size(); ii++ ){
-  if( !Manager()->ApplyCut((SignalTaus.size() < 3) && tau_charge_sum==0 && SignalTaus[ii]->pt() > 20. && (abs(SignalTaus[ii]->eta()) < 1.37 || (abs(SignalTaus[ii]->eta()) > 1.52 && abs(SignalTaus[ii]->eta()) < 2.5)), "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true; }
+  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && tau_charge_sum==0, "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true;
+
 
 
   //// Common cut-2 : 3rd medium tau veto. ////
@@ -241,7 +241,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// Common cut-2 : b-jet veto. ////
-  if( !Manager()->ApplyCut(nb < 1,"b-jet veto") ) return true;
+  if( !Manager()->ApplyCut(nb == 0,"b-jet veto") ) return true;
 
 
   //// Common cut-3 : light lepton veto. ////  
@@ -250,7 +250,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// Common cut-4 : Z/H veto. //// 
   double mtata=0;
-  if( SignalTaus.size()==2 ) mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
+  mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
   if( !Manager()->ApplyCut(mtata > 120.0, "Z/H veto") ) return true;
 
 
