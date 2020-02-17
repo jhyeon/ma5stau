@@ -58,8 +58,8 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ====================== //
 
   // Common selections
-  Manager()->AddCut("2 medium $\\tau$ (OS)",   SRlowhigh);
-  Manager()->AddCut("3rd medium $\\tau$ veto", SRlowhigh);
+  Manager()->AddCut("2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto",   SRlowhigh);
+//  Manager()->AddCut("3rd medium $\\tau$ veto", SRlowhigh);
   Manager()->AddCut("b-jet veto",              SRlowhigh);
   Manager()->AddCut("light lepton veto",       SRlowhigh);
   Manager()->AddCut("Z/H veto",                SRlowhigh);
@@ -84,11 +84,11 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ===== Histograms ===== //
   // ====================== //
 
-  Manager()->AddHisto("SRlow_MET", 10,0.0,150., "SRlow");
-  Manager()->AddHisto("SRlow_mT2", 5,30.0,70.,  "SRlow");
+  Manager()->AddHisto("SRlow_MET", 15,75.0,150., "SRlow");
+  Manager()->AddHisto("SRlow_mT2", 10,70.0,120., "SRlow");
 
-  Manager()->AddHisto("SRhigh_MET", 10,50.0,100., "SRhigh");
-  Manager()->AddHisto("SRhigh_mT2", 2.5,50.0,70., "SRhigh");
+  Manager()->AddHisto("SRhigh_MET", 30,150.0,300., "SRhigh");
+  Manager()->AddHisto("SRhigh_mT2", 30,70.0,220.,  "SRhigh");
 
   return true;
 }
@@ -224,29 +224,29 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   // ===== Event selection ===== //
   // =========================== //
 
-  //// Common cut-1 : 2 medium taus (OS). ////
+  //// Common cut-1 : 2 medium taus (OS) and 3rd medium tau veto. ////
   int tau_charge_sum=0;
   for( unsigned int i=0; i<SignalTaus.size(); i++ ){
     if( SignalTaus[i]->charge() > 0 ) tau_charge_sum++;
     if( SignalTaus[i]->charge() < 0 ) tau_charge_sum--;
   }
   for( unsigned int ii=0; ii<SignalTaus.size(); ii++ ){
-  if( !Manager()->ApplyCut((SignalTaus.size() > 1) && tau_charge_sum==0 && SignalTaus[ii]->pt() > 20. && (abs(SignalTaus[ii]->eta()) < 1.37 || (abs(SignalTaus[ii]->eta()) > 1.52 && abs(SignalTaus[ii]->eta()) < 2.5)), "2 medium $\\tau$ (OS)") ) return true; }
+  if( !Manager()->ApplyCut((SignalTaus.size() < 3) && tau_charge_sum==0 && SignalTaus[ii]->pt() > 20. && (abs(SignalTaus[ii]->eta()) < 1.37 || (abs(SignalTaus[ii]->eta()) > 1.52 && abs(SignalTaus[ii]->eta()) < 2.5)), "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true; }
 
 
   //// Common cut-2 : 3rd medium tau veto. ////
-  if( !Manager()->ApplyCut(SignalTaus.size() < 3, "3rd medium $\\tau$ veto") ) return true;
+//  if( !Manager()->ApplyCut(SignalTaus.size() < 3, "3rd medium $\\tau$ veto") ) return true;
 
 
-  //// Common cut-3 : b-jet veto. ////
+  //// Common cut-2 : b-jet veto. ////
   if( !Manager()->ApplyCut(nb < 1,"b-jet veto") ) return true;
 
 
-  //// Common cut-4 : light lepton veto. ////  
+  //// Common cut-3 : light lepton veto. ////  
   if( !Manager()->ApplyCut(SignalElectrons.size() < 1 && SignalMuons.size() < 1, "light lepton veto") ) return true;
 
 
-  //// Common cut-5 : Z/H veto. //// 
+  //// Common cut-4 : Z/H veto. //// 
   double mtata=0;
   if( SignalTaus.size()==2 ) mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
   if( !Manager()->ApplyCut(mtata > 120.0, "Z/H veto") ) return true;
@@ -285,6 +285,9 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   if( !Manager()->ApplyCut(mt2_low > 70, "$m_{T2}>70$ GeV") ) return true;
 
 
+  // Histograms
+  Manager()->FillHisto("SRlow_MET",MET);
+  Manager()->FillHisto("SRlow_mT2",mt2_low);
 
   //// SRhigh cut-1 : di-tau +mET trigger. ////
   if( !Manager()->ApplyCut(SignalTaus.size() == 2 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "\\geq 1$ tight $\\tau") )
@@ -316,6 +319,11 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
                                                      tau_high2.M(), tau_high2.Px(), tau_high2.Py(),
                                                      pTmiss.Px(), pTmiss.Py(), 1., 1.);
   if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV") ) return true;
+
+
+  // Histograms
+  Manager()->FillHisto("SRhigh_MET",MET);
+  Manager()->FillHisto("SRhigh_mT2",mt2_high);
 
 
   return true;
