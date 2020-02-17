@@ -3,3 +3,10 @@
 *.a
 *.so
 *.bak
+
+validation_note/*.aux
+validation_note/*.log
+validation_note/*.toc
+validation_note/*.out
+validation_note/*.bbl
+validation_note/validation_note_ATLAS_SUSY_2018_04.pdf
