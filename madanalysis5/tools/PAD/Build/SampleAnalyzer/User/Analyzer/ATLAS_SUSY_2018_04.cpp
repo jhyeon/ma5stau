@@ -90,6 +90,8 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   Manager()->AddHisto("SRhigh_MET", 30,150.0,300., "SRhigh");
   Manager()->AddHisto("SRhigh_mT2", 30,70.0,220.,  "SRhigh");
 
+  asymm_mt2_lester_bisect::disableCopyrightMessage();
+
   return true;
 }
 
@@ -290,12 +292,12 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   Manager()->FillHisto("SRlow_mT2",mt2_low);
 
   //// SRhigh cut-1 : di-tau +mET trigger. ////
-  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "\\geq 1$ tight $\\tau") )
+  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "$\\geq 1$ tight $\\tau$") )
     return true;
 
 
   //// SRhigh cut-2 : ETmiss > 150 GeV. ////
-  if( !Manager()->ApplyCut((MET > 150.),"E^{miss}_{T} > 150$ GeV") ) return true;
+  if( !Manager()->ApplyCut((MET > 150.),"$E^{miss}_{T} > 150$ GeV") ) return true;
 
 
   //// SRhigh cut-3 : >= 1 tight tau. //// 
