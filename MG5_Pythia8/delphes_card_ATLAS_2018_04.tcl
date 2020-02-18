@@ -696,7 +696,7 @@ module TrackCountingTauTagging TauTagging {
 
   set BitNumber 0
 
-  # taken from arXiv:1911.06660 (medium working point)
+  # taken from ATLAS-CONF-2017-029 (medium working point)
   add EfficiencyFormula {1} {0.55}
   add EfficiencyFormula {2} {0.40}
   add EfficiencyFormula {-1} {0.02}
@@ -719,7 +719,6 @@ module TrackCountingTauTagging TauTagging {
 
 module TreeWriter TreeWriter {
 # add Branch InputArray BranchName BranchClass
-  add Branch Delphes/allParticles Particle GenParticle
 
   add Branch TrackMerger/tracks Track Track
   add Branch Calorimeter/towers Tower Tower
@@ -727,9 +726,6 @@ module TreeWriter TreeWriter {
   add Branch HCal/eflowTracks EFlowTrack Track
   add Branch ECal/eflowPhotons EFlowPhoton Tower
   add Branch HCal/eflowNeutralHadrons EFlowNeutralHadron Tower
-
-  add Branch GenJetFinder/jets GenJet Jet
-  add Branch GenMissingET/momentum GenMissingET MissingET
 
   add Branch JetEnergyScale/jets Jet Jet
   add Branch ElectronIsolation/electrons Electron Electron
