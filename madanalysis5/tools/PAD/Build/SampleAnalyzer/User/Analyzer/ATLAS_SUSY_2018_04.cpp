@@ -276,7 +276,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   bool tight1 = (rand() % 100)/100. < 0.714815;
   bool tight2 = (rand() % 100)/100. < 0.714815;
 
-  if( !Manager()->ApplyCut(tight1 , "2 tight $\\tau$ (OS)") ) return true; 
+  if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true; 
 
 
   //// SRlow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
