@@ -195,24 +195,26 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   for( unsigned int it=0; it<event.rec()->taus().size(); it++ ){
     const RecTauFormat * CurrentTau = &(event.rec()->taus()[it]);
 
-    if( CurrentTau->pt() > 40. && abs(CurrentTau->eta()) < 2.5
-        && (abs(CurrentTau->eta()) < 1.37 || abs(CurrentTau->eta()) > 1.52))
-      SignalTaus.push_back(CurrentTau);
+    if( CurrentTau->pt() > 20. && abs(CurrentTau->eta()) < 2.5
+        && (abs(CurrentTau->eta()) < 1.37 || abs(CurrentTau->eta()) > 1.52)){
+      if(SignalTaus.size() == 0 && CurrentTau->pt() > 50) SignalTaus.push_back(CurrentTau);
+      else if(SignalTaus.size() == 1 && CurrentTau->pt() > 40) SignalTaus.push_back(CurrentTau);
+    }
   }
 
 
 
   // Electron-tau overlap removal
-  SignalElectrons = Removal(SignalElectrons, SignalTaus, 0.2);
+  SignalTaus = Removal(SignalTaus, SignalElectrons, 0.2);
   // Muon-tau overlap removal
-  SignalMuons = Removal(SignalMuons, SignalTaus, 0.2);
+  SignalTaus = Removal(SignalTaus, SignalMuons, 0.2);
   // Jet-electron overlap removal
   Jets = PHYSICS->Isol->JetCleaning(Jets, SignalElectrons, 0.4);
   // Jet-muon overlap removal
   Jets = PHYSICS->Isol->JetCleaning(Jets, SignalMuons, 0.4);
 
   // Tau-jet overlap removal
-  SignalTaus = Removal(SignalTaus, Jets, 0.2);
+  Jets = Removal(Jets, SignalTaus, 0.2);
 
 
   //// MET ////
