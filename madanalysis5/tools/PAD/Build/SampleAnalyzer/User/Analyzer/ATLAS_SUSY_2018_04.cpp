@@ -68,7 +68,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // SR Low Mass selections
   Manager()->AddCut("asymmetric di-$\\tau$ trigger",  SRlow);
   Manager()->AddCut("$75 < E^{miss}_{T} < 150$ GeV",  SRlow);
-//  Manager()->AddCut("2 tight $\\tau$ (OS)",           SRlow);
+  Manager()->AddCut("2 tight $\\tau$ (OS)",           SRlow);
   Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad](low)", SRlow);
   Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$(low)",            SRlow);
   Manager()->AddCut("$m_{T2}>70$ GeV(low)",                                 SRlow);
@@ -76,7 +76,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // SR High Mass selections
   Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
   Manager()->AddCut("$E^{miss}_{T} > 150$ GeV",          SRhigh);
-//  Manager()->AddCut("$\\geq 1$ tight $\\tau$",           SRhigh);
+  Manager()->AddCut("$\\geq 1$ tight $\\tau$",           SRhigh);
   Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad](high)", SRhigh);
   Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$(high)",            SRhigh);
   Manager()->AddCut("$m_{T2}>70$ GeV(high)",                                 SRhigh);
@@ -268,6 +268,12 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// SRlow cut-3 : 2 tight taus (OS). //// 
   // I suggest that we directly rescale our event rate with the ratio of P(2 tight taus (OS))/P(2 medium taus (OS)) here.
+    double tight_low=myWeight*0.714815;
+    Manager()->SetCurrentEventWeight(tight_low);
+   
+    if(!Manager()->ApplyCut(SignalTaus.size() == 2,"2 tight $\\tau$ (OS)")){
+      return true; 
+    }  
 
 
   //// SRlow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
@@ -294,6 +300,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   Manager()->FillHisto("SRlow_MET",MET);
   Manager()->FillHisto("SRlow_mT2",mt2_low);
 
+
+  double preselection=myWeight*1.0;
+  Manager()->SetCurrentEventWeight(preselection);
+
   //// SRhigh cut-1 : di-tau +mET trigger. ////
   if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "di-$\\tau +E^{miss}_{T}$ trigger") )
     return true;
@@ -305,6 +315,12 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// SRhigh cut-3 : >= 1 tight tau. //// 
   // I suggest that we directly rescale our event rate with the ratio of P(>= 1 tight tau)/P(2 medium taus (OS)) here.
+    double tight_high=myWeight*0.714815;
+    Manager()->SetCurrentEventWeight(tight_high);
+   
+    if(!Manager()->ApplyCut(SignalTaus.size() == 2,"$\\geq 1$ tight $\\tau$")){
+      return true; 
+    }  
 
 
   //// SRhigh cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
