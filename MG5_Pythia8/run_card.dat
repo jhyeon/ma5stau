@@ -73,7 +73,7 @@
  4 = asrwgtflavor     ! highest quark flavor for a_s reweight
  True  = auto_ptj_mjj  ! Automatic setting of ptj and mjj if xqcut >0
                                    ! (turn off for VBF and single top processes) 
- 30.0   = xqcut   ! minimum kt jet measure between partons
+ 30.0   = xqcut   ! minimum kt jet measure between partons - 1/4 of stau mass
 #*********************************************************************
 #
 #*********************************************************************
@@ -263,7 +263,7 @@
 # Store info for systematics studies                                 *
 # WARNING: Do not use for interference type of computation           *
 #*********************************************************************
-   True  = use_syst      ! Enable systematics studies
+   False  = use_syst      ! Enable systematics studies
 #
 systematics = systematics_program ! none, systematics [python], SysCalc [depreceted, C++]
 ['--mur=0.5,1,2', '--muf=0.5,1,2', '--pdf=errorset', '--alps=0.5,1,2'] = systematics_arguments ! see: https://cp3.irmp.ucl.ac.be/projects/madgraph/wiki/Systematics#Systematicspythonmodule
