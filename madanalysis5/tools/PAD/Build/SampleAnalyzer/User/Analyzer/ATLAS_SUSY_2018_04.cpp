@@ -1,5 +1,4 @@
 #include "SampleAnalyzer/User/Analyzer/ATLAS_SUSY_2018_04.h"
-#include "SampleAnalyzer/User/Analyzer/lester_mt2_bisect.h"
 #include <iostream>
 #include <ctime>
 using namespace MA5;
@@ -92,8 +91,6 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
 
   Manager()->AddHisto("SRhigh_MET", 30,150.0,300., "SRhigh");
   Manager()->AddHisto("SRhigh_mT2", 30,70.0,220.,  "SRhigh");
-
-  asymm_mt2_lester_bisect::disableCopyrightMessage();
 
   return true;
 }
@@ -230,6 +227,11 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   // ===== Event selection ===== //
   // =========================== //
 
+  srand((unsigned int)time(NULL));
+  // Select '2018' events according to the lumi weight
+  // 139 /fb = 36.2 + 44.3 + 58.5
+  bool is2018 = (rand() % 100)/100. < 0.421;
+
   //// Common cut-1 : 2 medium taus (OS) and 3rd medium tau veto. ////
   int tau_charge_sum=0;
   for( unsigned int i=0; i<SignalTaus.size(); i++ ){
@@ -259,9 +261,14 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRlow cut-1 : asymmetric di-tau trigger. ////
-  //if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60,"asymmetric di-$\\tau$ trigger") )
-  if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"asymmetric di-$\\tau$ trigger") )
-    return true;
+  if( is2018 ){
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"asymmetric di-$\\tau$ trigger") )
+      return true;
+  }
+  else{
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60,"asymmetric di-$\\tau$ trigger") )
+      return true;
+  }
   
 
   //// SRlow cut-2 : 75 < ETmiss < 150 GeV. ////
@@ -272,11 +279,12 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   // I suggest that we directly rescale our event rate with the ratio of P(2 tight taus (OS))/P(2 medium taus (OS)) here.
   //double tight_low=myWeight*0.714815;
   //Manager()->SetCurrentEventWeight(tight_low);
-  srand((unsigned int)time(NULL));
   bool tight1 = (rand() % 100)/100. < 0.714815;
   bool tight2 = (rand() % 100)/100. < 0.714815;
+  bool two_tight_ratio = (rand() % 100)/100. < 0.7;
 
-  if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true; 
+  //if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
+  if( !Manager()->ApplyCut(two_tight_ratio, "2 tight $\\tau$ (OS)") ) return true;
 
 
   //// SRlow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
@@ -291,11 +299,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRlow cut-6 : mT2>70 GeV. ////LorentzVector tau_low1 = SignalTaus[0]->momentum();
-  MALorentzVector tau_low1 = SignalTaus[0]->momentum();
-  MALorentzVector tau_low2 = SignalTaus[1]->momentum();
-  double mt2_low = asymm_mt2_lester_bisect::get_mT2(tau_low1.M(), tau_low1.Px(), tau_low1.Py(),
-                                                    tau_low2.M(), tau_low2.Px(), tau_low2.Py(),
-                                                    pTmiss.Px(), pTmiss.Py(), 1., 1.);
+  double mt2_low = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),1.);
   if( !Manager()->ApplyCut(mt2_low > 70, "$m_{T2}>70$ GeV(low)") ) return true;
 
 
@@ -308,9 +312,14 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   Manager()->SetCurrentEventWeight(preselection);
 
   //// SRhigh cut-1 : di-tau +mET trigger. ////
-  //if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40, "di-$\\tau +E^{miss}_{T}$ trigger") )
-  if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "di-$\\tau +E^{miss}_{T}$ trigger") )
-    return true;
+  if( is2018 ){
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "di-$\\tau +E^{miss}_{T}$ trigger") )
+      return true;
+  }
+  else{
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40, "di-$\\tau +E^{miss}_{T}$ trigger") )
+      return true;
+  }
 
 
   //// SRhigh cut-2 : ETmiss > 150 GeV. ////
@@ -339,11 +348,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRhigh cut-6 : mT2>70 GeV. ////
-  MALorentzVector tau_high1 = SignalTaus[0]->momentum();
-  MALorentzVector tau_high2 = SignalTaus[1]->momentum();
-  double mt2_high = asymm_mt2_lester_bisect::get_mT2(tau_high1.M(), tau_high1.Px(), tau_high1.Py(),
-                                                     tau_high2.M(), tau_high2.Px(), tau_high2.Py(),
-                                                     pTmiss.Px(), pTmiss.Py(), 1., 1.);
+  double mt2_high = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),1.);
   if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV(high)") ) return true;
 
 
