@@ -37,7 +37,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   INFO << "    <>    SUSY, stau, hadronic decaying ditau + MET @ 13 TeV, 139 fb^-1 <>" << endmsg;
   INFO << "    <>    arXiv:1911.06660                                              <>" << endmsg;
   INFO << "    <>    Recasted by : Jongwon Lim, Chih-Ting Lu,                      <>" << endmsg;
-  INFO << "    <>                  Jae-Hyeon Park, Jiwon Park                      <>" << endmsg;
+  INFO << "    <>                  Jae-hyeon Park, Jiwon Park                      <>" << endmsg;
   INFO << "    <>    Contact     : jongwon.lim@cern.ch, timluyu@gmail.com,         <>" << endmsg; 
   INFO << "    <>                  jhpark@kias.re.kr, jiwon.park@cern.ch           <>" << endmsg;
   INFO << "    <>    Based on MadAnalysis 5 v1.8 and above                         <>" << endmsg;
@@ -279,10 +279,17 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //// SRlow cut-3 : 2 tight taus (OS). //// 
   //double tight_low=myWeight*0.714815;
   //Manager()->SetCurrentEventWeight(tight_low);
+<<<<<<< HEAD
   bool tight1 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
   bool tight2 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
 //  bool tight1 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
 //  bool tight2 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
+=======
+  // 2228 and 1565 are Nraw before and after 2-tight-tau cut in SR-lowMass at
+  // https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-04/tabaux_01.pdf
+  bool tight1 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
+  bool tight2 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
+>>>>>>> 87d17620c5731683a1b12be2fa9ef772e8deee24
   // bool two_tight_ratio = (rand() % 100)/100. < 0.7;
 
   if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
