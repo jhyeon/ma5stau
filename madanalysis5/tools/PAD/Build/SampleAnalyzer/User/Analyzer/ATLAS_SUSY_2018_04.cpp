@@ -38,7 +38,8 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   INFO << "    <>    arXiv:1911.06660                                              <>" << endmsg;
   INFO << "    <>    Recasted by : Jongwon Lim, Chih-Ting Lu,                      <>" << endmsg;
   INFO << "    <>                  Jae-Hyeon Park, Jiwon Park                      <>" << endmsg;
-  INFO << "    <>    Contact     : timluyu@gmail.com                               <>" << endmsg;
+  INFO << "    <>    Contact     : jongwon.lim@cern.ch, timluyu@gmail.com,         <>" << endmsg; 
+  INFO << "    <>                  jhpark@kias.re.kr, jiwon.park@cern.ch           <>" << endmsg;
   INFO << "    <>    Based on MadAnalysis 5 v1.8 and above                         <>" << endmsg;
   INFO << "    <>    For more information, see                                     <>" << endmsg;
   INFO << "    <>    http://madanalysis.irmp.ucl.ac.be/wiki/PublicAnalysisDatabase <>" << endmsg;
@@ -241,7 +242,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   if( !Manager()->ApplyCut(SignalTaus.size() == 2 && tau_charge_sum==0, "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true;
 
 
-
   //// Common cut-2 : 3rd medium tau veto. ////
 //  if( !Manager()->ApplyCut(SignalTaus.size() < 3, "3rd medium $\\tau$ veto") ) return true;
 
@@ -261,12 +261,13 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRlow cut-1 : asymmetric di-tau trigger. ////
+  bool effl = double(rand())/RAND_MAX < 0.8;
   if( is2018 ){
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"asymmetric di-$\\tau$ trigger") )
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75 && effl,"asymmetric di-$\\tau$ trigger") )
       return true;
   }
   else{
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60,"asymmetric di-$\\tau$ trigger") )
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60 && effl,"asymmetric di-$\\tau$ trigger") )
       return true;
   }
   
@@ -276,15 +277,16 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRlow cut-3 : 2 tight taus (OS). //// 
-  // I suggest that we directly rescale our event rate with the ratio of P(2 tight taus (OS))/P(2 medium taus (OS)) here.
   //double tight_low=myWeight*0.714815;
   //Manager()->SetCurrentEventWeight(tight_low);
-  bool tight1 = (rand() % 100)/100. < 0.714815;
-  bool tight2 = (rand() % 100)/100. < 0.714815;
-  bool two_tight_ratio = (rand() % 100)/100. < 0.7;
+//  bool tight1 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
+//  bool tight2 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
+  bool tight1 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
+  bool tight2 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
+  // bool two_tight_ratio = (rand() % 100)/100. < 0.7;
 
-  //if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
-  if( !Manager()->ApplyCut(two_tight_ratio, "2 tight $\\tau$ (OS)") ) return true;
+  if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
+  //if( !Manager()->ApplyCut(two_tight_ratio, "2 tight $\\tau$ (OS)") ) return true;
 
 
   //// SRlow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
@@ -312,12 +314,13 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   Manager()->SetCurrentEventWeight(preselection);
 
   //// SRhigh cut-1 : di-tau +mET trigger. ////
+  bool effh = double(rand())/RAND_MAX < 0.8;
   if( is2018 ){
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40, "di-$\\tau +E^{miss}_{T}$ trigger") )
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40 && effh, "di-$\\tau +E^{miss}_{T}$ trigger") )
       return true;
   }
   else{
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40, "di-$\\tau +E^{miss}_{T}$ trigger") )
+    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40 && effh, "di-$\\tau +E^{miss}_{T}$ trigger") )
       return true;
   }
 
@@ -327,11 +330,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRhigh cut-3 : >= 1 tight tau. //// 
-  // I suggest that we directly rescale our event rate with the ratio of P(>= 1 tight tau)/P(2 medium taus (OS)) here.
   //double tight_high=myWeight*0.714815;
   //Manager()->SetCurrentEventWeight(tight_high);
-  tight1 = (rand() % 100)/100. < 0.714815;
-  tight2 = (rand() % 100)/100. < 0.714815;
+  tight1 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
+  tight2 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
  
   //if(!Manager()->ApplyCut(SignalTaus.size() == 2,"$\\geq 1$ tight $\\tau$")) return true; 
   if( !Manager()->ApplyCut(tight1 or tight2,"$\\geq 1$ tight $\\tau$") ) return true; 
