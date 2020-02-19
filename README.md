@@ -16,3 +16,8 @@ git remote add origin git@github.com:jhyeon/ma5stau.git
 mv madanalysis5/tools/PAD/Build/SampleAnalyzer/User/Analyzer/analysisList.h ~/
 git pull origin master
 ```
+
+## Plots
+```{.Bash}
+python plot_saf_file.py /path_to_Output_SAF_Histograms/histos.saf
+```
