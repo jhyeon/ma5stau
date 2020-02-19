@@ -281,8 +281,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //Manager()->SetCurrentEventWeight(tight_low);
 //  bool tight1 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
 //  bool tight2 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
-  bool tight1 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
-  bool tight2 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
+  // 2228 and 1565 are Nraw before and after 2-tight-tau cut in SR-lowMass at
+  // https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-04/tabaux_01.pdf
+  bool tight1 = double(rand())/RAND_MAX < sqrt(1565./2228.0); // 0.714815;
+  bool tight2 = double(rand())/RAND_MAX < sqrt(1565./2228.0); // 0.714815;
   // bool two_tight_ratio = (rand() % 100)/100. < 0.7;
 
   if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
