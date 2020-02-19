@@ -37,7 +37,7 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   INFO << "    <>    SUSY, stau, hadronic decaying ditau + MET @ 13 TeV, 139 fb^-1 <>" << endmsg;
   INFO << "    <>    arXiv:1911.06660                                              <>" << endmsg;
   INFO << "    <>    Recasted by : Jongwon Lim, Chih-Ting Lu,                      <>" << endmsg;
-  INFO << "    <>                  Jae-Hyeon Park, Jiwon Park                      <>" << endmsg;
+  INFO << "    <>                  Jae-hyeon Park, Jiwon Park                      <>" << endmsg;
   INFO << "    <>    Contact     : jongwon.lim@cern.ch, timluyu@gmail.com,         <>" << endmsg; 
   INFO << "    <>                  jhpark@kias.re.kr, jiwon.park@cern.ch           <>" << endmsg;
   INFO << "    <>    Based on MadAnalysis 5 v1.8 and above                         <>" << endmsg;
