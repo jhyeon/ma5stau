@@ -87,11 +87,9 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ===== Histograms ===== //
   // ====================== //
 
-  Manager()->AddHisto("SRlow_MET", 15,75.0,150., "SRlow");
-  Manager()->AddHisto("SRlow_mT2", 10,70.0,120., "SRlow");
+  Manager()->AddHisto("SRlow_mT2", 5,70.0,120., "SRlow");
 
-  Manager()->AddHisto("SRhigh_MET", 30,150.0,300., "SRhigh");
-  Manager()->AddHisto("SRhigh_mT2", 30,70.0,220.,  "SRhigh");
+  Manager()->AddHisto("SRhigh_mT2", 5,70.0,220.,  "SRhigh");
 
   return true;
 }
@@ -306,7 +304,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   // Histograms
-  Manager()->FillHisto("SRlow_MET",MET);
   Manager()->FillHisto("SRlow_mT2",mt2_low);
 
 
@@ -355,7 +352,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   // Histograms
-  Manager()->FillHisto("SRhigh_MET",MET);
   Manager()->FillHisto("SRhigh_mT2",mt2_high);
 
 
