@@ -87,11 +87,9 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ===== Histograms ===== //
   // ====================== //
 
-  Manager()->AddHisto("SRlow_MET", 15,75.0,150., "SRlow");
-  Manager()->AddHisto("SRlow_mT2", 10,70.0,120., "SRlow");
+  Manager()->AddHisto("SRlow_mT2", 5,70.0,120., "SRlow");
 
-  Manager()->AddHisto("SRhigh_MET", 30,150.0,300., "SRhigh");
-  Manager()->AddHisto("SRhigh_mT2", 30,70.0,220.,  "SRhigh");
+  Manager()->AddHisto("SRhigh_mT2", 5,70.0,220.,  "SRhigh");
 
   return true;
 }
@@ -279,17 +277,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //// SRlow cut-3 : 2 tight taus (OS). //// 
   //double tight_low=myWeight*0.714815;
   //Manager()->SetCurrentEventWeight(tight_low);
-<<<<<<< HEAD
-  bool tight1 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
-  bool tight2 = (rand() % 100)/100. < sqrt(1565./2228.0); // 0.714815;
-//  bool tight1 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
-//  bool tight2 = double(rand())/RAND_MAX < sqrt(0.7); // 0.714815;
-=======
   // 2228 and 1565 are Nraw before and after 2-tight-tau cut in SR-lowMass at
   // https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-04/tabaux_01.pdf
   bool tight1 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
   bool tight2 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
->>>>>>> 87d17620c5731683a1b12be2fa9ef772e8deee24
   // bool two_tight_ratio = (rand() % 100)/100. < 0.7;
 
   if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
@@ -313,7 +304,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   // Histograms
-  Manager()->FillHisto("SRlow_MET",MET);
   Manager()->FillHisto("SRlow_mT2",mt2_low);
 
 
@@ -362,7 +352,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   // Histograms
-  Manager()->FillHisto("SRhigh_MET",MET);
   Manager()->FillHisto("SRhigh_mT2",mt2_high);
 
 

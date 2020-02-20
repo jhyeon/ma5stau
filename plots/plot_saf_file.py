@@ -50,7 +50,8 @@ if __name__ == "__main__":
         ## Now read the title
         if line == '': break
         line = fopen.readline()
-        title = line
+        title = line.replace("\n","")
+        title = title.replace('"','')
 
         # Now go on and read binning
         line = fopen.readline()
@@ -72,15 +73,51 @@ if __name__ == "__main__":
             elif 'overflow' in line:
                 data[nbins-1] += float(line.split()[0])
             line = fopen.readline()
+        
+        plot_title = ""
+        comp_data = []
+        comp_err = []
+        if "m120" in outfile:
+            if "SRlow" in title:
+                plot_title = r"SR-lowMass for $m_{\tilde{\tau}} = 120$ GeV"
+                comp_data = [4.73, 2.62, 1.88, 0.44, 0.114]
+                comp_err = [0.50, 0.32, 0.27, 0.11, 0.072]
+            elif "SRhigh" in title:
+                plot_title = r"SR-highMass for $m_{\tilde{\tau}} = 120$ GeV"
+                comp_data = [6.36, 0.82, 0, 0, 0]
+                comp_err = [0.59, 0.23, 0, 0, 0]
+        elif "m280" in outfile:
+            if "SRlow" in title:
+                plot_title = r"SR-lowMass for $m_{\tilde{\tau}} = 280$ GeV"
+                comp_data = [0.82, 0.94, 0.446, 0.66, 3.22]
+                comp_err = [0.32, 0.24, 0.08, 0.10, 0.67]
+            elif "SRhigh" in title:
+                plot_title = r"SR-highMass for $m_{\tilde{\tau}} = 280$ GeV"
+                comp_data = [2.23, 2.49, 5.32, 2.47, 1.83]
+                comp_err = [0.36, 0.35, 0.80, 0.44, 0.44]
+        
         steps = (xmax - xmin)/nbins
         x = [xmin + steps/2.0 + steps*i for i in range(nbins)]
         thebins = [xmin + steps*i for i in range(nbins+1)]
+        
+        print "Plotting ",plot_title
+        #Normalization
+        norm_data = [ i/sum(data) for i in data ]
+        norm_comp_data = [ i/sum(comp_data) for i in comp_data ]
+        norm_comp_err = [ i/sum(comp_data) for i in comp_err ]
+        print(data)
+        print(norm_data)
+
+        print(comp_data)
         plt.figure()
-        plt.hist(x, bins=thebins, weights=data, label=title + '\nEntries ' + nentries, histtype='step', fill=False)
-        plt.xlabel(title)
-        plt.ylabel('number of events')
+        plt.rc("axes",labelsize=14)
+        plt.rc("legend",fontsize=12)
+        plt.hist(x, bins=thebins, weights=norm_data, label='MA5', histtype='step', fill=False)
+        plt.errorbar(x, norm_comp_data, yerr=norm_comp_err, label='ATLAS', fmt='.k')
+        plt.xlabel(r"$m_{T2}$")
+        plt.ylabel('Normalized Events')
         plt.legend()
-        plt.title(title)
+        plt.title(plot_title)
         pp.savefig()
     fopen.close()
     pp.close()
