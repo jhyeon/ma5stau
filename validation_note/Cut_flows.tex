@@ -1,0 +1,121 @@
+\documentclass[12pt,A4paper,pdftex, ]{article}
+\pdfoutput=1
+%
+\usepackage{enumitem}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{graphicx,color}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{tabularx,caption}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{cancel}
+\usepackage{booktabs,array}
+\usepackage{etoolbox} % provides \patchcmd macro
+\usepackage{lscape}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{rotating}
+
+\textwidth 170mm
+\textheight 220mm
+\oddsidemargin -5mm
+\evensidemargin 5mm
+\topmargin -16pt
+
+\title{Validation checks of the cut flows table in arXiv:1911.0660}
+
+\author{Chih-Ting Lu (KIAS)
+\date{\today}
+}
+
+\begin{document}
+\maketitle
+
+For each cut, we have calculated the related efficiency defined as 
+\begin{equation}
+\epsilon_i =\frac{n_i}{n_{i-1}}
+\end{equation}
+where $ n_i $ and $ n_{i-1} $ mean the event number after and before the considered cut, respectively.
+%
+On the other hand, we have also calculated the differences between $ \epsilon_i (MA5)$ and $ \epsilon_i (ATLAS)$ with the definition as
+\begin{equation}
+diff. = \frac{\epsilon_i (MA5)-\epsilon_i (ATLAS)}{\epsilon_i (ATLAS)}
+\end{equation}
+
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\multicolumn{6}{|c|}{ \textbf{$ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (120,1) $ GeV} }\\
+\hline\hline
+ & ATLAS($N_{raw}$) & $\epsilon_i$($\%$) & MA5($N_{raw}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
+\hline\hline
+Generator filter & 410000 & & 461415 & & \\ \hline
+2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 22493 & 5.49 & 12973 & 2.81 & \\ \hline
+$b$-jet veto & 22148 & 98.47 & 12679 & 97.73 & -0.75 \\ \hline
+Light lepton veto & 22109 & 99.82 & 12666 & 99.90 & 0.08 \\ \hline
+$Z/H$-veto & 18188 & 82.27 & 10511 & 82.99 & 0.88 \\ \hline
+\multicolumn{5}{|c|}{ \textbf{SR-low Mass} }\\\hline
+Trigger and offline cuts & 6512 & 35.80 & 4380 & 41.67 & 14.09 \\ \hline
+$ 75 < E^{miss}_T < 150 $ GeV & 2228 & 34.21 & 1543 & 35.23 & 2.98 \\ \hline
+2 tight $\tau$ & 1565 & 70.24 & 988 & 64.03 & -8.84 \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1564 & 99.94 & 986 & 99.80 & -0.14 \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 1429 & 91.37 & 902 & 91.48 & 0.12 \\ \hline
+$ m_{T2} > 70 $ GeV & 280 & 19.59 & 269 & 29.82 & 52.22 \\ \hline
+All & - & 1.24 & - & 2.07 & 66.94 \\ \hline
+\hline
+\multicolumn{5}{|c|}{ \textbf{SR-high Mass} }\\\hline
+Trigger and offline cuts & 1272 & 6.99 & 836 & 7.95 & 13.73 \\ \hline
+$ \geq 1 $ tight $\tau$ & 1249 & 98.19 & 799 & 95.57 & -2.67 \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1236 & 98.96 & 781 & 97.75 & -0.82 \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 1132 & 91.59 & 708 & 90.65 & -1.03 \\ \hline
+$ m_{T2} > 70 $ GeV & 170 & 15.02 & 167 & 23.59 & 57.06 \\ \hline
+All & - & 0.76 & - & 1.29 & 69.74 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Validation checks of the cut flows table for $ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (120,1) $ GeV.}
+\label{120GeV}
+\end{table} 
+
+
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\multicolumn{6}{|c|}{ \textbf{$ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (280,1) $ GeV} }\\
+\hline\hline
+ & ATLAS($N_{raw}$) & $\epsilon_i$($\%$) & MA5($N_{raw}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
+\hline\hline
+Generator filter & 420000 & & 578102 & & \\ \hline
+2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 3980 & 0.95 & 35034 & 6.06 & \\ \hline
+$b$-jet veto & 3903 & 98.07 & 34113 & 97.37 & -0.71 \\ \hline
+Light lepton veto & 3888 & 99.62 & 34059 & 99.84 & 0.22 \\ \hline
+$Z/H$-veto & 3382 & 86.65 & 30116 & 88.42 & 2.04 \\ \hline
+\multicolumn{5}{|c|}{ \textbf{SR-low Mass} }\\\hline
+Trigger and offline cuts & 1920 & 56.77 & 17931 & 59.54 & 4.88 \\ \hline
+$ 75 < E^{miss}_T < 150 $ GeV & 738 & 40.78 & 6458 & 36.02 & -11.67 \\ \hline
+2 tight $\tau$ & 512 & 69.38 & 4661 & 72.17 & 4.02 \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 512 & 100 & 4268 & 99.29 & -0.71 \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 478 & 93.36 & 4238 & 91.57 & -1.92 \\ \hline
+$ m_{T2} > 70 $ GeV & 278 & 58.16 & 2679 & 63.21 & 8.68 \\ \hline
+All & - & 6.98 & - & 7.65 & 9.60 \\ \hline
+\hline
+\multicolumn{5}{|c|}{ \textbf{SR-high Mass} }\\\hline
+Trigger and offline cuts & 1096 & 32.41 & 10455 & 34.72 & 7.13 \\ \hline
+$ \geq 1 $ tight $\tau$ & 1076 & 98.18 & 10090 & 96.51 & -1.70 \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1045 & 97.12 & 9663 & 95.77 & -1.39 \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 973 & 93.11 & 9050 & 93.66 & 0.59 \\ \hline
+$ m_{T2} > 70 $ GeV & 691 & 71.02 & 7024 & 77.61 & 9.28 \\ \hline
+All & - & 17.36 & - & 20.05 & 15.50 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Validation checks of the cut flows table for $ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (280,1) $ GeV.}
+\label{280GeV}
+\end{table} 
+
+\end{document}
