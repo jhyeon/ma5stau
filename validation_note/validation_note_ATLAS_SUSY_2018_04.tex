@@ -15,22 +15,30 @@
 \usepackage{graphicx}
 \begin{document}
 
-\markboth{Authors' Names}{Instructions for Typing Manuscripts (Paper's Title)}
+\markboth{Jongwon Lim, Chih-Ting Lu, Jae-hyeon Park, and Jiwon Park}{IMPLEMENTATION OF THE ATLAS-SUSY-2018-04 ANALYSIS IN THE MADANALYSIS 5 FRAMEWORK}
 
 %%%%%%%%%%%%%%%%%%%%% Publisher's Area please ignore %%%%%%%%%%%%%%
 \catchline{}{}{}{}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{IMPLEMENTATION OF THE XXXXX-XXXX-XXXX-XX ANALYSIS IN THE MADANALYSIS 5 FRAMEWORK}
+\title{IMPLEMENTATION OF THE ATLAS-SUSY-2018-04 ANALYSIS IN THE MADANALYSIS 5 FRAMEWORK}
 
-\author{\footnotesize FIRST AUTHOR}
+\author{\footnotesize Jongwon Lim}
 \address{
-  University Department, University Name, Address\\
+  University Department, Hanyang University, Address\\
   City, State ZIP/Zone, Country}
 
-\author{SECOND AUTHOR}
+\author{\footnotesize Chih-Ting Lu}
 \address{
-  University Department, University Name, Address\\
+  School of Physics, KIAS, Seoul 130-722, Republic of Korea}
+
+\author{\footnotesize Jae-hyeon Park}
+\address{
+  School of Physics, KIAS, Seoul 130-722, Republic of Korea}
+
+\author{\footnotesize Jiwon Park}
+\address{
+  University Department, Hanyang University, Address\\
   City, State ZIP/Zone, Country}
 
 \maketitle
@@ -38,79 +46,274 @@
 \pub{Received (Day Month Year)}{Revised (Day Month Year)}
 
 \begin{abstract}
-We present the MADANALYSIS 5 implementation and validation of the
-XXXXX-XXXX-XXXX-XX search (give the search identifier: CMS-EXO-17-013, etc...).
-Then describe in one sentence the targeted signature, the luminonsity of
-analysed data. Explain also in one sentence how the validation was performed.
-If a short physics is performed during the school, please mention it as well.
-\keywords{Keyword1; keyword2; keyword3.}
+We present the MADANALYSIS 5 implementation and validation of the ATLAS-SUSY-2018-04 search.
+This ATLAS analysis targets the search for direct stau production in events with two hadronic tau leptons and probes $139 fb^{-1}$ of LHC proton-proton collisions at a center-of-mass energy of 13 TeV.
+The validation of our reimplementation relies on a comparison of our cutflow predictions with the auxiliary table of official ATLAS results in the context of two supersymmetry-inspired simplified benchmark models in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and a neutralino.
+\keywords{supersymmetry; stau; hadronic tau lepton.}
 \end{abstract}
 
 %\ccode{PACS Nos.: include PACS Nos.}
 
 \section{Introduction}
-Here, present briefly the classes of new physics signals investigated in the LHC
-analysis and describe the signature relevant for the search. Detail the model on
-which the validation is based on, as well as the benchmark (how the model
-parameters have been fixed) and the signal.
+
+\begin{figure}[t]
+  \centerline{\includegraphics[width=2.0in]{fig_01}}
+  \vspace*{8pt}
+  \caption{The Feynman diagram for the process $pp\rightarrow\tilde{\tau}\tilde{\tau}\rightarrow\tilde{\chi}^0_1\tilde{\chi}^0_1\tau\tau$.\protect\label{fig:fig_01}}
+\end{figure}
+
+In this note, we describe the validation of the implementation, in MADANALYSIS 5 framework~\cite{Conte:2018vmg,Dumont:2014tja,Conte:2014zja,Conte:2012fm}, of the ATLAS-SUSY-2018-04 analysis~\cite{Aad:2019byo} with direct stau production in two hadronic $\tau +E^{miss}_T$ events. 
+This process is illustrated by the representative Feynman diagram of Fig.~\ref{fig:fig_01}. 
+This analysis focuses on LHC proton-proton collisions at a center-of-mass energy of 13 TeV and an integrated luminosity of $139 fb^{-1}$.
+
+For the validation of our reimplementation, we have focused on the sector of sparticles with only electroweak interactions. 
+The lightest neutralino ($\tilde{\chi}^0_1$) is taken as the lightest supersymmetric particle (LSP). 
+The stau-left ($\tilde{\tau}_L$) and stau-right ($\tilde{\tau}_R$) are combined with the assumption of mass degenerate and no mixing is assumed between the gauge eigenstates ($\tilde{\tau}_L$,$\tilde{\tau}_R$) and mass eigenstates ($\tilde{\tau}_1$,$\tilde{\tau}_2$). 
+Furthermore, in order to suppress other decay modes of stau, the masses of all charginos and neutralinos are set to 2.5 TeV except for the $\tilde{\chi}^0_1$. 
+Hence, the single kinematically allowed decay mode of stau is 
+\begin{equation}
+\tilde{\tau}\rightarrow\tilde{\chi}^0_1 \tau 
+\end{equation}
+ 
 
 \section{Description of the analysis}
-Describe in one or two sentences the main idea behind the event selection
-strategy.
+
+This analysis targets a final state containing two hadronic tau leptons with a certain amount of missing transverse energy. 
+The kinematics of di-$\tau +E^{miss}_T$ system is used to reduce the contributions from Standard Model backgrounds. 
+First, all the objects are defined and reconstructed. Then a sequene of event selections for the signal final state are applied.
 
 \subsection{Object definitions}
-Detail here all the objects that are used in the analysis. This should include
-typical selection cuts like $p_T$ and $|\eta|$ requirements, isolation criteria,
-jet definitions, {\it etc.} Please ignore stuff that we cannot simulate in our
-machinery.
+
+Jets are reconstructed by means of the anti-$k_t$ algorithm~\cite{Cacciari:2008gp} with a radius parameter set to $R=0.4$. Our analysis focuses on jets whose transverse momentum $p^j_T$ and pseudorapidity $\eta^j$ fullfill
+\begin{equation}
+p^j_T > 20 \textrm{GeV}\quad \textrm{and}\quad |\eta^j| < 2.8.
+\end{equation} 
+Moreover, the selected jets are tagged as originating from the fragmentation of a $b$-quark with 
+\begin{equation}
+p^b_T > 20 \textrm{GeV}\quad \textrm{and}\quad |\eta^b| < 2.5.
+\end{equation}
+A working point with the average $b$-tagging efficiency of $77\%$ is used. This working point corresponds to a $c$-jet and light-jet rejection of $4.9$ and $110$, respectively.
+
+Electron candidates are required to have a transverse momentum $p^e_T$ and pseudorapidity $\eta^e$ obeying
+\begin{equation}
+p^e_T > 17 \textrm{GeV}\quad \textrm{and}\quad |\eta^e| < 2.47,
+\end{equation}
+and the muon candidate definition is similar, although with slightly looser thresholds,
+\begin{equation}
+p^{\mu}_T > 14 \textrm{GeV}\quad \textrm{and}\quad |\eta^{\mu}| < 2.7,
+\end{equation}
+Furthermore, all electron candidates are required to have both track and calorimeter isolations. The condition of the track isolation is
+\begin{equation}
+\sum p_{T,\textrm{tracks}}/p^e_T < 0.15\quad \textrm{with}\quad \Delta R=min(10\textrm{GeV}/p^e_T,0.2),
+\end{equation}
+and the condition of the calorimeter isolation is
+\begin{equation}
+\sum E_{T,\textrm{tracks}}/p^e_T < 0.2\quad \textrm{with}\quad \Delta R=0.2,
+\end{equation}
+
+\begin{equation}
+\sum E_{T,\textrm{tracks}} < max(0.015\times p^e_T,3.5\textrm{GeV})\quad \textrm{with}\quad \Delta R=0.2\quad \textrm{if}\quad p^e_T > 200\textrm{GeV}.
+\end{equation}
+Similarly, for muon candidates, the condition of the track isolation is 
+\begin{equation}
+\sum p_{T,\textrm{tracks}}/p^{\mu}_T < 0.15\quad \textrm{with}\quad \Delta R=min(10\textrm{GeV}/p^{\mu}_T,0.3),
+\end{equation}
+and the condition of the calorimeter isolation is
+\begin{equation}
+\sum E_{T,\textrm{tracks}}/p^{\mu}_T < 0.3\quad \textrm{with}\quad \Delta R=0.2,
+\end{equation}
+
+Tau lepton candidates are reconstructed with one or three associated charged-particle tracks (prongs) and $\sum_i e_i (\textrm{tracks}) = \pm 1$. For 1-prong (3-prong) $\tau$ lepton candidates, the signal efficiencies are $75\%$($60\%$) and $60\%$($45\%$) for the \textit{medium} and \textit{tight} working points, respectively. 
+The baseline tau lepton candidates are required to have 
+\begin{equation}
+p^{\tau}_T > 50(40) \textrm{GeV}\quad \textrm{and}\quad |\eta^{\tau}| < 2.5
+\end{equation}
+for the leading (subleading) ones and the transition region between the barrel and endcap calorimeters ($ 1.37 < |\eta^{\tau}| < 1.52 $) is excluded.
+
+Finally, some overlap removal conditions are in order. Tau lepton is removed if $\Delta R(\tau,e/\mu) < 0.2$, electron or muon is removed if $\Delta R(e/\mu,j) < 0.4$, and jet is removed if $\Delta R(\tau,j) < 0.4$.
+
 
 \subsection{Event selection}
-Detail here the different cuts and how they define the different signal regions.
-A table may be useful to show everything in a compact way.
 
 \begin{table}[t]
-  \tbl{Please use this template for tables.}
-  {\begin{tabular}{@{}cccc@{}} \toprule
-  Piston mass & Analytical frequency & TRIA6-$S_1$ model &
-  \% Error \\
-  & (Rad/s) & (Rad/s) \\
+  \tbl{Offline $p_T$ thresholds for the leading (subleading) tau lepton candidates of \textit{asymmetric di-$\tau$} and \textit{di-$\tau +E^{miss}_T$} triggers with efficiencies about $80\%$.}
+  {\begin{tabular}{@{}c c c@{}} \toprule
+  Year & \textit{asymmetric di-$\tau$} & \textit{di-$\tau +E^{miss}_T$} \\
   \colrule
-  1.0\hphantom{00} & \hphantom{0}281.0 & \hphantom{0}280.81 & 0.07 \\
-  0.1\hphantom{00} & \hphantom{0}876.0 & \hphantom{0}875.74 & 0.03 \\
-  0.01\hphantom{0} & 2441.0 & 2441.0\hphantom{0} & 0.0\hphantom{0} \\
-  0.001 & 4130.0 & 4129.3\hphantom{0} & 0.16\\ \botrule
-  \end{tabular}\label{ta1} }
+ 2015-2017 & $95(60)$ GeV & $50(40)$ GeV \\
+ 2018 & $95(75)$ GeV & $75(40)$ GeV \\ 
+  \botrule
+  \end{tabular}\label{tab:trig-eff} }
 \end{table}
+
+The analysis contains two \textit{medium} tau lepton candidates with opposite-sign electric charge (os). All events are required to pass either an \textit{asymmetric di-$\tau$} trigger for the low stau mass region (SR-lowMass) or a combined \textit{di-$\tau +E^{miss}_T$} ($E^{miss}_T > 150$ GeV) trigger for the high stau mass region (SR-highMass). The trigger efficiencies about $80\%$ are applied in our recasting with the following offline $p_T$ thresholds for the leading (subleading) tau lepton candidates in Table~\ref{tab:trig-eff}.
+Events with the third \textit{medium} tau lepton or any light lepton are rejected. 
+On the other hand, values of $75 < E^{miss}_T < 150$ GeV are required for SR-lowMass to increase signal sensitivity.
+
+Furthermore, $b$-jet veto is applied to reject events from top quark associated processes. The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
+
+The \textit{stransverse mass} $m_{T2}$ variable is defined as\footnote{
+Notice $m_{T2}$ calculation is done with MADANALYSIS 5 function ($PHYSICS\rightarrow Transverse\rightarrow MT2(vec1,vec2,E^{miss}_T,m_{invisible})$)
+}
+\begin{equation}
+m_{T2} =min_{\mathbf{q}_T}
+\left[
+max(m_{T,\tau_1}(\mathbf{p}_{T,\tau_1},\mathbf{q}_T),m_{T,\tau_2}(\mathbf{p}_{T,\tau_2},\mathbf{p}^{miss}_T -\mathbf{q}_T))
+\right],
+\end{equation}   
+where $\mathbf{p}_{T,\tau_1}$ and $\mathbf{p}_{T,\tau_2}$ are the transverse momenta of the two tau lepton candidates, and the transverse momentum vector of one of the invisible particle, $\mathbf{q}_T$, is choosen to minimize the larger of the two transverse mass $m_{T,\tau_1}$ and $m_{T,\tau_2}$. The transverse mass $m_T$ is defined by
+\begin{equation}
+m_{T}(\mathbf{p}_T,\mathbf{q}_T) = \sqrt{2(p_T q_T -\mathbf{p}_T\cdot\mathbf{q}_T)}.
+\end{equation} 
+A lower bound on the $m_{T2}$ will be imposed to reduce contributions from $t\overline{t}$ and $WW$ events.
+Finally, the two tau lepton candidates are required to satisfy $\Delta R(\tau_1,\tau_2) < 3.2$, $|\Delta\phi (\tau_1,\tau_2)| > 0.8$ and $m_{T2} > 70$ GeV to further suppress contributions from SM backgrounds.
+
+
+%\begin{table}[t]
+%  \tbl{Please use this template for tables.}
+%  {\begin{tabular}{@{}cccc@{}} \toprule
+%  Piston mass & Analytical frequency & TRIA6-$S_1$ model &
+%  \% Error \\
+%  & (Rad/s) & (Rad/s) \\
+%  \colrule
+%  1.0\hphantom{00} & \hphantom{0}281.0 & \hphantom{0}280.81 & 0.07 \\
+%  0.1\hphantom{00} & \hphantom{0}876.0 & \hphantom{0}875.74 & 0.03 \\
+%  0.01\hphantom{0} & 2441.0 & 2441.0\hphantom{0} & 0.0\hphantom{0} \\
+%  0.001 & 4130.0 & 4129.3\hphantom{0} & 0.16\\ \botrule
+%  \end{tabular}\label{ta1} }
+%\end{table}
 
 
 \section{Validation}
 
 \subsection{Event generation}
 
-Give information on how the event samples relevant for the validation of the
-analysis have been generated. Provide details about the generators that have
-been used, their versions, the model files, etc.
+In order to validate our analysis, we rely on the MSSM UFO model file~\cite{Duhr:2011se} from Feynrules model database~\cite{Alloul:2013bka}. 
+Two benchmark points with masses $ m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV and $ (280,1) $GeV are used in this note to illustrate the validation of our reimplementation. 
+We make use of MADGRAPH5 aMC@NLO version 2.6.7~\cite{Alwall:2014hca} for hard-scattering event generation in which leading-order matrix elements are convoluted with the NNPDF23LO~\cite{Martin:2009iq} parton distribution function (PDF) set. The signal includes the emission of up to two additional partons. We apply the MLM scheme~\cite{Mangano:2006rw,Alwall:2008qv} of the ME-PS matching with $xqcut = m_{\tilde{\tau}}/4$. 
+The PYTHIA8 version 8.244~\cite{Sjostrand:2007gs} with $A14$ tune has been used for the simulation of the parton showering and hadronization. The simulation of the detector response has been performed by using DELPHES-3.4.2~\cite{deFavereau:2013fsa}, that relies on FASTJET~\cite{Cacciari:2011ma} for object reconstruction and that has been used with an appropriate tuned detector card. Finally, we have used the MADANALYSIS5 reimplementation to calculate the signal selection efficiencies.
+
 
 \subsection{Comparison with the official results}
-In this section, you should put all the comparisons you have made. Cutflows in
-which you compare the MA5 numbers to the official ATLAS/CMS ones, distributions
-if any. Put here as much material as possible. Of course this depends on the
-pieces of information available in the analysis. Assess the level of agreement,
-why you think it is correct, etc.
+
+\begin{table}[t]
+  \tbl{Validation checks of the cut flows for $ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (120,1) $ GeV.}
+  {\begin{tabular}{@{}c c c c c c@{}} \toprule
+\hline
+\multicolumn{6}{c}{ \textbf{$ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (120,1) $ GeV} }\\
+\hline\hline
+ & ATLAS($N_{raw}$) & $\epsilon_i$($\%$) & MA5($N_{raw}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
+\hline\hline
+
+2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 22493 & & 25857 & & \\ \hline
+$b$-jet veto & 22148 & 98.47 & 25270 & 97.73 & $-0.75$ \\ \hline
+Light lepton veto & 22109 & 99.82 & 25248 & 99.91 & 0.00 \\ \hline
+$Z/H$-veto & 18188 & 82.27 & 20940 & 82.94 & 0.80 \\ \hline
+%
+\multicolumn{5}{c}{ \textbf{SR-lowMass} }\\\hline
+%
+Trigger and offline cuts & 6512 & 35.80 & 7675 & 36.65 & 2.30 \\ \hline
+$ 75 < E^{miss}_T < 150 $ GeV & 2228 & 34.21 & 2653 & 34.57 & 1.00 \\ \hline
+2 tight $\tau$ & 1565 & 70.24 & 1747 & 65.85 & $-6.25$ \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1564 & 99.94 & 1744 & 99.83 & $-0.11$ \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 1429 & 91.37 & 1595 & 91.46 & 0.10 \\ \hline
+$ m_{T2} > 70 $ GeV & 280 & 19.59 & 453 & 28.40 & 44.90 \\ \hline
+All &  & 1.24 &  & 1.75 & 40.70 \\ \hline
+%
+\hline
+\multicolumn{5}{c}{ \textbf{SR-highMass} }\\\hline
+%
+Trigger and offline cuts & 1272 & 6.99 & 1709 & 8.16 & 16.70 \\ \hline
+$ \geq 1 $ tight $\tau$ & 1249 & 98.19 & 1632 & 95.49 & $-2.75$ \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1236 & 98.96 & 1600 & 98.04 & $-0.93$ \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 1132 & 91.59 & 1444 & 90.25 & $-1.46$ \\ \hline
+$ m_{T2} > 70 $ GeV & 170 & 15.02 & 345 & 23.89 & 59.00 \\ \hline
+All &  & 0.76 &  & 1.33 & 76.50 \\ \botrule
+\end{tabular}
+\label{tab:120GeV} }
+\end{table}
+
+\begin{table}[t]
+  \tbl{Validation checks of the cut flows for $ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (280,1) $ GeV.}
+  {\begin{tabular}{@{}c c c c c c@{}} \toprule
+\hline
+\multicolumn{6}{c}{ \textbf{$ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (120,1) $ GeV} }\\
+\hline\hline
+ & ATLAS($N_{raw}$) & $\epsilon_i$($\%$) & MA5($N_{raw}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
+\hline\hline
+
+2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 3980 & & 35034 & & \\ \hline
+$b$-jet veto & 3903 & 98.07 & 34113 & 97.37 & $-0.71$ \\ \hline
+Light lepton veto & 3888 & 99.62 & 34059 & 99.84 & 0.20 \\ \hline
+$Z/H$-veto & 3382 & 86.99 & 30116 & 88.42 & 1.60 \\ \hline
+%
+\multicolumn{5}{c}{ \textbf{SR-lowMass} }\\\hline
+%
+Trigger and offline cuts & 1920 & 56.77 & 18677 & 62.02 & 9.20 \\ \hline
+$ 75 < E^{miss}_T < 150 $ GeV & 738 & 38.44 & 6730 & 36.03 & $-6.25$ \\ \hline
+2 tight $\tau$ & 512 & 69.38 & 4328 & 64.31 & $-7.30$ \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 512 & 100.00 & 4296 & 99.26 & $-0.74$ \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 478 & 93.36 & 3928 & 91.43 & $-2.06$ \\ \hline
+$ m_{T2} > 70 $ GeV & 278 & 58.16 & 2441 & 62.14 & 6.80 \\ \hline
+All &  & 6.98 &  & 6.97 & $-0.25$ \\ \hline
+%
+\hline
+\multicolumn{5}{c}{ \textbf{SR-highMass} }\\\hline
+%
+Trigger and offline cuts & 1096 & 32.41 & 11526 & 38.27 & 18.10 \\ \hline
+$ \geq 1 $ tight $\tau$ & 1076 & 98.18 & 11315 & 98.17 & $-0.01$ \\ \hline
+$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1045 & 97.12 & 10833 & 95.74 & $-1.42$ \\ \hline
+$ |\Delta R(\tau,\tau)| < 3.2 $ & 973 & 93.11 & 10140 & 93.60 & 0.50 \\ \hline
+$ m_{T2} > 70 $ GeV & 691 & 71.02 & 7887 & 77.78 & 9.50 \\ \hline
+All &  & 17.36 &  & 22.51 & 29.60 \\ \botrule
+\end{tabular}
+\label{tab:280GeV} }
+\end{table} 
 
 \begin{figure}[t]
-  \centerline{\includegraphics[width=2.0in]{mplaf1}}
+  \centerline{\includegraphics[width=2.0in]{m120_norm_1}\includegraphics[width=2.0in]{m120_norm_2}}
   \vspace*{8pt}
-  \caption{Please use this template for figures.\protect\label{fig1}}
+  \caption{The $m_{T2}$ distributions for $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV.\protect\label{fig:m120_norm}}
 \end{figure}
 
+\begin{figure}[t]
+  \centerline{\includegraphics[width=2.0in]{m280_norm_1}\includegraphics[width=2.0in]{m280_norm_2}}
+  \vspace*{8pt}
+  \caption{The $m_{T2}$ distributions for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV.\protect\label{fig:m280_norm}}
+\end{figure}
+
+In Table~\ref{tab:120GeV} and~\ref{tab:280GeV}, we compare the results obtained with our implememtation to the official raw event numbers in the auxiliary tables provided by the ATLAS collaboration for the benchmark points with masses $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $ and $(280,1)$GeV, respectively. 
+For each cut, we have calculated the related efficiency defined as 
+\begin{equation}
+\epsilon_i =\frac{n_i}{n_{i-1}}
+\end{equation}
+where $ n_i $ and $ n_{i-1} $ mean the event number after and before the considered cut, respectively.
+%
+On the other hand, we have also calculated the differences between $ \epsilon_i (MA5)$ and $ \epsilon_i (ATLAS)$ with the definition as
+\begin{equation}
+diff. = \frac{\epsilon_i (MA5)-\epsilon_i (ATLAS)}{\epsilon_i (ATLAS)}
+\end{equation}
+We observe that the disagreement on a cut-by-cut basis, is $-2.65\%$ and $10.03\%$ before the $m_{T2}$ cut for SR-lowMass and SR-highMass in Table~\ref{tab:120GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV. The major parts of the disagreement come from \textbf{Trigger and offline cuts}, and tight $\tau$ selection steps. By lack of more public experimental information, we have not been able to validate these two steps more precisely.
+In Fig.~\ref{fig:m120_norm}, we realize the $m_{T2}$ distributions from ATLAS analysis are sofer than our results. This causes the $m_{T2} > 70$GeV cut looser in our reimplementation than the original ATLAS results. 
+Similarly, the disagreement on a cut-by-cut basis, is $-0.25\%$ and $29.60\%$ with all cuts for SR-lowMass and SR-highMass in Table~\ref{tab:280GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV. The major parts of the disagreement still come from  \textbf{Trigger and offline cuts}, tight $\tau$ selection ,and $m_{T2}$ cut steps. 
+The $m_{T2}$ distributions are shown in Fig.~\ref{fig:m280_norm} for the comparison of our results with ATLAS analysis. 
+
+%\begin{figure}[t]
+%  \centerline{\includegraphics[width=2.0in]{mplaf1}}
+%  \vspace*{8pt}
+%  \caption{Please use this template for figures.\protect\label{fig1}}
+%\end{figure}
+
 \section{Conclusions}
-Summarise your work here.
+
+We have implemented the ATLAS-SUSY-2018-04 search in the MADANALYSIS 5 framework. Our analysis has been validated in the context of two supersymmetry-inspired simplified benchmark models in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and a neutrino. 
+By comparing our predictions for the cutflow with the official one provided by ATLAS in Ref.\cite{Aad:2019byo}, we have found an agreement for each step in Table~\ref{tab:120GeV} and~\ref{tab:280GeV} except for the ones from \textbf{Trigger and offline cuts}, tight $\tau$ selection, and $m_{T2}$ cut. Due to the lack of more information, we have not been able to validate these steps more precisely. 
+
 
 \section*{Acknowledgments}
 Dedications and funding information may be included here.
 
-\begin{thebibliography}{0}
+\begin{thebibliography}{99}
 \bibitem{Conte:2018vmg}
   E.~Conte and B.~Fuks,
   Int.\ J.\ Mod.\ Phys.\ A {\bf 33} (2018) no.28,  1830027
@@ -131,5 +334,114 @@ Dedications and funding information may be included here.
   Comput.\ Phys.\ Commun.\  {\bf 184} (2013) 222
   [arXiv:1206.1599 [hep-ph]].
 
+%\cite{Aad:2019byo}
+\bibitem{Aad:2019byo} 
+  G.~Aad {\it et al.} [ATLAS Collaboration],
+  %``Search for direct stau production in events with two hadronic $\tau$-leptons in $\sqrt{s} = 13$ TeV $pp$ collisions with the ATLAS detector,''
+  Phys.\ Rev.\ D {\bf 101}, no. 3, 032009 (2020)
+  doi:10.1103/PhysRevD.101.032009
+  [arXiv:1911.06660 [hep-ex]].
+  %%CITATION = doi:10.1103/PhysRevD.101.032009;%%
+  %7 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{Cacciari:2008gp}
+\bibitem{Cacciari:2008gp} 
+  M.~Cacciari, G.~P.~Salam and G.~Soyez,
+  %``The anti-$k_t$ jet clustering algorithm,''
+  JHEP {\bf 0804}, 063 (2008)
+  doi:10.1088/1126-6708/2008/04/063
+  [arXiv:0802.1189 [hep-ph]].
+  %%CITATION = doi:10.1088/1126-6708/2008/04/063;%%
+  %6790 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{Duhr:2011se}
+\bibitem{Duhr:2011se} 
+  C.~Duhr and B.~Fuks,
+  %``A superspace module for the FeynRules package,''
+  Comput.\ Phys.\ Commun.\  {\bf 182}, 2404 (2011)
+  doi:10.1016/j.cpc.2011.06.009
+  [arXiv:1102.4191 [hep-ph]].
+  %%CITATION = doi:10.1016/j.cpc.2011.06.009;%%
+  %69 citations counted in INSPIRE as of 27 Mar 2020
+  
+%\cite{Alloul:2013bka}
+\bibitem{Alloul:2013bka} 
+  A.~Alloul, N.~D.~Christensen, C.~Degrande, C.~Duhr and B.~Fuks,
+  %``FeynRules  2.0 - A complete toolbox for tree-level phenomenology,''
+  Comput.\ Phys.\ Commun.\  {\bf 185}, 2250 (2014)
+  doi:10.1016/j.cpc.2014.04.012
+  [arXiv:1310.1921 [hep-ph]].
+  %%CITATION = doi:10.1016/j.cpc.2014.04.012;%%
+  %1327 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{Alwall:2014hca}
+\bibitem{Alwall:2014hca} 
+  J.~Alwall {\it et al.},
+  %``The automated computation of tree-level and next-to-leading order differential cross sections, and their matching to parton shower simulations,''
+  JHEP {\bf 1407}, 079 (2014)
+  doi:10.1007/JHEP07(2014)079
+  [arXiv:1405.0301 [hep-ph]].
+  %%CITATION = doi:10.1007/JHEP07(2014)079;%%
+  %4502 citations counted in INSPIRE as of 27 Mar 2020
+    
+%\cite{Martin:2009iq}
+\bibitem{Martin:2009iq} 
+  A.~D.~Martin, W.~J.~Stirling, R.~S.~Thorne and G.~Watt,
+  %``Parton distributions for the LHC,''
+  Eur.\ Phys.\ J.\ C {\bf 63}, 189 (2009)
+  doi:10.1140/epjc/s10052-009-1072-5
+  [arXiv:0901.0002 [hep-ph]].
+  %%CITATION = doi:10.1140/epjc/s10052-009-1072-5;%%
+  %4803 citations counted in INSPIRE as of 27 Mar 2020  
+  
+%\cite{Mangano:2006rw}
+\bibitem{Mangano:2006rw} 
+  M.~L.~Mangano, M.~Moretti, F.~Piccinini and M.~Treccani,
+  %``Matching matrix elements and shower evolution for top-quark production in hadronic collisions,''
+  JHEP {\bf 0701}, 013 (2007)
+  doi:10.1088/1126-6708/2007/01/013
+  [hep-ph/0611129].
+  %%CITATION = doi:10.1088/1126-6708/2007/01/013;%%
+  %695 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{Alwall:2008qv}
+\bibitem{Alwall:2008qv} 
+  J.~Alwall, S.~de Visscher and F.~Maltoni,
+  %``QCD radiation in the production of heavy colored particles at the LHC,''
+  JHEP {\bf 0902}, 017 (2009)
+  doi:10.1088/1126-6708/2009/02/017
+  [arXiv:0810.5350 [hep-ph]].
+  %%CITATION = doi:10.1088/1126-6708/2009/02/017;%%
+  %210 citations counted in INSPIRE as of 27 Mar 2020  
+
+%\cite{Sjostrand:2007gs}
+\bibitem{Sjostrand:2007gs} 
+  T.~Sjostrand, S.~Mrenna and P.~Z.~Skands,
+  %``A Brief Introduction to PYTHIA 8.1,''
+  Comput.\ Phys.\ Commun.\  {\bf 178}, 852 (2008)
+  doi:10.1016/j.cpc.2008.01.036
+  [arXiv:0710.3820 [hep-ph]].
+  %%CITATION = doi:10.1016/j.cpc.2008.01.036;%%
+  %5077 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{deFavereau:2013fsa}
+\bibitem{deFavereau:2013fsa} 
+  J.~de Favereau {\it et al.} [DELPHES 3 Collaboration],
+  %``DELPHES 3, A modular framework for fast simulation of a generic collider experiment,''
+  JHEP {\bf 1402}, 057 (2014)
+  doi:10.1007/JHEP02(2014)057
+  [arXiv:1307.6346 [hep-ex]].
+  %%CITATION = doi:10.1007/JHEP02(2014)057;%%
+  %1518 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{Cacciari:2011ma}
+\bibitem{Cacciari:2011ma} 
+  M.~Cacciari, G.~P.~Salam and G.~Soyez,
+  %``FastJet User Manual,''
+  Eur.\ Phys.\ J.\ C {\bf 72}, 1896 (2012)
+  doi:10.1140/epjc/s10052-012-1896-2
+  [arXiv:1111.6097 [hep-ph]].
+  %%CITATION = doi:10.1140/epjc/s10052-012-1896-2;%%
+  %3362 citations counted in INSPIRE as of 27 Mar 2020
 \end{thebibliography}
 \end{document}

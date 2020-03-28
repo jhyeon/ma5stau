@@ -62,7 +62,6 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
 
   // Common selections
   Manager()->AddCut("2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto",   SRlowhigh);
-//  Manager()->AddCut("3rd medium $\\tau$ veto", SRlowhigh);
   Manager()->AddCut("b-jet veto",              SRlowhigh);
   Manager()->AddCut("light lepton veto",       SRlowhigh);
   Manager()->AddCut("Z/H veto",                SRlowhigh);
@@ -149,7 +148,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //// Electrons ////
   std::vector<const RecLeptonFormat*> SignalElectrons;
   for( unsigned int ie=0; ie<event.rec()->electrons().size(); ie++ ){
-
     const RecLeptonFormat *Lep = &(event.rec()->electrons()[ie]);
 
     // Kinematics
@@ -163,7 +161,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     bool iso = (iso_tracks<0.15 && iso_all<0.20);
     if( pt>200. ) iso = (iso_all<std::max(0.015, 3.5/pt));
 
-    // Signal leptons
+    // Signal electrons
     if( eta < 2.47 && pt > 17. && iso) SignalElectrons.push_back(Lep);
   }
 
@@ -184,7 +182,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     bool iso = (iso_tracks<0.15 && iso_all<0.30);
 
     // Signal leptons
-    if( eta < 2.47 && pt > 14. && iso ) SignalMuons.push_back(Lep);
+    if( eta < 2.7 && pt > 14. && iso ) SignalMuons.push_back(Lep);
   }
 
 
@@ -238,10 +236,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     if( SignalTaus[i]->charge() < 0 ) tau_charge_sum--;
   }
   if( !Manager()->ApplyCut(SignalTaus.size() == 2 && tau_charge_sum==0, "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true;
-
-
-  //// Common cut-2 : 3rd medium tau veto. ////
-//  if( !Manager()->ApplyCut(SignalTaus.size() < 3, "3rd medium $\\tau$ veto") ) return true;
 
 
   //// Common cut-2 : b-jet veto. ////
@@ -298,7 +292,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     return true;
 
 
-  //// SRlow cut-6 : mT2>70 GeV. ////LorentzVector tau_low1 = SignalTaus[0]->momentum();
+  //// SRlow cut-6 : mT2>70 GeV. ////
   double mt2_low = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),1.);
   if( !Manager()->ApplyCut(mt2_low > 70, "$m_{T2}>70$ GeV(low)") ) return true;
 
