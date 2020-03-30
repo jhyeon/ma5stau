@@ -47,7 +47,7 @@
 
 \begin{abstract}
 We present the MADANALYSIS 5 implementation and validation of the ATLAS-SUSY-2018-04 search.
-This ATLAS analysis targets the search for direct stau production in events with two hadronic tau leptons and probes $139 fb^{-1}$ of LHC proton-proton collisions at a center-of-mass energy of 13 TeV.
+This ATLAS analysis targets the search for direct stau production in events with two hadronic tau leptons and probes 139 fb$^{-1}$ of LHC proton-proton collisions at a center-of-mass energy of 13 TeV.
 The validation of our reimplementation relies on a comparison of our cutflow predictions with the auxiliary table of official ATLAS results in the context of two supersymmetry-inspired simplified benchmark models in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and a neutralino.
 \keywords{supersymmetry; stau; hadronic tau lepton.}
 \end{abstract}
@@ -80,7 +80,7 @@ Hence, the single kinematically allowed decay mode of stau is
 
 This analysis targets a final state containing two hadronic tau leptons with a certain amount of missing transverse energy. 
 The kinematics of di-$\tau +E^{miss}_T$ system is used to reduce the contributions from Standard Model backgrounds. 
-First, all the objects are defined and reconstructed. Then a sequene of event selections for the signal final state are applied.
+First, all the objects are reconstructed and defined. Then a sequene of event selections for the signal final state are applied.
 
 \subsection{Object definitions}
 
@@ -96,34 +96,37 @@ A working point with the average $b$-tagging efficiency of $77\%$ is used. This 
 
 Electron candidates are required to have a transverse momentum $p^e_T$ and pseudorapidity $\eta^e$ obeying
 \begin{equation}
-p^e_T > 17 \textrm{GeV}\quad \textrm{and}\quad |\eta^e| < 2.47,
-\end{equation}
-and the muon candidate definition is similar, although with slightly looser thresholds,
-\begin{equation}
-p^{\mu}_T > 14 \textrm{GeV}\quad \textrm{and}\quad |\eta^{\mu}| < 2.7,
+p^e_T > 17 \textrm{GeV}\quad \textrm{and}\quad |\eta^e| < 2.47.
 \end{equation}
 Furthermore, all electron candidates are required to have both track and calorimeter isolations. The condition of the track isolation is
 \begin{equation}
 \sum p_{T,\textrm{tracks}}/p^e_T < 0.15\quad \textrm{with}\quad \Delta R=min(10\textrm{GeV}/p^e_T,0.2),
 \end{equation}
-and the condition of the calorimeter isolation is
+the condition of the calorimeter isolation is
 \begin{equation}
-\sum E_{T,\textrm{tracks}}/p^e_T < 0.2\quad \textrm{with}\quad \Delta R=0.2,
+\sum E_{T,\textrm{calorimeter}}/p^e_T < 0.2\quad \textrm{with}\quad \Delta R=0.2,
 \end{equation}
-
+and for high transverse momentum electron, 
 \begin{equation}
 \sum E_{T,\textrm{tracks}} < max(0.015\times p^e_T,3.5\textrm{GeV})\quad \textrm{with}\quad \Delta R=0.2\quad \textrm{if}\quad p^e_T > 200\textrm{GeV}.
 \end{equation}
-Similarly, for muon candidates, the condition of the track isolation is 
+
+Muon candidate definition is similar, although with slightly looser thresholds,
+\begin{equation}
+p^{\mu}_T > 14 \textrm{GeV}\quad \textrm{and}\quad |\eta^{\mu}| < 2.7,
+\end{equation}
+The condition of the track isolation is 
 \begin{equation}
 \sum p_{T,\textrm{tracks}}/p^{\mu}_T < 0.15\quad \textrm{with}\quad \Delta R=min(10\textrm{GeV}/p^{\mu}_T,0.3),
 \end{equation}
 and the condition of the calorimeter isolation is
 \begin{equation}
-\sum E_{T,\textrm{tracks}}/p^{\mu}_T < 0.3\quad \textrm{with}\quad \Delta R=0.2,
+\sum E_{T,\textrm{tracks}}/p^{\mu}_T < 0.3\quad \textrm{with}\quad \Delta R=0.2.
 \end{equation}
 
-Tau lepton candidates are reconstructed with one or three associated charged-particle tracks (prongs) and $\sum_i e_i (\textrm{tracks}) = \pm 1$. For 1-prong (3-prong) $\tau$ lepton candidates, the signal efficiencies are $75\%$($60\%$) and $60\%$($45\%$) for the \textit{medium} and \textit{tight} working points, respectively. 
+Tau lepton candidates are reconstructed with one or three associated charged pion tracks (prongs). %$\sum_i e_i (\textrm{tracks}) = \pm 1$.
+%For 1-prong (3-prong) $\tau$ lepton candidates, the signal efficiencies are $75\%$($60\%$) and $60\%$($45\%$) for the \textit{medium} and \textit{tight} working points, respectively.
+For 1-prong (3-prong) $\tau$ lepton candidates, the signal efficiencies are $75\%$ and $60\%$ for the \textit{medium} working points. Due to technical restriction, the \textit{tight} working point efficiencies are directly taken from cutflow table. %Should add more details
 The baseline tau lepton candidates are required to have 
 \begin{equation}
 p^{\tau}_T > 50(40) \textrm{GeV}\quad \textrm{and}\quad |\eta^{\tau}| < 2.5
@@ -134,8 +137,22 @@ Finally, some overlap removal conditions are in order. Tau lepton is removed if 
 
 
 \subsection{Event selection}
+%The analysis contains two \textit{medium} tau lepton candidates with opposite-sign electric charge (OS). All events are required to pass either an \textit{asymmetric di-$\tau$} trigger for the low stau mass region (SR-lowMass) or a combined \textit{di-$\tau +E^{miss}_T$} ($E^{miss}_T > 150$ GeV) trigger for the high stau mass region (SR-highMass). The trigger efficiencies about $80\%$ are applied in our recasting with the following offline $p_T$ thresholds for the leading (subleading) tau lepton candidates in Table~\ref{tab:trig-eff}.
+%Events with the third \textit{medium} tau lepton or any light lepton are rejected. 
+%On the other hand, values of $75 < E^{miss}_T < 150$ GeV are required for SR-lowMass to increase signal sensitivity.
 
-\begin{table}[t]
+%Furthermore, $b$-jet veto is applied to reject events from top quark associated processes. The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
+
+%Here mostly re-arranged sentences from above paragraphs
+The events with exactly two \textit{medium} tau lepton candidates with opposite-sign electric charge (OS) are selected. 
+Then, $b$-jet veto is applied to reject events from top quark associated processes.
+Also, the events with additional light lepton (muon or electron) are rejected.
+The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
+
+All events are required to pass either an \textit{asymmetric di-$\tau$} trigger for the low stau mass region (SR-lowMass) or a combined \textit{di-$\tau +E^{miss}_T$} ($E^{miss}_T > 150$ GeV) trigger for the high stau mass region (SR-highMass) (\textbf{Trigger and offline cuts}).
+The trigger efficiencies about $80\%$ are applied in our recasting with the following offline $p_T$ thresholds for the leading (subleading) tau lepton candidates in Table~\ref{tab:trig-eff}.
+
+\begin{table}[h!]
   \tbl{Offline $p_T$ thresholds for the leading (subleading) tau lepton candidates of \textit{asymmetric di-$\tau$} and \textit{di-$\tau +E^{miss}_T$} triggers with efficiencies about $80\%$.}
   {\begin{tabular}{@{}c c c@{}} \toprule
   Year & \textit{asymmetric di-$\tau$} & \textit{di-$\tau +E^{miss}_T$} \\
@@ -146,11 +163,10 @@ Finally, some overlap removal conditions are in order. Tau lepton is removed if 
   \end{tabular}\label{tab:trig-eff} }
 \end{table}
 
-The analysis contains two \textit{medium} tau lepton candidates with opposite-sign electric charge (os). All events are required to pass either an \textit{asymmetric di-$\tau$} trigger for the low stau mass region (SR-lowMass) or a combined \textit{di-$\tau +E^{miss}_T$} ($E^{miss}_T > 150$ GeV) trigger for the high stau mass region (SR-highMass). The trigger efficiencies about $80\%$ are applied in our recasting with the following offline $p_T$ thresholds for the leading (subleading) tau lepton candidates in Table~\ref{tab:trig-eff}.
-Events with the third \textit{medium} tau lepton or any light lepton are rejected. 
-On the other hand, values of $75 < E^{miss}_T < 150$ GeV are required for SR-lowMass to increase signal sensitivity.
-
-Furthermore, $b$-jet veto is applied to reject events from top quark associated processes. The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
+In SR-lowMass region, values of $75 < E^{miss}_T < 150$ GeV are required for SR-lowMass to increase signal sensitivity.
+Also, two selected tau leptons are required to be tight tagged.
+The efficiency of selection two taus passing tight working point on top of two medium tagged tau leptons is taken from official ATLAS cutflow table as a ratio of raw number of event before and after applying cut, and the tight tagging efficiency is then applied as a probability per tau by a square root of the efficiency.
+On the other hand, in SR-highMass region the tight tagging efficiency is applied in the same manner as SR-lowMass region, but allowing at least one of two taus passing the tight selection.
 
 The \textit{stransverse mass} $m_{T2}$ variable is defined as\footnote{
 Notice $m_{T2}$ calculation is done with MADANALYSIS 5 function ($PHYSICS\rightarrow Transverse\rightarrow MT2(vec1,vec2,E^{miss}_T,m_{invisible})$)
@@ -191,12 +207,30 @@ Finally, the two tau lepton candidates are required to satisfy $\Delta R(\tau_1,
 In order to validate our analysis, we rely on the MSSM UFO model file~\cite{Duhr:2011se} from Feynrules model database~\cite{Alloul:2013bka}. 
 Two benchmark points with masses $ m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV and $ (280,1) $GeV are used in this note to illustrate the validation of our reimplementation. 
 We make use of MADGRAPH5 aMC@NLO version 2.6.7~\cite{Alwall:2014hca} for hard-scattering event generation in which leading-order matrix elements are convoluted with the NNPDF23LO~\cite{Martin:2009iq} parton distribution function (PDF) set. The signal includes the emission of up to two additional partons. We apply the MLM scheme~\cite{Mangano:2006rw,Alwall:2008qv} of the ME-PS matching with $xqcut = m_{\tilde{\tau}}/4$. 
-The PYTHIA8 version 8.244~\cite{Sjostrand:2007gs} with $A14$ tune has been used for the simulation of the parton showering and hadronization. The simulation of the detector response has been performed by using DELPHES-3.4.2~\cite{deFavereau:2013fsa}, that relies on FASTJET~\cite{Cacciari:2011ma} for object reconstruction and that has been used with an appropriate tuned detector card. Finally, we have used the MADANALYSIS5 reimplementation to calculate the signal selection efficiencies.
+The PYTHIA8 version 8.244~\cite{Sjostrand:2007gs} with $A14$ tune has been used for the simulation of the parton showering and hadronization. The simulation of the detector response has been performed by using DELPHES-3.4.2~\cite{deFavereau:2013fsa}, that relies on FASTJET~\cite{Cacciari:2011ma} for object reconstruction.
+The modified delphes card has been used with an appropriate tuned detector card.
+For example, the loosened isolation criteria are applied to cover all offline object definitions.
+And the radius parameter of jet and minimum transverse momentum in lowered to 0.4 and 15 GeV with updating $b$ and tau tagging efficiencies.
+Also, UniqueObjectFinder is disabled for overlap removal which is done in MADANALYSIS5.
+Finally, we have used the MADANALYSIS5 reimplementation to calculate the signal selection efficiencies.
+
 
 
 \subsection{Comparison with the official results}
+In Table~\ref{tab:120GeV} and~\ref{tab:280GeV}, we compare the results obtained with our implememtation to the official raw event numbers in the auxiliary tables provided by the ATLAS collaboration for the benchmark points with masses $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $ and $(280,1)$GeV, respectively. 
+For each cut, we have calculated the related efficiency defined as 
+\begin{equation}
+\epsilon_i =\frac{n_i}{n_{i-1}}
+\end{equation}
+where $ n_i $ and $ n_{i-1} $ mean the event number after and before the considered cut, respectively.
+%
+On the other hand, we have also calculated the differences between $ \epsilon_i (MA5)$ and $ \epsilon_i (ATLAS)$ with the definition as
+\begin{equation}
+diff. = \frac{\epsilon_i (MA5)-\epsilon_i (ATLAS)}{\epsilon_i (ATLAS)}
+\end{equation}
 
-\begin{table}[t]
+
+\begin{table}[h!]
   \tbl{Validation checks of the cut flows for $ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (120,1) $ GeV.}
   {\begin{tabular}{@{}c c c c c c@{}} \toprule
 \hline
@@ -233,7 +267,7 @@ All &  & 0.76 &  & 1.33 & 76.50 \\ \botrule
 \label{tab:120GeV} }
 \end{table}
 
-\begin{table}[t]
+\begin{table}[h!]
   \tbl{Validation checks of the cut flows for $ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (280,1) $ GeV.}
   {\begin{tabular}{@{}c c c c c c@{}} \toprule
 \hline
@@ -270,7 +304,9 @@ All &  & 17.36 &  & 22.51 & 29.60 \\ \botrule
 \label{tab:280GeV} }
 \end{table} 
 
-\begin{figure}[t]
+
+We observe that the disagreement on a cut-by-cut basis, is $-2.65\%$ and $10.03\%$ before the $m_{T2}$ cut for SR-lowMass and SR-highMass in Table~\ref{tab:120GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV. The major parts of the disagreement come from \textbf{Trigger and offline cuts}, and tight $\tau$ selection steps. By lack of more public experimental information, we have not been able to validate these two steps more precisely.
+\begin{figure}[h!]
   \centerline{\includegraphics[width=2.0in]{m120_norm_1}\includegraphics[width=2.0in]{m120_norm_2}}
   \vspace*{8pt}
   \caption{The $m_{T2}$ distributions for $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV.\protect\label{fig:m120_norm}}
@@ -281,21 +317,8 @@ All &  & 17.36 &  & 22.51 & 29.60 \\ \botrule
   \vspace*{8pt}
   \caption{The $m_{T2}$ distributions for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV.\protect\label{fig:m280_norm}}
 \end{figure}
-
-In Table~\ref{tab:120GeV} and~\ref{tab:280GeV}, we compare the results obtained with our implememtation to the official raw event numbers in the auxiliary tables provided by the ATLAS collaboration for the benchmark points with masses $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $ and $(280,1)$GeV, respectively. 
-For each cut, we have calculated the related efficiency defined as 
-\begin{equation}
-\epsilon_i =\frac{n_i}{n_{i-1}}
-\end{equation}
-where $ n_i $ and $ n_{i-1} $ mean the event number after and before the considered cut, respectively.
-%
-On the other hand, we have also calculated the differences between $ \epsilon_i (MA5)$ and $ \epsilon_i (ATLAS)$ with the definition as
-\begin{equation}
-diff. = \frac{\epsilon_i (MA5)-\epsilon_i (ATLAS)}{\epsilon_i (ATLAS)}
-\end{equation}
-We observe that the disagreement on a cut-by-cut basis, is $-2.65\%$ and $10.03\%$ before the $m_{T2}$ cut for SR-lowMass and SR-highMass in Table~\ref{tab:120GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV. The major parts of the disagreement come from \textbf{Trigger and offline cuts}, and tight $\tau$ selection steps. By lack of more public experimental information, we have not been able to validate these two steps more precisely.
-In Fig.~\ref{fig:m120_norm}, we realize the $m_{T2}$ distributions from ATLAS analysis are sofer than our results. This causes the $m_{T2} > 70$GeV cut looser in our reimplementation than the original ATLAS results. 
-Similarly, the disagreement on a cut-by-cut basis, is $-0.25\%$ and $29.60\%$ with all cuts for SR-lowMass and SR-highMass in Table~\ref{tab:280GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV. The major parts of the disagreement still come from  \textbf{Trigger and offline cuts}, tight $\tau$ selection ,and $m_{T2}$ cut steps. 
+In Fig.~\ref{fig:m120_norm}, we realize the $m_{T2}$ distributions from ATLAS analysis are sofer than our results. This causes the $m_{T2} > 70$GeV cut looser in our reimplementation than the original ATLAS results which is taken from HEPData. %Need reference? 
+Similarly, the disagreement on a cut-by-cut basis is $-0.25\%$ and $29.60\%$ with all cuts for SR-lowMass and SR-highMass in Table~\ref{tab:280GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV. The major parts of the disagreement still come from  \textbf{Trigger and offline cuts}, tight $\tau$ selection, and $m_{T2}$ cut steps. 
 The $m_{T2}$ distributions are shown in Fig.~\ref{fig:m280_norm} for the comparison of our results with ATLAS analysis. 
 
 %\begin{figure}[t]
