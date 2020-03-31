@@ -126,7 +126,7 @@ and the condition of the calorimeter isolation is
 
 Tau lepton candidates are reconstructed with one or three associated charged pion tracks (prongs). %$\sum_i e_i (\textrm{tracks}) = \pm 1$.
 %For 1-prong (3-prong) $\tau$ lepton candidates, the signal efficiencies are $75\%$($60\%$) and $60\%$($45\%$) for the \textit{medium} and \textit{tight} working points, respectively.
-For 1-prong (3-prong) $\tau$ lepton candidates, the signal efficiencies are $75\%$ and $60\%$ for the \textit{medium} working points. Due to technical restriction, the \textit{tight} working point efficiencies are directly taken from cutflow table. %Should add more details
+For 1-prong (3-prong) $\tau$ lepton candidates, the signal efficiencies are $75\%$ and $60\%$ for the \textit{medium} working points. Due to the technical restriction, the \textit{tight} working point efficiencies are directly taken from the official ATLAS cutflow table. %Should add more details
 The baseline tau lepton candidates are required to have 
 \begin{equation}
 p^{\tau}_T > 50(40) \textrm{GeV}\quad \textrm{and}\quad |\eta^{\tau}| < 2.5
@@ -165,8 +165,8 @@ The trigger efficiencies about $80\%$ are applied in our recasting with the foll
 
 In SR-lowMass region, values of $75 < E^{miss}_T < 150$ GeV are required for SR-lowMass to increase signal sensitivity.
 Also, two selected tau leptons are required to be tight tagged.
-The efficiency of selection two taus passing tight working point on top of two medium tagged tau leptons is taken from official ATLAS cutflow table as a ratio of raw number of event before and after applying cut, and the tight tagging efficiency is then applied as a probability per tau by a square root of the efficiency.
-On the other hand, in SR-highMass region the tight tagging efficiency is applied in the same manner as SR-lowMass region, but allowing at least one of two taus passing the tight selection.
+The selection efficiency of two taus passing the \textit{tight} working point on top of two medium tagged tau leptons is taken from official ATLAS cutflow table as a ratio of raw number of event before and after applying cut, and the tight tagging efficiency is then applied as a probability per tau lepton by a square root of the efficiency.
+On the other hand, in SR-highMass region the tight tagging efficiency is applied in the same manner as SR-lowMass region, but allowing at least one of two tau leptons passing the tight selection.
 
 The \textit{stransverse mass} $m_{T2}$ variable is defined as\footnote{
 Notice $m_{T2}$ calculation is done with MADANALYSIS 5 function ($PHYSICS\rightarrow Transverse\rightarrow MT2(vec1,vec2,E^{miss}_T,m_{invisible})$)
@@ -210,7 +210,7 @@ We make use of MADGRAPH5 aMC@NLO version 2.6.7~\cite{Alwall:2014hca} for hard-sc
 The PYTHIA8 version 8.244~\cite{Sjostrand:2007gs} with $A14$ tune has been used for the simulation of the parton showering and hadronization. The simulation of the detector response has been performed by using DELPHES-3.4.2~\cite{deFavereau:2013fsa}, that relies on FASTJET~\cite{Cacciari:2011ma} for object reconstruction.
 The modified delphes card has been used with an appropriate tuned detector card.
 For example, the loosened isolation criteria are applied to cover all offline object definitions.
-And the radius parameter of jet and minimum transverse momentum in lowered to 0.4 and 15 GeV with updating $b$ and tau tagging efficiencies.
+And the radius parameter of jet and minimum transverse momentum are lowered to 0.4 and 15 GeV with updating $b$ and tau tagging efficiencies.
 Also, UniqueObjectFinder is disabled for overlap removal which is done in MADANALYSIS5.
 Finally, we have used the MADANALYSIS5 reimplementation to calculate the signal selection efficiencies.
 
@@ -317,7 +317,7 @@ We observe that the disagreement on a cut-by-cut basis, is $-2.65\%$ and $10.03\
   \vspace*{8pt}
   \caption{The $m_{T2}$ distributions for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV.\protect\label{fig:m280_norm}}
 \end{figure}
-In Fig.~\ref{fig:m120_norm}, we realize the $m_{T2}$ distributions from ATLAS analysis are sofer than our results. This causes the $m_{T2} > 70$GeV cut looser in our reimplementation than the original ATLAS results which is taken from HEPData. %Need reference? 
+In Fig.~\ref{fig:m120_norm}, we realize the $m_{T2}$ distributions from ATLAS analysis are sofer than our results. This causes the $m_{T2} > 70$GeV cut looser in our reimplementation than the original ATLAS results which is taken from HEPData\cite{hepdata}.
 Similarly, the disagreement on a cut-by-cut basis is $-0.25\%$ and $29.60\%$ with all cuts for SR-lowMass and SR-highMass in Table~\ref{tab:280GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV. The major parts of the disagreement still come from  \textbf{Trigger and offline cuts}, tight $\tau$ selection, and $m_{T2}$ cut steps. 
 The $m_{T2}$ distributions are shown in Fig.~\ref{fig:m280_norm} for the comparison of our results with ATLAS analysis. 
 
@@ -366,6 +366,13 @@ Dedications and funding information may be included here.
   [arXiv:1911.06660 [hep-ex]].
   %%CITATION = doi:10.1103/PhysRevD.101.032009;%%
   %7 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{Aad:2019byo}
+\bibitem{hepdata}
+G.~Aad \textit{et al.} [ATLAS],
+%``Search for direct stau production in events with two hadronic $\tau$-leptons in $\sqrt{s} = 13$ TeV $pp$ collisions with the ATLAS detector,''
+doi:10.17182/hepdata.92006
+%https://doi.org/10.17182/hepdata.92006
 
 %\cite{Cacciari:2008gp}
 \bibitem{Cacciari:2008gp} 
