@@ -59,13 +59,13 @@ The validation of our reimplementation relies on a comparison of our cutflow pre
   \caption{The Feynman diagram for the process $pp\rightarrow\tilde{\tau}\tilde{\tau}\rightarrow\tilde{\chi}^0_1\tilde{\chi}^0_1\tau\tau$.\protect\label{fig:fig_01}}
 \end{figure}
 
-In this note, we describe the validation of the implementation, in MADANALYSIS 5 framework~\cite{Conte:2018vmg,Dumont:2014tja,Conte:2014zja,Conte:2012fm}, of the ATLAS-SUSY-2018-04 analysis~\cite{Aad:2019byo} with direct stau production in two hadronic $\tau +E^{miss}_T$ events. 
+In this note, we describe the validation of the implementation, in MADANALYSIS 5 framework~\cite{Conte:2018vmg,Dumont:2014tja,Conte:2014zja,Conte:2012fm}, of the ATLAS-SUSY-2018-04 search~\cite{Aad:2019byo} for direct stau production in two hadronic $\tau +E^{miss}_T$ events. 
 This process is illustrated by the representative Feynman diagram of Fig.~\ref{fig:fig_01}. 
 This analysis focuses on LHC proton-proton collisions at a center-of-mass energy of 13 TeV and an integrated luminosity of $139 fb^{-1}$.
 
 For the validation of our reimplementation, we have focused on the sector of sparticles with only electroweak interactions. 
 The lightest neutralino ($\tilde{\chi}^0_1$) is taken as the lightest supersymmetric particle (LSP). 
-The stau-left ($\tilde{\tau}_L$) and stau-right ($\tilde{\tau}_R$) are combined with the assumption of mass degenerate and no mixing is assumed between the gauge eigenstates ($\tilde{\tau}_L$,$\tilde{\tau}_R$) and mass eigenstates ($\tilde{\tau}_1$,$\tilde{\tau}_2$). 
+The stau-left ($\tilde{\tau}_L$) and stau-right ($\tilde{\tau}_R$) are assumed to be mass degenerate without mixing.  Therefore the gauge eigenstates ($\tilde{\tau}_L$,$\tilde{\tau}_R$) coincide with the mass eigenstates ($\tilde{\tau}_1$,$\tilde{\tau}_2$). 
 Furthermore, in order to suppress other decay modes of stau, the masses of all charginos and neutralinos are set to 2.5 TeV except for the $\tilde{\chi}^0_1$. 
 Hence, the single kinematically allowed decay mode of stau is 
 \begin{equation}
