@@ -13,6 +13,7 @@
 \documentclass{ws-mpla}
 \usepackage[super]{cite}
 \usepackage{graphicx}
+\usepackage{color,url}
 \begin{document}
 
 \markboth{Jongwon Lim, Chih-Ting Lu, Jae-hyeon Park, and Jiwon Park}{IMPLEMENTATION OF THE ATLAS-SUSY-2018-04 ANALYSIS IN THE MADANALYSIS 5 FRAMEWORK}
@@ -130,7 +131,7 @@ p^{\tau}_T > 50(40) \textrm{GeV}\quad \textrm{and}\quad |\eta^{\tau}| < 2.5
 \end{equation}
 for the leading (subleading) ones and the transition region between the barrel and endcap calorimeters ($ 1.37 < |\eta^{\tau}| < 1.52 $) is excluded.
 
-Finally, some overlap removal conditions are in order. Tau lepton is removed if $\Delta R(\tau,e/\mu) < 0.2$, electron or muon is removed if $\Delta R(e/\mu,j) < 0.4$, and jet is removed if $\Delta R(\tau,j) < 0.4$.
+Finally, some overlap removal conditions are in order. {\color{blue}Electron is removed if $\Delta R(e,e) < 0.05$}. Tau lepton is removed if $\Delta R(\tau,e/\mu) < 0.2$. {\color{blue}Electron is removed if $\Delta R(e,\mu) < 0.01$. Jet is removed if $\Delta R(j,e/\mu) < 0.2$, and then electron or muon is removed if $\Delta R(e/\mu,j) < 0.4$, and jet is removed if $\Delta R(j,\tau) < 0.4$.}
 
 
 \subsection{Event selection}
