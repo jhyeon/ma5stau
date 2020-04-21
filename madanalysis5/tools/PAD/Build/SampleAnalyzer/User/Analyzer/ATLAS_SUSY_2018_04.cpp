@@ -199,13 +199,23 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   }
 
 
+  // Electron-electron overlap removal 
+  SignalElectrons = Removal(SignalElectrons, SignalElectrons, 0.05);
 
   // Electron-tau overlap removal
   SignalTaus = Removal(SignalTaus, SignalElectrons, 0.2);
   // Muon-tau overlap removal
   SignalTaus = Removal(SignalTaus, SignalMuons, 0.2);
+
+  // Muon-electron overlap removal
+  SignalElectrons = Removal(SignalElectrons, SignalMuons, 0.01);
+
+  // Electron-jet overlap removal
+  Jets = Removal(Jets, SignalElectrons, 0.2);
   // Jet-electron overlap removal
   Jets = PHYSICS->Isol->JetCleaning(Jets, SignalElectrons, 0.4);
+  // Muon-jet overlap removal
+  Jets = Removal(Jets, SignalMuons, 0.2);
   // Jet-muon overlap removal
   Jets = PHYSICS->Isol->JetCleaning(Jets, SignalMuons, 0.4);
 
