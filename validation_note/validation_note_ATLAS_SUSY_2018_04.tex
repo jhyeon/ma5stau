@@ -63,7 +63,7 @@ The validation of our reimplementation relies on a comparison of our cutflow pre
 
 In this note, we describe the validation of the implementation, in MADANALYSIS 5 framework~\cite{Conte:2018vmg,Dumont:2014tja,Conte:2014zja,Conte:2012fm}, of the ATLAS-SUSY-2018-04 search~\cite{Aad:2019byo} for direct stau production in two hadronic $\tau +E^{miss}_T$ events. 
 This process is illustrated by the representative Feynman diagram of Fig.~\ref{fig:fig_01}. 
-This analysis focuses on LHC proton-proton collisions at a center-of-mass energy of 13 TeV and an integrated luminosity of $139 fb^{-1}$.
+This analysis is based on a data sample of LHC proton-proton collisions at a center-of-mass energy of 13 TeV corresponding to an integrated luminosity of $139 fb^{-1}$.
 
 For the validation of our reimplementation, we have focused on the sector of sparticles with only electroweak interactions. 
 The lightest neutralino ($\tilde{\chi}^0_1$) is taken as the lightest supersymmetric particle (LSP). 
@@ -146,7 +146,7 @@ Finally, some overlap removal conditions are in order which are consistent with 
 %Furthermore, $b$-jet veto is applied to reject events from top quark associated processes. The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
 
 %Here mostly re-arranged sentences from above paragraphs
-The events with exactly two \textit{medium} tau lepton candidates with opposite-sign electric charge (OS) are selected. 
+The events with exactly two \textit{medium} tau lepton candidates with opposite-sign (OS) electric charge are selected.
 Then, $b$-jet veto is applied to reject events from top quark associated processes.
 Also, the events with additional light lepton (muon or electron) are rejected.
 The reconstructed invariant mass of the two leading {\color{blue}hadronic taus}, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass {\color{blue}$Z/H$ resonances}.
@@ -333,7 +333,7 @@ The $m_{T2}$ distributions are shown in Fig.~\ref{fig:m280_norm} for the compari
 
 \section{Conclusions}
 
-We have implemented the ATLAS-SUSY-2018-04 search in the MADANALYSIS 5 framework. Our analysis has been validated in the context of a supersymmetry-inspired simplified benchmark model in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and a neutralino, employing two different benchmark points in the parameter space.
+We have implemented the ATLAS-SUSY-2018-04 search in the MADANALYSIS 5 framework. Our analysis has been validated in the context of a supersymmetry-inspired simplified benchmark model in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and the neutralino, employing two different benchmark points in the parameter space.
 By comparing our predictions for the cutflow with the official one provided by ATLAS in Ref.\cite{Aad:2019byo}, we have found an agreement for each step in Table~\ref{tab:120GeV} and~\ref{tab:280GeV} except for the ones from Trigger and offline cuts, tight $\tau$ selection, and $m_{T2}$ cut. Due to the lack of more information, we have not been able to validate these steps more precisely. 
 
 
