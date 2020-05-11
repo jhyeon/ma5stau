@@ -151,7 +151,7 @@ p^{\tau}_T > 50(40) \textrm{ GeV}\quad \textrm{and}\quad |\eta^{\tau}| < 2.5
 \end{equation}
 for the leading (subleading) ones and the transition region between the barrel and endcap calorimeters ($ 1.37 < |\eta^{\tau}| < 1.52 $) is excluded.
 
-Finally, some overlap removal conditions are in order which are consistent with the analysis code provided in HEPData\cite{hepdata}. Electron is removed if $\Delta R(e,e) < 0.05$. Tau lepton is removed if $\Delta R(\tau,e/\mu) < 0.2$. Electron is removed if $\Delta R(e,\mu) < 0.01$. Jet is removed if $\Delta R(j,e/\mu) < 0.2$, and then electron or muon is removed if $\Delta R(e/\mu,j) < 0.4$, and jet is removed if $\Delta R(j,\tau) < 0.4$.
+Finally, some overlap removal conditions are in order which are consistent with the analysis code provided in HEPData\cite{hepdata}. Electrons are removed if they overlap so closely with another electron that $\Delta R(e,e) < 0.05$. Tau candidates are discarded if they overlap with a light lepton, i.e.\ $\Delta R(\tau,e/\mu) < 0.2$. If an electron overlaps with a muon such that $\Delta R(e,\mu) < 0.01$, the muon is retained. If a jet is found to overlap with a light lepton leading to $\Delta R(j,e/\mu) < 0.2$, the jet is discarded. For overlapping light leptons and jets with $\Delta R(e/\mu,j) < 0.4$, the jet is kept. Lastly, jets are removed if they overlap with a tau such that $\Delta R(j,\tau) < 0.4$.
 
 
 \subsection{Event selection}
