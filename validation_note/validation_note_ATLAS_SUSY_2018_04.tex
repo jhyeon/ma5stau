@@ -98,18 +98,37 @@ Electron candidates are required to have a transverse momentum $p^e_T$ and pseud
 \begin{equation}
 p^e_T > 17 \textrm{ GeV}\quad \textrm{and}\quad |\eta^e| < 2.47.
 \end{equation}
-Furthermore, all electron candidates are required to have both track and calorimeter isolations. The condition of the track isolation is
+Furthermore, all electron candidates are required to have both track and calorimeter isolations
+to reduce the number of jets misidentified as charged leptons.
+For the track isolation, the scalar sum of the $p_T$ of tracks inside a variable-size cone around the electron (excluding its own track) is required to satisfy
 \begin{equation}
-\sum p_{T,\textrm{tracks}}/p^e_T < 0.15\quad \textrm{with}\quad \Delta R=\min(10\textrm{ GeV}/p^e_T,0.2),
+\sum p_{T,\textrm{tracks}}/p^e_T < 0.15 ,
 \end{equation}
-the condition of the calorimeter isolation is
+with the cone size
 \begin{equation}
-\sum E_{T,\textrm{calorimeter}}/p^e_T < 0.2\quad \textrm{with}\quad \Delta R=0.2,
+\Delta R=\min(10\textrm{ GeV}/p^e_T,0.2) .
 \end{equation}
-and for high transverse momentum electron, 
+For the calorimeter isolation,
+the sum of the transverse energy of the calorimeter energy clusters is required to satisfy
 \begin{equation}
-\sum E_{T,\textrm{tracks}} < \max(0.015\times p^e_T,3.5\textrm{ GeV})\quad \textrm{with}\quad \Delta R=0.2\quad \textrm{if}\quad p^e_T > 200\textrm{ GeV}.
+\sum E_{T,\textrm{calorimeter}}/p^e_T < 0.2 ,
 \end{equation}
+in a cone of size
+\begin{equation}
+\Delta R=0.2
+\end{equation}
+around the electron, excluding the energy from the electron itself.
+For electrons with a high transverse momentum
+$ p^e_T > 200\textrm{ GeV} $,
+only an upper limit instead is imposed on the transverse energy of the calorimeter energy clusters so that
+\begin{equation}
+\sum E_{T,\textrm{tracks}} < \max(0.015\times p^e_T,3.5\textrm{ GeV}) ,
+\end{equation}
+in a cone of
+\begin{equation}
+\Delta R=0.2
+\end{equation}
+around the electron.
 
 Muon candidate definition is similar, although with slightly looser thresholds,
 \begin{equation}
