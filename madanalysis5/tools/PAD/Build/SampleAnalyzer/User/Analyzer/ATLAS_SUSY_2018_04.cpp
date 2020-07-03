@@ -336,7 +336,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRhigh cut-6 : mT2>70 GeV. ////
-  double mt2_high = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),1.);
+  double mt2_high = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),0.);
   if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV") ) return true;
 
 
