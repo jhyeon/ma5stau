@@ -60,6 +60,10 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ===== Selections ===== //
   // ====================== //
 
+  // Trigger and offline cuts
+  Manager()->AddCut("asymmetric di-$\\tau$ trigger",     SRlow);
+  Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
+
   // Common selections
   Manager()->AddCut("2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto",   SRlowhigh);
   Manager()->AddCut("b-jet veto",              SRlowhigh);
@@ -67,20 +71,16 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   Manager()->AddCut("Z/H veto",                SRlowhigh);
 
   // SR Low Mass selections
-  Manager()->AddCut("asymmetric di-$\\tau$ trigger",  SRlow);
   Manager()->AddCut("$75 < E^{miss}_{T} < 150$ GeV",  SRlow);
   Manager()->AddCut("2 tight $\\tau$ (OS)",           SRlow);
-  Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad](low)", SRlow);
-  Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$(low)",            SRlow);
-  Manager()->AddCut("$m_{T2}>70$ GeV(low)",                                 SRlow);
 
   // SR High Mass selections
-  Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
-  Manager()->AddCut("$E^{miss}_{T} > 150$ GeV",          SRhigh);
   Manager()->AddCut("$\\geq 1$ tight $\\tau$",           SRhigh);
-  Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad](high)", SRhigh);
-  Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$(high)",            SRhigh);
-  Manager()->AddCut("$m_{T2}>70$ GeV(high)",                                 SRhigh);
+
+  // Common selections
+  Manager()->AddCut("$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]", SRlowhigh);
+  Manager()->AddCut("$\\Delta R(\\tau_{1},\\tau_{2})<3.2$",            SRlowhigh);
+  Manager()->AddCut("$m_{T2}>70$ GeV",                                 SRlowhigh);
 
   // ====================== //
   // ===== Histograms ===== //
@@ -239,6 +239,31 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   // 139 /fb = 36.2 + 44.3 + 58.5
   bool is2018 = (rand() % 100)/100. < 0.421;
 
+
+  //// SRlow cut-1 : asymmetric di-tau trigger. ////
+  bool effl = double(rand())/RAND_MAX < 0.8;
+  if( is2018 ){
+    if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75 && effl,"asymmetric di-$\\tau$ trigger") )
+      return true;
+  }
+  else{
+    if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60 && effl,"asymmetric di-$\\tau$ trigger") )
+      return true;
+  }
+
+
+  //// SRhigh cut-1 : di-tau +mET trigger. ////
+  bool effh = double(rand())/RAND_MAX < 0.8;
+  if( is2018 ){
+    if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40 && effh && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
+      return true;
+  }
+  else{
+    if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40 && effh && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
+      return true;
+  }
+
+
   //// Common cut-1 : 2 medium taus (OS) and 3rd medium tau veto. ////
   int tau_charge_sum=0;
   for( unsigned int i=0; i<SignalTaus.size(); i++ ){
@@ -261,19 +286,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   mtata=(SignalTaus[1]->momentum()+SignalTaus[0]->momentum()).M();
   if( !Manager()->ApplyCut(mtata > 120.0, "Z/H veto") ) return true;
 
-
-  //// SRlow cut-1 : asymmetric di-tau trigger. ////
-  bool effl = double(rand())/RAND_MAX < 0.8;
-  if( is2018 ){
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75 && effl,"asymmetric di-$\\tau$ trigger") )
-      return true;
-  }
-  else{
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60 && effl,"asymmetric di-$\\tau$ trigger") )
-      return true;
-  }
   
-
   //// SRlow cut-2 : 75 < ETmiss < 150 GeV. ////
   if( !Manager()->ApplyCut((MET > 75. && MET < 150.), "$75 < E^{miss}_{T} < 150$ GeV") ) return true;
 
@@ -291,43 +304,14 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //if( !Manager()->ApplyCut(two_tight_ratio, "2 tight $\\tau$ (OS)") ) return true;
 
 
-  //// SRlow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
-  double DeltaPhiTau = 999999.9;
-  DeltaPhiTau = SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
-  if( !Manager()->ApplyCut((fabs(DeltaPhiTau)) > 0.8, "$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad](low)") ) return true;
-
-
-  //// SRlow cut-5 : dR(ta1,ta2)<3.2. ////
-  if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$(low)") ) 
-    return true;
-
-
-  //// SRlow cut-6 : mT2>70 GeV. ////
-  double mt2_low = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),1.);
-  if( !Manager()->ApplyCut(mt2_low > 70, "$m_{T2}>70$ GeV(low)") ) return true;
-
-
   // Histograms
-  Manager()->FillHisto("SRlow_mT2",mt2_low);
+//  Manager()->FillHisto("SRlow_mT2",mt2_low);
 
 
   double preselection=myWeight*1.0;
   Manager()->SetCurrentEventWeight(preselection);
 
-  //// SRhigh cut-1 : di-tau +mET trigger. ////
-  bool effh = double(rand())/RAND_MAX < 0.8;
-  if( is2018 ){
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40 && effh, "di-$\\tau +E^{miss}_{T}$ trigger") )
-      return true;
-  }
-  else{
-    if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40 && effh, "di-$\\tau +E^{miss}_{T}$ trigger") )
-      return true;
-  }
 
-
-  //// SRhigh cut-2 : ETmiss > 150 GeV. ////
-  if( !Manager()->ApplyCut((MET > 150.),"$E^{miss}_{T} > 150$ GeV") ) return true;
 
 
   //// SRhigh cut-3 : >= 1 tight tau. //// 
@@ -341,22 +325,23 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRhigh cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
+  double DeltaPhiTau = 999999.9;
   DeltaPhiTau = SignalTaus[0]->dphi_0_pi(SignalTaus[1]);
-  if( !Manager()->ApplyCut((fabs(DeltaPhiTau)) > 0.8, "$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad](high)") ) return true;
+  if( !Manager()->ApplyCut((fabs(DeltaPhiTau)) > 0.8, "$|\\Delta\\phi(\\tau_{1},\\tau_{2})|>0.8$ [rad]") ) return true;
 
 
   //// SRhigh cut-5 : dR(ta1,ta2)<3.2. ////
-  if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$(high)"))  
+  if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$"))  
     return true;
 
 
   //// SRhigh cut-6 : mT2>70 GeV. ////
   double mt2_high = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),1.);
-  if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV(high)") ) return true;
+  if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV") ) return true;
 
 
   // Histograms
-  Manager()->FillHisto("SRhigh_mT2",mt2_high);
+//  Manager()->FillHisto("SRhigh_mT2",mt2_high);
 
 
   return true;
