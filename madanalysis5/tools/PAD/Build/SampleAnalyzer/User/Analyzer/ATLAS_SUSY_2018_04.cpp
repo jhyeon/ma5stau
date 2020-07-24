@@ -60,6 +60,9 @@ bool ATLAS_SUSY_2018_04::Initialize(const MA5::Configuration& cfg, const std::ma
   // ===== Selections ===== //
   // ====================== //
 
+  // Baseline cut 
+  Manager()->AddCut("Baseline cut",            SRlowhigh);
+
   // Trigger and offline cuts
   Manager()->AddCut("asymmetric di-$\\tau$ trigger",     SRlow);
   Manager()->AddCut("di-$\\tau +E^{miss}_{T}$ trigger",  SRhigh);
@@ -193,8 +196,9 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
     if( CurrentTau->pt() > 20. && abs(CurrentTau->eta()) < 2.5
         && (abs(CurrentTau->eta()) < 1.37 || abs(CurrentTau->eta()) > 1.52)){
-      if(SignalTaus.size() == 0 && CurrentTau->pt() > 50) SignalTaus.push_back(CurrentTau);
-      else if(SignalTaus.size() >= 1 && CurrentTau->pt() > 40) SignalTaus.push_back(CurrentTau);
+SignalTaus.push_back(CurrentTau);
+//      if(SignalTaus.size() == 0 && CurrentTau->pt() > 50) SignalTaus.push_back(CurrentTau);
+//      else if(SignalTaus.size() >= 1 && CurrentTau->pt() > 40) SignalTaus.push_back(CurrentTau);
     }
   }
 
@@ -240,6 +244,9 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   bool is2018 = (rand() % 100)/100. < 0.421;
 
 
+  //// Baseline cut ////
+  if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>50 && SignalTaus[1]->pt()>40,"Baseline cut") ) return true;
+
   //// SRlow cut-1 : asymmetric di-tau trigger. ////
   bool effl = double(rand())/RAND_MAX < 0.8;
   if( is2018 ){
@@ -263,14 +270,13 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
       return true;
   }
 
-
   //// Common cut-1 : 2 medium taus (OS) and 3rd medium tau veto. ////
   int tau_charge_sum=0;
   for( unsigned int i=0; i<SignalTaus.size(); i++ ){
     if( SignalTaus[i]->charge() > 0 ) tau_charge_sum++;
     if( SignalTaus[i]->charge() < 0 ) tau_charge_sum--;
   }
-  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && tau_charge_sum==0, "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true;
+  if( !Manager()->ApplyCut(SignalTaus.size() == 2 && tau_charge_sum == 0, "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true;
 
 
   //// Common cut-2 : b-jet veto. ////
