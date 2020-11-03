@@ -223,7 +223,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   // Jet-electron overlap removal
   //Jets = PHYSICS->Isol->JetCleaning(Jets, SignalElectrons, 0.4);
-  SignalElectrons = Removal(SignalElectrons, Jets, 0.2);
+  SignalElectrons = Removal(SignalElectrons, Jets, 0.4);
 
   // Muon-jet overlap removal
   //Jets = Removal(Jets, SignalMuons, 0.2);
