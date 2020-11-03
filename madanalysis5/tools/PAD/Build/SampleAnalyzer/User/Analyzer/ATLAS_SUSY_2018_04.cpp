@@ -364,7 +364,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
   //if( !Manager()->ApplyCut(two_tight_ratio, "2 tight $\\tau$ (OS)") ) return true;
-  if( !Manager()->ApplyCut(tight_low, "2 tight $\\tau$ (OS)") ) return true;
+  if( !Manager()->ApplyCut(true, "2 tight $\\tau$ (OS)") ) return true;
 
 
   // Histograms
@@ -386,11 +386,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   double mt2_high = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],event.rec()->MET(),0.);
   if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV,low") ) return true;
 
-
-  double tight_high1=sqrt(1565./2228.0);
-  double tight_high2=sqrt(1565./2228.0);
-  Manager()->SetCurrentEventWeight(eff*tight_high1);
-  Manager()->SetCurrentEventWeight(eff*tight_high2);
+  //eff of 2 tight tau = 1565./2228.0 = p, from 120 GeV SRlow
+  //eff of 1 tight tau = sqrt(p)
+  //eff of at least 1 tau = p^2 + 2*(1-p)*p = 0.973791
+  Manager()->SetCurrentEventWeight(eff*0.973791);
 
 
   //// SRhigh cut-3 : >= 1 tight tau. ////
@@ -399,7 +398,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
  
   //if(!Manager()->ApplyCut(SignalTaus.size() == 2,"$\\geq 1$ tight $\\tau$")) return true;
   //if( !Manager()->ApplyCut(tight1 or tight2,"$\\geq 1$ tight $\\tau$") ) return true;
-  if( !Manager()->ApplyCut(tight_high1 or tight_high2,"$\\geq 1$ tight $\\tau$") ) return true;
+  if( !Manager()->ApplyCut(true, "$\\geq 1$ tight $\\tau$") ) return true;
 
 
   //// SRhigh cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
