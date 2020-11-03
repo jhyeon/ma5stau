@@ -131,7 +131,7 @@ p^{\tau}_T > 50(40) \textrm{GeV}\quad \textrm{and}\quad |\eta^{\tau}| < 2.5
 \end{equation}
 for the leading (subleading) ones and the transition region between the barrel and endcap calorimeters ($ 1.37 < |\eta^{\tau}| < 1.52 $) is excluded.
 
-Finally, some overlap removal conditions are in order {\color{blue}which are consistent with the analysis code provided in HEPData\cite{hepdata}. Electron is removed if $\Delta R(e,e) < 0.05$}. Tau lepton is removed if $\Delta R(\tau,e/\mu) < 0.2$. {\color{blue}Electron is removed if $\Delta R(e,\mu) < 0.01$. Jet is removed if $\Delta R(j,e/\mu) < 0.2$, and then electron or muon is removed if $\Delta R(e/\mu,j) < 0.4$, and jet is removed if $\Delta R(j,\tau) < 0.4$.}
+Finally, some overlap removal conditions are in order which are consistent with the analysis code provided in HEPData\cite{hepdata}. Electron is removed if $\Delta R(e,e) < 0.05$. Tau lepton is removed if $\Delta R(\tau,e/\mu) < 0.2$. Electron is removed if $\Delta R(e,\mu) < 0.01$. Jet is removed if $\Delta R(j,e/\mu) < 0.2$, and then electron or muon is removed if $\Delta R(e/\mu,j) < 0.4$, and jet is removed if $\Delta R(j,\tau) < 0.4$.
 
 
 \subsection{Event selection}
@@ -142,11 +142,6 @@ Finally, some overlap removal conditions are in order {\color{blue}which are con
 %Furthermore, $b$-jet veto is applied to reject events from top quark associated processes. The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
 
 %Here mostly re-arranged sentences from above paragraphs
-The events with exactly two \textit{medium} tau lepton candidates with opposite-sign electric charge (OS) are selected. 
-Then, $b$-jet veto is applied to reject events from top quark associated processes.
-Also, the events with additional light lepton (muon or electron) are rejected.
-The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
-
 All events are required to pass either an \textit{asymmetric di-$\tau$} trigger for the low stau mass region (SR-lowMass) or a combined \textit{di-$\tau +E^{miss}_T$} ($E^{miss}_T > 150$ GeV) trigger for the high stau mass region (SR-highMass) (\textbf{Trigger and offline cuts}).
 The trigger efficiencies about $80\%$ are applied in our recasting with the following offline $p_T$ thresholds for the leading (subleading) tau lepton candidates in Table~\ref{tab:trig-eff}.
 
@@ -161,10 +156,15 @@ The trigger efficiencies about $80\%$ are applied in our recasting with the foll
   \end{tabular}\label{tab:trig-eff} }
 \end{table}
 
+Then events with exactly two \textit{medium} tau lepton candidates with opposite-sign electric charge (OS) are selected. 
+Then, $b$-jet veto is applied to reject events from top quark associated processes.
+Also, the events with additional light lepton (muon or electron) are rejected.
+The reconstructed invariant mass of the two leading tau lepton candidates, $m(\tau_1,\tau_2)$, larger than $120$ GeV is required for removing tau lepton pair from low-mass resonances, $Z$ boson, and Higgs boson events ($Z/H$ veto).
+
 In SR-lowMass region, values of $75 < E^{miss}_T < 150$ GeV are required for SR-lowMass to increase signal sensitivity.
 Also, two selected tau leptons are required to be tight tagged.
-The selection efficiency of two taus passing the \textit{tight} working point on top of two medium tagged tau leptons is taken from official ATLAS cutflow table as a ratio of raw number of event before and after applying cut, and the tight tagging efficiency is then applied as a probability per tau lepton by a square root of the efficiency.
-On the other hand, in SR-highMass region, the tight tagging efficiency is applied in the same manner as SR-lowMass region, but allowing at least one of two tau leptons passing the tight selection.
+The selection efficiency of two taus passing the \textit{tight} working point on top of two medium tagged tau leptons is taken from official ATLAS cutflow table as a ratio of raw number of event before and after applying cut {\color{red}($ p_{tight}\simeq 0.70 $)}, and the tight tagging efficiency is then applied as a probability per tau lepton by a square root of the efficiency {\color{red}($ \sqrt{p_{tight}}\simeq 0.84 $)}.
+On the other hand, in SR-highMass region, the tight tagging efficiency is applied in the same manner as SR-lowMass region, but allowing at least one of two tau leptons passing the tight selection {\color{red}($ p_{tight} + 2\sqrt{p_{tight}}(1-\sqrt{p_{tight}})\simeq 0.97 $)}.
 
 The \textit{stransverse mass} $m_{T2}$ variable is defined as\footnote{
 Notice $m_{T2}$ calculation is done with MADANALYSIS 5 function ($PHYSICS\rightarrow Transverse\rightarrow MT2(vec1,vec2,E^{miss}_T,m_{invisible})$)
@@ -237,30 +237,37 @@ diff. = \frac{\epsilon_i (MA5)-\epsilon_i (ATLAS)}{\epsilon_i (ATLAS)}
  & ATLAS($N_{raw}$) & $\epsilon_i$($\%$) & MA5($N_{raw}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
 \hline\hline
 
-2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 22493 & & 26016 & & \\ \hline
-$b$-jet veto & 22148 & 98.47 & 25429 & 97.74 & $-0.74$ \\ \hline
-Light lepton veto & 22109 & 99.82 & 25414 & 99.94 & 0.12 \\ \hline
-$Z/H$-veto & 18188 & 82.27 & 21082 & 82.95 & 0.83 \\ \hline
+Generator filter & 410000 &  & 922987 &  & \\ \hline
+Baseline cut & 43062 & 10.5 & 27758 & 3.0 & $-71.43$ \\ \hline
 %
-\multicolumn{5}{c}{ \textbf{SR-lowMass} }\\\hline
+\multicolumn{5}{c}{ \textbf{SR-low Mass} }\\\hline
 %
-Trigger and offline cuts & 6512 & 35.80 & 8144 & 38.63 & 7.91 \\ \hline
-$ 75 < E^{miss}_T < 150 $ GeV & 2228 & 34.21 & 2840 & 34.87 & 1.93 \\ \hline
-2 tight $\tau$ & 1565 & 70.24 & 1973 & 69.47 & $-1.10$ \\ \hline
-$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1564 & 99.94 & 1965 & 99.59 & $-0.35$ \\ \hline
-$ |\Delta R(\tau,\tau)| < 3.2 $ & 1429 & 91.37 & 1796 & 91.40 & 0.03 \\ \hline
-$ m_{T2} > 70 $ GeV & 280 & 19.59 & 537 & 29.90 & 52.63 \\ \hline
-All &  & 1.24 &  & 2.06 & 66.13 \\ \hline
+Trigger and offline cuts & 10324 & 23.97 & 8836.8 & 31.84 & 30.84 \\ \hline
+2 medium $\tau$ (OS) and 3rd medium $\tau$ veto & 6660 & 64.51 & 8224.8 & 93.07 & 44.27 \\ \hline
+$b$-jet veto & 6554 & 98.41 & 8040.8 & 97.76 & $-0.66$ \\ \hline
+Light lepton veto & 6543 & 99.83 & 8035.2 & 99.93 & 0.10 \\ \hline
+$Z/H$-veto & 6512 & 99.53 & 7978.4 & 99.29 & $-0.24$ \\ \hline
+$ 75 < E^{miss}_T < 150 $ GeV & 2228 & 34.21 & 2777.6 & 34.81 & 1.75 \\ \hline
+2 tight $\tau$ & 1565 & 70.24 & 1951 & 70.24 & 0.0 \\ \hline
+$ |\Delta\phi(\tau;\tau)| > 0.8 $ & 1564 & 99.94 & 1946 & 99.74 & $-0.2$ \\ \hline
+$ |\Delta R(\tau;\tau)| < 3.2 $ & 1429 & 91.37 & 1783 & 91.62 & 0.27 \\ \hline
+$ m_{T2} > 70 $ GeV & 280 & 19.59 & 531.6 & 28.81 & 47.06 \\ \hline
+All &  & 0.65 &  & 1.92 & 195.4 \\ \hline
+%All &  & 2.71 &  & 5.88 & 117 \\ \hline %Trigger ~ mT2
 %
 \hline
-\multicolumn{5}{c}{ \textbf{SR-highMass} }\\\hline
+\multicolumn{5}{c}{ \textbf{SR-high Mass} }\\\hline
 %
-Trigger and offline cuts & 1272 & 6.99 & 1649 & 7.82 & 11.87 \\ \hline
-$ \geq 1 $ tight $\tau$ & 1249 & 98.19 & 1590 & 96.42 & $-1.80$ \\ \hline
-$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1236 & 98.96 & 1560 & 98.11 & $-0.86$ \\ \hline
-$ |\Delta R(\tau,\tau)| < 3.2 $ & 1132 & 91.59 & 1408 & 90.26 & $-1.45$ \\ \hline
-$ m_{T2} > 70 $ GeV & 170 & 15.02 & 326 & 23.15 & 54.13 \\ \hline
-All &  & 0.76 &  & 1.25 & 64.47 \\ \botrule
+Trigger and offline cuts & 2283 & 5.30 & 2096 & 7.55 & 42.45 \\ \hline
+2 medium $\tau$ (OS) and 3rd medium $\tau$ veto & 1457 & 63.82 & 1896.8 & 90.50 & 41.81 \\ \hline
+$b$-jet veto & 1407 & 98.07 & 1812 & 95.53 & $-2.59$ \\ \hline
+Light lepton veto & 1404 & 99.79 & 1808.8 & 99.82 & 0.03 \\ \hline
+$Z/H$-veto & 1272 & 90.60 & 1671.2 & 92.39 & 1.98 \\ \hline
+$ \geq 1 $ tight $\tau$ & 1249 & 98.19 & 1627.4 & 97.38 & $-0.82$ \\ \hline
+$ |\Delta\phi(\tau;\tau)| > 0.8 $ & 1236 & 98.96 & 1596.2 & 98.08 & $-0.89$ \\ \hline
+$ |\Delta R(\tau;\tau)| < 3.2 $ & 1132 & 91.59 & 1438.9 & 90.15 & $-1.57$ \\ \hline
+$ m_{T2} > 70 $ GeV & 170 & 15.02 & 342.8 & 23.82 & 58.59 \\ \hline
+All &  & 0.39 &  & 1.23 & 215.4 \\ \botrule
 \end{tabular}
 \label{tab:120GeV} }
 \end{table}
@@ -273,37 +280,43 @@ All &  & 0.76 &  & 1.25 & 64.47 \\ \botrule
 \hline\hline
  & ATLAS($N_{raw}$) & $\epsilon_i$($\%$) & MA5($N_{raw}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
 \hline\hline
-
-2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 3980 & & 35261 & & \\ \hline
-$b$-jet veto & 3903 & 98.07 & 34338 & 97.38 & $-0.70$ \\ \hline
-Light lepton veto & 3888 & 99.62 & 34308 & 99.91 & 0.29 \\ \hline
-$Z/H$-veto & 3382 & 86.99 & 30356 & 88.48 & 1.71 \\ \hline
+Generator filter & 42000 &  & 578102 &  & \\ \hline
+Baseline cut & 7312 & 17.41 & 37397 & 6.47 & $-62.84$ \\ \hline
 %
-\multicolumn{5}{c}{ \textbf{SR-lowMass} }\\\hline
+\multicolumn{5}{c}{ \textbf{SR-low Mass} }\\\hline
 %
-Trigger and offline cuts & 1920 & 56.77 & 17468 & 57.54 & 1.36 \\ \hline
-$ 75 < E^{miss}_T < 150 $ GeV & 738 & 38.44 & 6329 & 36.23 & $-5.75$ \\ \hline
-2 tight $\tau$ & 512 & 69.38 & 4074 & 64.37 & $-7.22$ \\ \hline
-$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 512 & 100.00 & 4050 & 99.41 & $-0.59$ \\ \hline
-$ |\Delta R(\tau,\tau)| < 3.2 $ & 478 & 93.36 & 3690 & 91.11 & $-2.41$ \\ \hline
-$ m_{T2} > 70 $ GeV & 278 & 58.16 & 2304 & 62.44 & 7.36 \\ \hline
-All &  & 6.98 &  & 6.53 & $-6.45$ \\ \hline
+Trigger and offline cuts & 3116 & 42.61 & 20308.8 & 54.31 & 27.46 \\ \hline
+2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 2036 & 65.34 & 19089.6 & 94.00 & 43.86 \\ \hline
+$b$-jet veto & 1997 & 98.08 & 18577.6 & 97.32 & $-0.77$ \\ \hline
+Light lepton veto & 1988 & 99.55 & 18565.6 & 99.94 & 0.39 \\ \hline
+$Z/H$-veto & 1920 & 96.58 & 17984.8 & 96.87 & 0.30 \\ \hline
+$ 75 < E^{miss}_T < 150 $ GeV & 738 & 38.44 & 6522.4 & 36.27 & $-5.65$ \\ \hline
+2 tight $\tau$ & 512 & 69.38 & 4581.5 & 70.24 & 1.24 \\ \hline
+$ |\Delta\phi(\tau;\tau)| > 0.8 $ & 512 & 100.00 & 4551.1 & 99.34 & $-0.66$ \\ \hline
+$ |\Delta R(\tau;\tau)| < 3.2 $ & 478 & 93.36 & 4148.8 & 91.16 & $-2.36$ \\ \hline
+$ m_{T2} > 70 $ GeV & 278 & 58.16 & 2568 & 61.90 & 6.43 \\ \hline
+All &  & 3.80 &  & 6.87 & 80.79 \\ \hline
+%All &  & 8.92 &  & 12.34 & 38.34 \\ \hline %Trigger ~ mT2
 %
 \hline
-\multicolumn{5}{c}{ \textbf{SR-highMass} }\\\hline
+\multicolumn{5}{c}{ \textbf{SR-high Mass} }\\\hline
 %
-Trigger and offline cuts & 1096 & 32.41 & 11305 & 37.24 & 14.90 \\ \hline
-$ \geq 1 $ tight $\tau$ & 1076 & 98.18 & 11110 & 98.28 & $-0.10$ \\ \hline
-$ |\Delta\phi(\tau,\tau)| > 0.8 $ & 1045 & 97.12 & 10643 & 95.80 & $-1.36$ \\ \hline
-$ |\Delta R(\tau,\tau)| < 3.2 $ & 973 & 93.11 & 9960 & 93.58 & 0.50 \\ \hline
-$ m_{T2} > 70 $ GeV & 691 & 71.02 & 7721 & 77.52 & 9.15 \\ \hline
-All &  & 17.36 &  & 21.90 & 26.15 \\ \botrule
+Trigger and offline cuts & 1973 & 26.98 & 13557.6 & 36.25 & 34.36 \\ \hline
+2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto & 1276 & 64.67 & 12630.4 & 93.16 & 44.05 \\ \hline
+$b$-jet veto & 1244 & 97.49 & 12234.4 & 96.86 & $-0.65$ \\ \hline
+Light lepton veto & 1239 & 99.60 & 12223.2 & 99.91 & 0.31 \\ \hline
+$Z/H$-veto & 1096 & 88.46 & 10865.6 & 88.89 & 0.49 \\ \hline
+$ \geq 1 $ tight $\tau$ & 1076 & 98.18 & 10580.8 & 97.38 & $-0.81$ \\ \hline
+$ |\Delta\phi(\tau;\tau)| > 0.8 $ & 1045 & 97.12 & 10138.3 & 95.82 & $-1.33$ \\ \hline
+$ |\Delta R(\tau;\tau)| < 3.2 $ & 973 & 93.11 & 9482.4 & 93.53 & $0.45$ \\ \hline
+$ m_{T2} > 70 $ GeV & 691 & 71.02 & 7352.5 & 77.54 & 9.18 \\ \hline
+All &  & 9.45 &  & 19.66 & 108.04 \\ \botrule
 \end{tabular}
 \label{tab:280GeV} }
 \end{table} 
 
 
-We observe that the disagreement on a cut-by-cut basis, is {\color{blue}$8.66\%$ and $7.55\%$} before the $m_{T2}$ cut for SR-lowMass and SR-highMass in Table~\ref{tab:120GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV. The major part of the disagreement comes from the \textbf{Trigger and offline cuts} step. By lack of more public experimental information, we have not been able to validate these two steps more precisely.
+We observe that the disagreement on a cut-by-cut basis, is {\color{red}$195.4\%$ and $215.4\%$} with all cuts for SR-lowMass and SR-highMass in Table~\ref{tab:120GeV} of $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $GeV. The major parts of the disagreement come from \textbf{Trigger and offline cuts} {\color{red}, 2 medium $\tau$ (OS) and 3rd baseline $\tau$ veto,  and $m_{T2}$ cut} steps. By lack of more public experimental information, we have not been able to validate these two steps more precisely.
 \begin{figure}[h!]
   \centerline{\includegraphics[width=2.0in]{m120_norm_1}\includegraphics[width=2.0in]{m120_norm_2}}
   \vspace*{8pt}
@@ -316,7 +329,7 @@ We observe that the disagreement on a cut-by-cut basis, is {\color{blue}$8.66\%$
   \caption{The $m_{T2}$ distributions for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV.\protect\label{fig:m280_norm}}
 \end{figure}
 In Fig.~\ref{fig:m120_norm}, we realize the $m_{T2}$ distributions from ATLAS analysis are sofer than our results. This causes the $m_{T2} > 70$GeV cut looser in our reimplementation than the original ATLAS results which is taken from HEPData\cite{hepdata}.
-Similarly, the disagreement on a cut-by-cut basis is {\color{blue}$-6.45\%$ and $26.15\%$} with all cuts for SR-lowMass and SR-highMass in Table~\ref{tab:280GeV} for $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV. The major parts of the disagreement come from  \textbf{Trigger and offline cuts}, tight $\tau$ selection, and $m_{T2}$ cut steps. 
+Similarly, the disagreement on a cut-by-cut basis is {\color{red}$80.79\%$ and $108.04\%$} with all cuts for SR-lowMass and SR-highMass in Table~\ref{tab:280GeV} of $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1) $GeV. Again, the major parts of the disagreement come from  \textbf{Trigger and offline cuts}, {\color{red}2 medium $\tau$ (OS) and 3rd medium $\tau$ veto}, and $m_{T2}$ cut steps. 
 The $m_{T2}$ distributions are shown in Fig.~\ref{fig:m280_norm} for the comparison of our results with ATLAS analysis. 
 
 %\begin{figure}[t]
@@ -328,7 +341,7 @@ The $m_{T2}$ distributions are shown in Fig.~\ref{fig:m280_norm} for the compari
 \section{Conclusions}
 
 We have implemented the ATLAS-SUSY-2018-04 search in the MADANALYSIS 5 framework. Our analysis has been validated in the context of a supersymmetry-inspired simplified benchmark model in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and a neutralino, employing two different benchmark points in the parameter space.
-By comparing our predictions for the cutflow with the official one provided by ATLAS in Ref.\cite{Aad:2019byo}, we have found an agreement for each step in Table~\ref{tab:120GeV} and~\ref{tab:280GeV} except for the ones from \textbf{Trigger and offline cuts}, tight $\tau$ selection, and $m_{T2}$ cut. Due to the lack of more information, we have not been able to validate these steps more precisely. 
+By comparing our predictions for the cutflow with the official one provided by ATLAS in Ref.\cite{Aad:2019byo}, we have found an agreement for each step in Table~\ref{tab:120GeV} and~\ref{tab:280GeV} except for the ones from \textbf{Trigger and offline cuts}, {\color{red}2 medium $\tau$ (OS) and 3rd medium $\tau$ veto}, and $m_{T2}$ cut. Due to the lack of more information, we have not been able to validate these steps more precisely. 
 
 
 \section*{Acknowledgments}
