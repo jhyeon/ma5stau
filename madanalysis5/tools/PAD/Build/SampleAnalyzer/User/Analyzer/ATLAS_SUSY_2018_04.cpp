@@ -197,20 +197,15 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     const RecTauFormat * CurrentTau = &(event.rec()->taus()[it]);
 
     if( CurrentTau->pt() > 20. && abs(CurrentTau->eta()) < 2.5
-    //if( CurrentTau->pt() * 0.9 > 20. && abs(CurrentTau->eta()) < 2.5
         && (abs(CurrentTau->eta()) < 1.37 || abs(CurrentTau->eta()) > 1.52)){
       SignalTaus.push_back(CurrentTau);
-      //if(SignalTaus.size() == 0 && CurrentTau->pt() > 50) SignalTaus.push_back(CurrentTau);
-      //else if(SignalTaus.size() >= 1 && CurrentTau->pt() > 40) SignalTaus.push_back(CurrentTau);
     }
   }
 
 
-  // Electron-electron overlap removal 
-  SignalElectrons = Removal(SignalElectrons, SignalElectrons, 0.05);
-
   // Electron-tau overlap removal
   SignalTaus = Removal(SignalTaus, SignalElectrons, 0.2);
+
   // Muon-tau overlap removal
   SignalTaus = Removal(SignalTaus, SignalMuons, 0.2);
 
@@ -218,18 +213,15 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   SignalElectrons = Removal(SignalElectrons, SignalMuons, 0.01);
 
   // Electron-jet overlap removal
-  //Jets = Removal(Jets, SignalElectrons, 0.2);
   Jets = PHYSICS->Isol->JetCleaning(Jets, SignalElectrons, 0.2);
 
   // Jet-electron overlap removal
-  //Jets = PHYSICS->Isol->JetCleaning(Jets, SignalElectrons, 0.4);
   SignalElectrons = Removal(SignalElectrons, Jets, 0.4);
 
   // Muon-jet overlap removal
-  //Jets = Removal(Jets, SignalMuons, 0.2);
   Jets = PHYSICS->Isol->JetCleaning(Jets, SignalMuons, 0.2);
+
   // Jet-muon overlap removal
-  //Jets = PHYSICS->Isol->JetCleaning(Jets, SignalMuons, 0.4);
   SignalMuons = Removal(SignalMuons, Jets, 0.4);
 
   // Tau-jet overlap removal
@@ -238,40 +230,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //// MET ////
   MALorentzVector pTmiss = event.rec()->MET().momentum();
   pTmiss.SetPz(0.); // Remove eta component
-
-  //MALorentzVector pTmiss(0,0,0,0);
-  //for( unsigned int i=0; i<event.rec()->photons().size(); i++ ){
-  //  MALorentzVector temp = event.rec()->photons()[i].momentum();
-  //  pTmiss = pTmiss + temp;
-  //}
-
-  //for( unsigned int i=0; i<event.rec()->muons().size(); i++ ){
-  //  MALorentzVector temp = event.rec()->muons()[i].momentum();
-  //  pTmiss = pTmiss + temp;
-  //}
-  //for( unsigned int i=0; i<event.rec()->jets().size(); i++ ){
-  //  MALorentzVector temp = event.rec()->jets()[i].momentum();
-  //  pTmiss = pTmiss + temp;
-  //}
-
-  //for( unsigned int i=0; i<Jets.size(); i++ ){
-  //  MALorentzVector temp = Jets.at(i)->momentum();
-  //  pTmiss = pTmiss + temp;
-  //}
-  //for( unsigned int i=0; i<SignalMuons.size(); i++ ){
-  //  MALorentzVector temp = SignalMuons.at(i)->momentum();
-  //  pTmiss = pTmiss + temp;
-  //}
-  //for( unsigned int i=0; i<SignalElectrons.size(); i++ ){
-  //  MALorentzVector temp = SignalElectrons.at(i)->momentum();
-  //  pTmiss = pTmiss + temp;
-  //}
   double MET = pTmiss.Pt();
-  //pTmiss = -1 * pTmiss;
-  //pTmiss.SetPz(0.);
-  //cout << MET << " " << event.rec()->MET().pt() << endl;
-  //cout << MET << ", ";
-  //cout << event.rec()->MET().pt() << ", ";
 
   DEBUG << "    * Event reconstructed properly..." << endmsg;
 
@@ -288,7 +247,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// Baseline cut ////
   if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>50 && SignalTaus[1]->pt()>40,"Baseline cut") ) return true;
-  //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && 0.9* SignalTaus[0]->pt()>50 && 0.9* SignalTaus[1]->pt()>40,"Baseline cut") ) return true;
 
   double eff=myWeight*0.8;
   Manager()->SetCurrentEventWeight(eff);
@@ -297,30 +255,21 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //bool effl = double(rand())/RAND_MAX < 0.8;
   if( is2018 ){
     if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75,"asymmetric di-$\\tau$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>75 && effl,"asymmetric di-$\\tau$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && 0.9* SignalTaus[0]->pt()>95 && 0.9* SignalTaus[1]->pt()>75 && effl,"asymmetric di-$\\tau$ trigger") )
       return true;
   }
   else{
     if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60,"asymmetric di-$\\tau$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt()>95 && SignalTaus[1]->pt()>60 && effl,"asymmetric di-$\\tau$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && 0.9* SignalTaus[0]->pt()>95 && 0.9* SignalTaus[1]->pt()>60 && effl,"asymmetric di-$\\tau$ trigger") )
       return true;
   }
 
 
   //// SRhigh cut-1 : di-tau +mET trigger. ////
-  //bool effh = double(rand())/RAND_MAX < 0.8;
   if( is2018 ){
     if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40 && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt() > 75 && SignalTaus[1]->pt() > 40 && effh && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && 0.9* SignalTaus[0]->pt() > 75 && 0.9* SignalTaus[1]->pt() > 40 && effh && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
       return true;
   }
   else{
     if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40 && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && SignalTaus[0]->pt() > 50 && SignalTaus[1]->pt() > 40 && effh && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
-    //if( !Manager()->ApplyCut(SignalTaus.size() > 1 && 0.9* SignalTaus[0]->pt() > 50 && 0.9* SignalTaus[1]->pt() > 40 && effh && MET > 150., "di-$\\tau +E^{miss}_{T}$ trigger") )
       return true;
   }
 
@@ -351,24 +300,12 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   if( !Manager()->ApplyCut((MET > 75. && MET < 150.), "$75 < E^{miss}_{T} < 150$ GeV") ) return true;
 
 
-  double tight_low=1565./2228.0;
-  Manager()->SetCurrentEventWeight(eff*tight_low);
-
-
   //// SRlow cut-3 : 2 tight taus (OS). //// 
   // 2228 and 1565 are Nraw before and after 2-tight-tau cut in SR-lowMass at
   // https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-04/tabaux_01.pdf
-  //bool tight1 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
-  //bool tight2 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
-  // bool two_tight_ratio = (rand() % 100)/100. < 0.7;
-
-  //if( !Manager()->ApplyCut(tight1 && tight2, "2 tight $\\tau$ (OS)") ) return true;
-  //if( !Manager()->ApplyCut(two_tight_ratio, "2 tight $\\tau$ (OS)") ) return true;
+  double tight_low=1565./2228.0;
+  Manager()->SetCurrentEventWeight(eff*tight_low);
   if( !Manager()->ApplyCut(true, "2 tight $\\tau$ (OS)") ) return true;
-
-
-  // Histograms
-  //Manager()->FillHisto("SRlow_mT2",mt2_low);
 
 
   //// SRlow cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
@@ -390,14 +327,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //eff of 1 tight tau = sqrt(p)
   //eff of at least 1 tau = p^2 + 2*(1-p)*p = 0.973791
   Manager()->SetCurrentEventWeight(eff*0.973791);
-
-
-  //// SRhigh cut-3 : >= 1 tight tau. ////
-  //tight1 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
-  //tight2 = double(rand())/RAND_MAX < sqrt(1565./2228.0);
- 
-  //if(!Manager()->ApplyCut(SignalTaus.size() == 2,"$\\geq 1$ tight $\\tau$")) return true;
-  //if( !Manager()->ApplyCut(tight1 or tight2,"$\\geq 1$ tight $\\tau$") ) return true;
   if( !Manager()->ApplyCut(true, "$\\geq 1$ tight $\\tau$") ) return true;
 
 
@@ -410,18 +339,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   if( !Manager()->ApplyCut(((SignalTaus[0]->momentum()).DeltaR(SignalTaus[1]->momentum()) < 3.2), "$\\Delta R(\\tau_{1},\\tau_{2})<3.2$,high")) 
     return true;
 
-
-  //// SRhigh cut-6 : mT2>70 GeV. ////
-  //MALorentzVector tau1 = SignalTaus[0]->momentum();
-  //MALorentzVector tau2 = SignalTaus[1]->momentum();
-  //MALorentzVector tau1 = 0.9* SignalTaus[0]->momentum();
-  //MALorentzVector tau2 = 0.9* SignalTaus[1]->momentum();
-  //double mt2_high = PHYSICS->Transverse->MT2(&tau1, &tau2, pTmiss,0.);
-  //double mt2_high = PHYSICS->Transverse->MT2(SignalTaus[0],SignalTaus[1],pTmiss,0.);
   if( !Manager()->ApplyCut(mt2_high > 70, "$m_{T2}>70$ GeV,high") ) return true;
-
-  // Histograms
-//  Manager()->FillHisto("SRhigh_mT2",mt2_high);
 
 
   return true;
