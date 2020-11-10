@@ -159,7 +159,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     double pt = CurrentTau->pt();
     double eta = CurrentTau->abseta();
 
-    if( pt > 20. && eta < 2.5 && (eta < 1.37 || eta > 1.52)){
+    if( pt > 20. && eta < 2.5 && (eta < 1.37 || eta > 1.52) ){
       SignalTaus.push_back(CurrentTau);
     }
   }
@@ -186,7 +186,6 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   // ===== Event selection ===== //
   // =========================== //
 
-  // Triggers
   // Select '2018' events according to the lumi weight
   // 139 /fb = 36.2 + 44.3 + 58.5
   event_num++;
@@ -196,8 +195,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   //// Baseline cut ////
   if( !Manager()->ApplyCut(SignalTaus.size() == 2 && SignalTaus[0]->pt() > 50. && SignalTaus[1]->pt() > 40.,"Baseline cut") ) return true;
 
-  //// SRlow cut-1 : asymmetric di-tau trigger. ////
-  myWeight = myWeight * 0.8;
+  //// SRlow cut-1 : asymmetric di-tau trigger. ////a
+  // HLT online eff for tau candidates identified by the offline medium tau identification ~ 0.9,
+  // assuming that trigger object matching is done. ref: ATLAS-CONF-2017-029 Figure 12
+  myWeight = myWeight * 0.8 * 0.9 * 0.9;
   Manager()->SetCurrentEventWeight(myWeight);
   if( is2018 ){
     if( !Manager()->ApplyCut(SignalTaus[0]->pt() > 95. && SignalTaus[1]->pt() > 75.,"asymmetric di-$\\tau$ trigger") )
@@ -218,8 +219,16 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
       return true;
   }
 
+  // Since we don't know the efficiency of '2 taus to be
+  // medium tagged when 2 taus passed ditau(+met) trigger,
+  // it is implemented via reweighting.
+  // 0.7 is the ratio between MA5 and ATLAS efficiency
+  // from Nraw of the 2 medium tau cut, with OS selection
+  myWeight = myWeight * 0.7;
+  Manager()->SetCurrentEventWeight(myWeight);
   //// Common cut-1 : 2 medium taus (OS) and 3rd medium tau veto. ////
-  if( !Manager()->ApplyCut(SignalTaus[0]->charge()*SignalTaus[1]->charge() < 0., "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") ) return true;
+  if( !Manager()->ApplyCut(SignalTaus[0]->charge()*SignalTaus[1]->charge() < 0., "2 medium $\\tau$ (OS) and 3rd medium $\\tau$ veto") )
+    return true;
 
   //// Common cut-2 : b-jet veto. ////
   if( !Manager()->ApplyCut(nb == 0,"b-jet veto") ) return true;
