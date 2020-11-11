@@ -548,15 +548,6 @@ module Merger MissingET {
 # Scalar HT merger
 ##################
 
-##module Merger ScalarHT {
-# add InputArray InputArray
-##  add InputArray UniqueObjectFinder/jets
-##  add InputArray UniqueObjectFinder/electrons
-##  add InputArray UniqueObjectFinder/photons
-##  add InputArray UniqueObjectFinder/muons
-##  set EnergyOutputArray energy
-##}
-
 
 #####################
 # Neutrino Filter
@@ -705,11 +696,11 @@ module TrackCountingTauTagging TauTagging {
 
   set BitNumber 0
 
-  # taken from arXiv:1911.06660 (medium working point)
-  add EfficiencyFormula {1} {0.55}
-  add EfficiencyFormula {2} {0.40}
-  add EfficiencyFormula {-1} {0.02}
-  add EfficiencyFormula {-2} {0.01}
+  # taken from ATLAS-CONF-2017-029 (medium working point)
+  add EfficiencyFormula {1} {1.0}
+  add EfficiencyFormula {2} {1.0}
+  add EfficiencyFormula {-1} {0.0}
+  add EfficiencyFormula {-2} {0.0}
 
 }
 
@@ -717,14 +708,6 @@ module TrackCountingTauTagging TauTagging {
 # Find uniquely identified photons/electrons/tau/jets
 #####################################################
 
-##module UniqueObjectFinder UniqueObjectFinder {
-# earlier arrays take precedence over later ones
-# add InputArray InputArray OutputArray
-##  add InputArray PhotonIsolation/photons photons
-##  add InputArray ElectronIsolation/electrons electrons
-##  add InputArray MuonIsolation/muons muons
-##  add InputArray JetEnergyScale/jets jets
-##}
 
 ##################
 # ROOT tree writer
@@ -736,7 +719,6 @@ module TrackCountingTauTagging TauTagging {
 
 module TreeWriter TreeWriter {
 # add Branch InputArray BranchName BranchClass
-  add Branch Delphes/allParticles Particle GenParticle
 
   add Branch TrackMerger/tracks Track Track
   add Branch Calorimeter/towers Tower Tower
@@ -745,15 +727,11 @@ module TreeWriter TreeWriter {
   add Branch ECal/eflowPhotons EFlowPhoton Tower
   add Branch HCal/eflowNeutralHadrons EFlowNeutralHadron Tower
 
-  add Branch GenJetFinder/jets GenJet Jet
-  add Branch GenMissingET/momentum GenMissingET MissingET
-
   add Branch JetEnergyScale/jets Jet Jet
   add Branch ElectronIsolation/electrons Electron Electron
   add Branch PhotonIsolation/photons Photon Photon
   add Branch MuonIsolation/muons Muon Muon
   add Branch MissingET/momentum MissingET MissingET
-  add Branch ScalarHT/energy ScalarHT ScalarHT
 
 }
 
