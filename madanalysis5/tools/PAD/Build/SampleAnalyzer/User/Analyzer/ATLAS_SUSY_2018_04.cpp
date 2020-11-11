@@ -197,7 +197,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
   //// SRlow cut-1 : asymmetric di-tau trigger. ////a
   // HLT online eff for tau candidates identified by the offline medium tau identification ~ 0.9,
-  // assuming that trigger object matching is done. ref: ATLAS-CONF-2017-029 Figure 12
+  // assuming that trigger object matching is done. ref: ATLAS-CONF-2017-029 Figure 13
   myWeight = myWeight * 0.8 * 0.9 * 0.9;
   Manager()->SetCurrentEventWeight(myWeight);
   if( is2018 ){
@@ -245,9 +245,9 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
   if( !Manager()->ApplyCut((MET > 75. && MET < 150.), "$75 < E^{miss}_{T} < 150$ GeV") ) return true;
 
   //// SRlow cut-3 : 2 tight taus (OS) - implementation via reweighting //// 
-  // 2228 and 1565 are Nraw before and after 2-tight-tau cut in SR-lowMass at
+  // 0.7 is ratio of N_weighted before and after 2-tight-tau cut in SR-lowMass at
   // https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-04/tabaux_01.pdf
-  double tight_low=1565./2228.0;
+  double tight_low=0.7;
   Manager()->SetCurrentEventWeight(myWeight * tight_low);
   if( !Manager()->ApplyCut(true, "2 tight $\\tau$ (OS)") ) return true;
 
@@ -268,10 +268,10 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
 
 
   //// SRhigh cut-3 : >= 1 tight tau. ////
-  //eff of 2 tight tau = 1565./2228.0 = p, from 120 GeV SRlow
+  //eff of 2 tight tau = 0.7 = p, from 120 GeV mass point
   //eff of 1 tight tau = sqrt(p)
-  //eff of at least 1 tau = p^2 + 2*(1-p)*p = 0.973791
-  Manager()->SetCurrentEventWeight(myWeight * 0.973791);
+  //eff of at least 1 tau = p^2 + 2*(1-p)*p = 0.91
+  Manager()->SetCurrentEventWeight(myWeight * 0.91);
   if( !Manager()->ApplyCut(true, "$\\geq 1$ tight $\\tau$") ) return true;
 
   //// SRhigh cut-4 : |dphi(ta1,ta2)|>0.8 [rad]. ////
