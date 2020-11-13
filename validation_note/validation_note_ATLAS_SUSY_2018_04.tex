@@ -50,9 +50,9 @@
 \begin{abstract}
 We present the \madanalysis\ implementation and validation of the ATLAS-SUSY-2018-04 search.
 This ATLAS analysis targets direct stau production in events with two hadronic tau leptons, and probes 139 fb$^{-1}$ of LHC proton-proton collisions at a center-of-mass energy of 13 TeV.
-The validation of our reimplementation relies on a comparison of our cutflow predictions with the auxiliary material and official results provided by the ATLAS collaboration in the context of two supersymmetry-inspired simplified benchmark models in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and a neutralino.
-{\color{red} Add some quantitative statement about the obtained level of agreement.}
-{\color{blue} The recasting results agree with ATLAS cutflow at the level of 6-8\% in heavy stau scenario, and increase to 15-50\% in light stau scenario due to large discrepancies from one of the kinematic cut.}
+The validation of our re-implementation relies on a comparison of our cutflow predictions with the auxiliary material and official results provided by the ATLAS collaboration in the context of two supersymmetry-inspired simplified benchmark models in which the Standard Model is extended by a neutralino and a stau decaying into a tau lepton and a neutralino. A first scenario focuses on very light staus, whereas a second one addresses heavier staus. Our predictions have been found to agree with ATLAS official cutflows at the level of 6\%--8\% in the heavy stau scenario, and exhibit a larger discrepancy (of 15\%--50\%) in the light stau scenario. This disagreement is however considered as not too significant, as both ATLAS and \madanalysis\ predictions comes with large Monte Carlo numerical uncertainties.
+
+
 % \keywords{supersymmetry; stau; hadronic tau lepton.}
 \end{abstract}
 
@@ -70,7 +70,7 @@ In this note, we describe the validation of the implementation, in the \madanaly
 This analysis focuses on LHC proton-proton collisions at a center-of-mass energy of 13 TeV, and considers an integrated luminosity of $139 {\rm fb}^{-1}$.
 The typical supersymmetric signal which this analysis is dedicated to is illustrated by the representative Feynman diagram shown in Fig.~\ref{fig:fig_01}. 
 
-For the validation of our reimplementation, we have focused on a simplified model in which only a few electroweakly-interacting superpartners are relevant.
+For the validation of our re-implementation, we have focused on a simplified model in which only a few electroweakly-interacting superpartners are relevant.
 The lightest neutralino ($\tilde{\chi}^0_1$) is taken as the lightest supersymmetric particle (LSP).
 The stau-left ($\tilde{\tau}_L$) and stau-right ($\tilde{\tau}_R$) sleptons are moreover assumed to be mass degenerate and they do not mix. Therefore the gauge eigenstates ($\tilde{\tau}_L$,$\tilde{\tau}_R$) coincide with the mass eigenstates ($\tilde{\tau}_1$,$\tilde{\tau}_2$) in this theoretical framework.
 Furthermore, in order to suppress any other decay modes of the tau sleptons, the masses of all charginos and neutralinos are set to 2.5 TeV except for the $\tilde{\chi}^0_1$ neutralino. 
@@ -79,8 +79,8 @@ Hence, the single kinematically allowed decay mode of the staus is
 \tilde{\tau}\rightarrow\tilde{\chi}^0_1 \tau 
 \end{equation}
 Finally, all squarks, that do not contribute at leading-order, are decoupled as well.
-{\color{red}Add a paragraph detailing the content of the note: in Sec.~X, we present... Sec.~Y is dedicated to... {\it etc.} }
-{\color{blue}This note is organized as follows. In Sec.~\ref{sec:descript}, we present outline of the analysis, followed by definition of physics objects and event selections implemented for recasting. Sec.~\ref{sec:val} is dedicated to the generation of events and comparison of recasting and ATLAS official results. In Sec.~\ref{sec:conc}, we summarize our work.}
+
+This note is organized as follows. In Sec.~\ref{sec:descript}, we present an outline of the analysis under consideration. It in particular includes definitions for the physics objects and event selections that we have implemented for our recasting exercise. Sec.~\ref{sec:val} is dedicated to event generation in the context of the two considered benchmark for the validation or our re-implementation, and includes a comparison with official ATLAS results. In Sec.~\ref{sec:conc}, we summarize our work.
 
 \section{Description of the analysis}\label{sec:descript}
 
@@ -145,18 +145,15 @@ Tau leptons are removed if they are too close to an electron or a muon, with $\D
 
 
 \subsection{Event selection}\label{sec:selection}
-{\color{red}The next paragraphs should be clarified. There are so many reweighting factors... I would introduce the section by 2-3 sentences listing the different reweighting factors that will be considered, and the continue with the paragraphs describing all of them.}
-{\color{blue} Because {\sc Delphes} utilizes simplified and parametrized approaches to the detector simulation, it is hard to emulate detailed cut steps used in the real analysis. Firstly, several corrections are introduced as reweighting to mimic a trigger efficiency of ATLAS analysis. Also, to follow several stages of tau tagging selections presented in the analysis, additional reweighting factors are computed from official ATLAS results and applied to \madanalysis\ implementation for \textit{medium} and \textit{tight} tau lepton cuts.}
+Because {\sc Delphes}~3 utilizes simplified and parameterized approaches to simulate different elements of the detector response, it is hard to emulate some of the properties relevant for the ATLAS-SUSY-2018-04 analysis, and therefore implement certain cut steps precisely. As a consequence, we have modelled several selections through event reweighting. This concerns first the trigger efficiency. Next, several reweighting factors are included to model specific features of the tau-tagging-based selections. This allows us to define the so-called \textit{medium} and \textit{tight} tau lepton cuts in our implementation, from an ideal detector parameterization in {\sc Delphes}~3.
 
 After the object definitions introduced in the previous subsection, events with exactly two baseline tau leptons are selected.
 All events are required to pass either an \textit{asymmetric di-$\tau$} trigger for the low stau mass region (SR-lowMass) or a combined \textit{di-$\tau +E^{miss}_T$} ($E^{miss}_T > 150$ GeV) trigger for the high stau mass region (SR-highMass). This is coined \textit{trigger and offline cuts} below.
 A trigger efficiency of $80\%$ is applied in our recasting, after that we impose that the transverse momenta of the two leading tau candidates are larger than the offline $p_T$ thresholds given in Table~\ref{tab:trig-eff}.
-{\color{red}Please give information on how the code selects which trigger cuts should be used (2018 or 2015-2017)-done}
-{\color{blue} To deal with different kinematic cuts for tau candidates in 2015-2017 and 2018 data taking period, corresponding fraction of events are randomly selected. A probability of imposing thresholds for 2018 dataset is calculated by the ratio of integrated luminosity of 2018 data among $139 {\rm fb}^{-1}$.}
+In order to deal with the different tau candidate kinematic cuts that are applied in the 2015--2017 and 2018 data-taking periods, we randomly tag each event as originating from the 2015--2017 or 2018 data set. In practice, the probability of imposing the 2015--2017 (2018) data set thresholds is calculated from the ratio of the 2015--2017 (2018) integrated luminosity to the total luminosity of $139~{\rm fb}^{-1}$.
 
-Moreover, we assume that the tau leptons which fired the triggers are those selected through the offline cuts. A trigger-level $\tau_{had}$ identification efficiency {\color{blue}for a tau candidate passing offline selection is set to 0.9 and applied for each tau lepton, in order to mimic medium tau identification procedure}~\cite{ATLAS:2017mpa}.
+Moreover, we assume that the tau leptons which fired the triggers are those selected through the offline cuts. A trigger-level $\tau_{had}$ identification efficiency of 0.9 is correspondingly applied for each reconstructed tau lepton, which mimics the medium tau identification procedure for a tau lepton passing both online and offline requirements~\cite{ATLAS:2017mpa}.
 This leads to a total trigger reweighting factor of 64.8\% that includes a global trigger efficiency of 80\% and individual tau reconstruction efficiencies of 90\%.
-{\color{blue}(0.9 is P(offline\&online $\vert$ offline medium))}
 
 \begin{table}[t]
   \tbl{Offline $p_T$ thresholds for the leading (subleading) tau lepton candidate, in the case of the \textit{asymmetric di-$\tau$} (second column) and \textit{di-$\tau +E^{miss}_T$} (third column) triggers. This corresponds to a ditau efficiencies of about $80\%$.}
@@ -170,8 +167,7 @@ This leads to a total trigger reweighting factor of 64.8\% that includes a globa
 \end{table}
 
 After the handling of the triggers described above, events with exactly two \textit{medium} tau lepton candidates with opposite-sign (OS) electric charges are selected. To treat the efficiency of selecting two offline mediumly tagged OS taus on top of a \textit{di-tau(+$E^{miss}_T$)} trigger selection (as {\sc Delphes} does not simulate charge misidentification), an additional event reweighting factor of 0.7 is enforced.
-This number is evaluated from the average ratio of the cut efficiencies provided by the ATLAS collaboration and those predicted by \madanalysis\ when the identification of {\color{blue}two medium taus} is not included at the cutflow step called \textit{2 medium $\tau$ (OS) and 3rd medium $\tau$ veto} below.
-{\color{blue}(0.7 is the ratio of (ATLAS cut eff) / (MA5 cut eff but only OS condition is applied). Even though there's no charge misid in delphes, still small background taus exist. Since tau charge is taken from jet's charge, it is due to jet charge misid? The eff. only with OS cut is 93-94\%)}
+This number is evaluated from the average ratio of the cut efficiencies provided by the ATLAS collaboration and those predicted by \madanalysis\ when the identification of two medium taus is not included at the cutflow step called \textit{2 medium $\tau$ (OS) and 3rd medium $\tau$ veto} below.
 
 In the next selection steps, a $b$-jet veto is enforced to reject events originating from top quark processes.
 Also, events featuring any additional light leptons (muons or electrons) are rejected.
@@ -182,7 +178,7 @@ The selection efficiency $p_{tight}$ associated with two {\it medium} taus passi
 
 In the SR-highMass region, the tight tagging efficiency is extracted similarly, with the exception that at least one of two tau leptons should pass the tight selection requirements 9and not both of them). We use here $p_{tight} + 2\sqrt{p_{tight}}(1-\sqrt{p_{tight}})\simeq 0.91$.
 
-The \textit{stransverse mass} $m_{T2}$ variable~\cite{Lester:1999tx,Cheng:2008hk} {\color{blue}[please add these two references - done]} is defined as
+The \textit{stransverse mass} $m_{T2}$ variable~\cite{Lester:1999tx,Cheng:2008hk} is defined as
 \begin{equation}
 m_{T2} =min_{\mathbf{q}_T}
 \left[
@@ -203,15 +199,15 @@ Finally, the two tau lepton candidates are required to be well separated in the 
 
 \subsection{Event generation}
 
-In order to validate our analysis, we rely on the MSSM implementation~\cite{Duhr:2011se} available in the {\sc Feynrules}~\cite{Alloul:2013bka} model database and shipped with thew {\sc MadGraph5\_aMC@NLO} event generator~\cite{Alwall:2014hca} as a UFO library~\cite{Degrande:2011ua}.{\color{blue}Add the generic UFO reference.-done}
+In order to validate our analysis, we rely on the MSSM implementation~\cite{Duhr:2011se} available in the {\sc Feynrules}~\cite{Alloul:2013bka} model database and shipped with thew {\sc MadGraph5\_aMC@NLO} event generator~\cite{Alwall:2014hca} as a UFO library~\cite{Degrande:2011ua}.
 
-We consider two benchmark points with masses $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1)$ GeV and $(280,1)$ GeV to illustrate the validation of our reimplementation, as those correspond two scenarios for which official ATLAS cutflows and differential distributions are provided.
+We consider two benchmark points with masses $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1)$ GeV and $(280,1)$ GeV to illustrate the validation of our re-implementation, as those correspond two scenarios for which official ATLAS cutflows and differential distributions are provided.
 The stau mixing matrix is additionally set to a unity matrix, so that the stau mass-eigenstates correspond to the right-handed and left-handed stau flavor-eigenstates.
 
-We make use of MADGRAPH5 aMC@NLO version 2.6.7~\cite{Alwall:2014hca} for hard-scattering event generation for each of the two stau eigenstates, in which we convolute leading-order matrix elements with the NNPDF23LO~\cite{Ball:2012cx} set of parton distribution function.  {\color{blue} Fix the NNPDF reference.-done}
+We make use of {\sc Madgraph5\_aMC@NLO} version 2.6.7~\cite{Alwall:2014hca} for hard-scattering event generation for each of the two stau eigenstates, in which we convolute leading-order matrix elements with the NNPDF23LO~\cite{Ball:2012cx} set of parton distribution function.
 Our signal matrix elements include the potential emission of up to two additional partons, and the different contributions are merged according to the MLM scheme~\cite{Mangano:2006rw,Alwall:2008qv}. We use a merging scale defined through the hard-scattering level parameter of {\sc MadGraph5\_aMC2NLO} {\tt xqcut} $= m_{\tilde{\tau}}/4$.
 
-The {\sc Pythia} package version 8.244~\cite{Sjostrand:2014zea} with the so-called $A14$ tune\cite{TheATLAScollaboration:2014rfk} has been used for the simulation of parton showering and hadronization. {\color{blue}Fix the pythia reference and add an A14 reference-done}. The simulation of the detector response has been performed by using {\sc Delphes}~3.4.2~\cite{deFavereau:2013fsa}, that relies on {\sc FastJet}~\cite{Cacciari:2011ma} for object reconstruction.
+The {\sc Pythia} package version 8.244~\cite{Sjostrand:2014zea} with the so-called $A14$ tune\cite{TheATLAScollaboration:2014rfk} has been used for the simulation of parton showering and hadronization. The simulation of the detector response has been performed by using {\sc Delphes}~3.4.2~\cite{deFavereau:2013fsa}, that relies on {\sc FastJet}~\cite{Cacciari:2011ma} for object reconstruction.
 
 We have tuned the ATLAS detector parameterization in {\sc Delphes}~3 appropriately, according to the needs of the analysis.
 For example, loosened isolation criteria are applied so that isolation could be implemented fully at the analysis level.
@@ -227,12 +223,12 @@ For each cut, we have calculated the related efficiency
 \epsilon_i =\frac{n_i}{n_{i-1}}
 \end{equation}
 where $ n_i $ and $ n_{i-1} $ correspond to the number of events after and before the considered cut respectively.
+In our comparison, we have nornalized the number of events surviving the baseline cut $n_0$ as in the ATLAS cutflow.
 %
 On the other hand, we have also evaluated the differences between the \madanalysis\ ($\epsilon_i ({\rm MA5})$) and ATLAS ($\epsilon_i ({\rm ATLAS})$) cut efficiencies through the quantity
 \begin{equation}
 \delta_i = \frac{\epsilon_i ({\rm MA5})-\epsilon_i ({\rm ATLAS})}{\epsilon_i ({\rm ATLAS})}.
 \end{equation}
-{\color{blue}(Need to mention that MA5 is weighted to have same yield of ATLAS at Baseline cut?)}
 
 
 \begin{table}[t]
@@ -242,8 +238,7 @@ On the other hand, we have also evaluated the differences between the \madanalys
 \multicolumn{6}{c}{ \textbf{$ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (120,1) $ GeV} }\\
  & ATLAS ($N_{weighted}$) & $\epsilon_i$($\%$) & MA5 ($N_{weighted}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
 \hline
-Baseline cut                                    &  1686.80 &     - &  1686.80 &     - &      - \\
-[.4cm]
+Baseline cut                                    &  1686.80 &     - &  1686.80 &     - &      - \\[.4cm]
 %
 \multicolumn{5}{c}{ \textbf{SR-low Mass} }\\\hline
 Trigger and offline cuts                        &   390.46 & 23.15 &   410.01 & 24.31 &   5.01 \\
@@ -255,10 +250,8 @@ $ 75 < E^{miss}_T < 150 $ GeV                   &    85.70 & 34.43 &    89.90 & 
 2 tight $\tau$                                  &    60.19 & 70.23 &    62.93 & 70.00 &  -0.33 \\
 $ |\Delta\phi(\tau,\tau)| > 0.8 $               &    60.14 & 99.92 &    62.75 & 99.72 &  -0.20 \\
 $ |\Delta R(\tau,\tau)| < 3.2 $                 &    54.73 & 91.00 &    57.10 & 90.99 &  -0.01 \\
-$ m_{T2} > 70 $ GeV                             &     9.78 & 17.87 &    14.65 & 25.66 &  43.58 \\
-\hline
-All                                             &        - &  0.58 &        - &  0.87 &  49.80 \\
-[.4cm]
+$ m_{T2} > 70 $ GeV                             &     9.78 & 17.87 &    14.65 & 25.66 &  43.58 \\ \hline
+All                                             &        - &  0.58 &        - &  0.87 &  49.80 \\[.4cm]
 %
 \multicolumn{5}{c}{ \textbf{SR-high Mass} }\\\hline
 Trigger and offline cuts                        &   101.23 &  6.00 &    96.35 &  5.71 &  -4.82 \\
@@ -269,10 +262,8 @@ $Z/H$-veto                                      &    58.33 & 91.33 &    55.70 & 
 $ \geq 1 $ tight $\tau$                         &    57.29 & 98.22 &    50.69 & 91.00 &  -7.35 \\
 $ |\Delta\phi(\tau,\tau)| > 0.8 $               &    56.71 & 98.99 &    49.99 & 98.63 &  -0.36 \\
 $ |\Delta R(\tau,\tau)| < 3.2 $                 &    51.74 & 91.24 &    45.41 & 90.84 &  -0.43 \\
-$ m_{T2} > 70 $ GeV                             &     7.18 & 13.88 &     8.24 & 18.14 &  30.75 \\
-\hline
-All                                             &        - &  0.43 &        - &  0.49 &  14.76 \\
-[.2cm] \botrule
+$ m_{T2} > 70 $ GeV                             &     7.18 & 13.88 &     8.24 & 18.14 &  30.75 \\ \hline
+All                                             &        - &  0.43 &        - &  0.49 &  14.76 \\[.2cm] \botrule
 \end{tabular}
 \label{tab:120GeV} }
 \end{table}
@@ -284,8 +275,7 @@ All                                             &        - &  0.43 &        - & 
 \multicolumn{6}{c}{ \textbf{$ \tilde{\tau}\tilde{\tau} $ production with $ m(\tilde{\tau},\tilde{\chi}^0_1) = (280,1) $ GeV} }\\
  & ATLAS ($N_{weighted}$) & $\epsilon_i$($\%$) & MA5 ($N_{weighted}$) & $\epsilon_i$($\%$) & diff.($\%$) \\
 \hline
-Baseline cut                                    &   184.36 &     - &   184.36 &     - &      - \\
-[.4cm]
+Baseline cut                                    &   184.36 &     - &   184.36 &     - &      - \\[.4cm]
 %
 \multicolumn{5}{c}{ \textbf{SR-low Mass} }\\\hline
 Trigger and offline cuts                        &    73.74 & 40.00 &    69.97 & 37.95 &  -5.12 \\
@@ -297,10 +287,8 @@ $ 75 < E^{miss}_T < 150 $ GeV                   &    17.48 & 38.98 &    16.26 & 
 2 tight $\tau$                                  &    12.04 & 68.88 &    11.38 & 70.00 &   1.63 \\
 $ |\Delta\phi(\tau,\tau)| > 0.8 $               &    12.04 &   100 &    11.33 & 99.55 &  -0.45 \\
 $ |\Delta R(\tau,\tau)| < 3.2 $                 &    11.08 & 92.03 &    10.35 & 91.32 &  -0.77 \\
-$ m_{T2} > 70 $ GeV                             &     6.08 & 54.87 &     5.64 & 54.50 &  -0.68 \\
-\hline
-All                                             &        - &  3.30 &        - &  3.06 &  -7.24 \\
-[.4cm]
+$ m_{T2} > 70 $ GeV                             &     6.08 & 54.87 &     5.64 & 54.50 &  -0.68 \\ \hline
+All                                             &        - &  3.30 &        - &  3.06 &  -7.24 \\[.4cm]
 %
 \multicolumn{5}{c}{ \textbf{SR-high Mass} }\\\hline
 Trigger and offline cuts                        &    47.64 & 25.84 &    42.10 & 22.83 & -11.64 \\
@@ -311,13 +299,11 @@ $Z/H$-veto                                      &    24.88 & 85.00 &    24.01 & 
 $ \geq 1 $ tight $\tau$                         &    24.21 & 97.31 &    21.85 & 91.00 &  -6.48 \\
 $ |\Delta\phi(\tau,\tau)| > 0.8 $               &    23.29 & 96.20 &    21.19 & 96.96 &   0.79 \\
 $ |\Delta R(\tau,\tau)| < 3.2 $                 &    21.95 & 94.25 &    19.68 & 92.91 &  -1.42 \\
-$ m_{T2} > 70 $ GeV                             &    14.35 & 65.38 &    13.37 & 67.91 &   3.88 \\
-\hline
-All                                             &        - &  7.78 &        - &  7.25 &  -6.84 \\
-[.2cm] \botrule
+$ m_{T2} > 70 $ GeV                             &    14.35 & 65.38 &    13.37 & 67.91 &   3.88 \\ \hline
+All                                             &        - &  7.78 &        - &  7.25 &  -6.84 \\[.2cm] \botrule
 \end{tabular}
 \label{tab:280GeV} }
-\end{table} 
+\end{table}
 
 We observe that for both scenarios, a good agreement is obtained at each step of the cutflow, with the exception of the last cut on the $M_{T2}$ variable. For the $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1) $~GeV scenario, we hence obtain a disagreement of 30\%--40\% for both signal regions. In constrast, for the $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1)$~GeV scenario does not feature any strong issue at all, the two cutflow agreeing at the level of a few percent.
 
@@ -325,7 +311,7 @@ By lack of additional publicly available experimental information, we have not b
 
 We observe that the global shape of the distribution is generally well reproduced, although the curves exhibit large differences that explain our findings at the level of the cutflow tables. However, one must note that the differences concern cases where a not so large number of (unweighted) events survive. Large Monte Carlo uncertainties of 10\%--20\% of percent are thus expected, both for our predictions and the ATLAS results.
 
-On different lines, the number of signal events after all cuts are in the same ballpark, so that the potential impact on limit setting is mild. For this reason, the good agreement for one of the two benchmarks and the global reproduction of the $M_{T2}$ shapes for both scenarios, we consider this reimplementation as validated.
+On different lines, the number of signal events after all cuts are in the same ballpark, so that the potential impact on limit setting is mild. For this reason, the good agreement for one of the two benchmarks and the global reproduction of the $M_{T2}$ shapes for both scenarios, we consider this re-implementation as validated.
 
 \begin{figure}[t]
   \centerline{\includegraphics[width=2.0in]{m120_SRlow}\includegraphics[width=2.0in]{m120_SRhigh}}
@@ -334,16 +320,14 @@ On different lines, the number of signal events after all cuts are in the same b
   \caption{The $m_{T2}$ distributions after all cuts, for the SR-low Mass (left) and SR-high Mass (right) signal regions, and for the $m(\tilde{\tau},\tilde{\chi}^0_1)=(120,1)$~GeV (top panel) and $m(\tilde{\tau},\tilde{\chi}^0_1)=(280,1)$~GeV (bottom panel) scenarios.\protect\label{fig:mt2}}
 \end{figure}
 
-
 \section{Conclusions}\label{sec:conc}
 
 In this note, we detail our implementation of the ATLAS-SUSY-2018-04 search in the \madanalysis\ framework. Our analysis has been validated in the context of a supersymmetry-inspired simplified benchmark model in which the Standard Model is extended by a neutralino and a stau. Both stau chiralities are considered, as the stau is considered to decay into a tau lepton and a neutralino. Our validation relies on two different benchmark points in the parameter space.
 
 By comparing our predictions for different cutflows for the two benchmarks with the official ones provided by the ATLAS collaboration in Ref.~[\refcite{Aad:2019byo}], we have found an agreement at each step of the analysis, except for the last cut on the stranverse mass variable $m_{T2}$ cut for the light stau scenario. While the shape of the distribution is correctly reproduced, large difference leads to a quite different cut efficiency. Due to the lack of more information, we have however not been able to investigate the issue more precisely.
 
-As we got an agreement at the level of a few percent for the heavy stau scenario, and that the discrepancies for the light stau scenarios are connected with large Monte Carlo uncertainties (and are thus less significant), we have considered our reimplementation as validated.
+As we got an agreement at the level of a few percent for the heavy stau scenario, and that the discrepancies for the light stau scenarios are connected with large Monte Carlo uncertainties (and are thus less significant), we have considered our re-implementation as validated.
 As a side remark, we emphasize that the differences would not lead to a significant impact for any limit setting procedure based on the light stau signal, the signal regions being here populated by a small number of events in both cases.
-{\color{blue}(I don't get this side remark part. This might be ok for 120 GeV SR-highmass (considering systematic and statistical uncertainties), but low mass shows ~ 50\% difference. AFAIK limit is usually linearly depend on expected yield (or cross section), so if we have 50\% more events at the end, we will have \% higher limit. Please correct me if I'm wrong.)}
 
 
 %\section*{Acknowledgments}
@@ -381,13 +365,6 @@ As a side remark, we emphasize that the differences would not lead to a signific
   %%CITATION = doi:10.1103/PhysRevD.101.032009;%%
   %7 citations counted in INSPIRE as of 27 Mar 2020
 
-%\cite{Aad:2019byo}
-\bibitem{hepdata}
-G.~Aad \textit{et al.} [ATLAS],
-%``Search for direct stau production in events with two hadronic $\tau$-leptons in $\sqrt{s} = 13$ TeV $pp$ collisions with the ATLAS detector,''
-doi:10.17182/hepdata.92006
-%https://doi.org/10.17182/hepdata.92006
-
 %\cite{Cacciari:2008gp}
 \bibitem{Cacciari:2008gp} 
   M.~Cacciari, G.~P.~Salam and G.~Soyez,
@@ -397,6 +374,48 @@ doi:10.17182/hepdata.92006
   [arXiv:0802.1189 [hep-ph]].
   %%CITATION = doi:10.1088/1126-6708/2008/04/063;%%
   %6790 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{deFavereau:2013fsa}
+\bibitem{deFavereau:2013fsa} 
+  J.~de Favereau {\it et al.} [DELPHES 3 Collaboration],
+  %``DELPHES 3, A modular framework for fast simulation of a generic collider experiment,''
+  JHEP {\bf 1402}, 057 (2014)
+  doi:10.1007/JHEP02(2014)057
+  [arXiv:1307.6346 [hep-ex]].
+  %%CITATION = doi:10.1007/JHEP02(2014)057;%%
+  %1518 citations counted in INSPIRE as of 27 Mar 2020
+
+%\cite{Aad:2019byo}
+\bibitem{hepdata}
+  G.~Aad \textit{et al.} [ATLAS],
+  %``Search for direct stau production in events with two hadronic $\tau$-leptons in $\sqrt{s} = 13$ TeV $pp$ collisions with the ATLAS detector,''
+  doi:10.17182/hepdata.92006
+  %https://doi.org/10.17182/hepdata.92006
+
+%\cite{ATLAS:2017mpa}
+\bibitem{ATLAS:2017mpa}
+  ATLAS Collaboration,
+  %``Measurement of the tau lepton reconstruction and identification performance in the ATLAS experiment using $pp$ collisions at $\sqrt{s}=13~{\rm TeV}$,''
+  ATLAS-CONF-2017-029.
+  %113 citations counted in INSPIRE as of 11 Nov 2020
+
+%\cite{Lester:1999tx}
+\bibitem{Lester:1999tx}
+  C.~G.~Lester and D.~J.~Summers,
+  %``Measuring masses of semiinvisibly decaying particles pair produced at hadron colliders,''
+  Phys. Lett. B \textbf{463}, 99-103 (1999)
+  doi:10.1016/S0370-2693(99)00945-4
+  [arXiv:hep-ph/9906349 [hep-ph]].
+  %867 citations counted in INSPIRE as of 12 Nov 2020
+
+%\cite{Cheng:2008hk}
+\bibitem{Cheng:2008hk}
+  H.~C.~Cheng and Z.~Han,
+  %``Minimal Kinematic Constraints and m(T2),''
+  JHEP \textbf{12}, 063 (2008)
+  doi:10.1088/1126-6708/2008/12/063
+  [arXiv:0810.5178 [hep-ph]].
+  %220 citations counted in INSPIRE as of 13 Nov 2020
 
 %\cite{Duhr:2011se}
 \bibitem{Duhr:2011se} 
@@ -427,7 +446,16 @@ doi:10.17182/hepdata.92006
   [arXiv:1405.0301 [hep-ph]].
   %%CITATION = doi:10.1007/JHEP07(2014)079;%%
   %4502 citations counted in INSPIRE as of 27 Mar 2020
-    
+
+%\cite{Degrande:2011ua}
+\bibitem{Degrande:2011ua}
+  C.~Degrande, C.~Duhr, B.~Fuks, D.~Grellscheid, O.~Mattelaer and T.~Reiter,
+  %``UFO - The Universal FeynRules Output,''
+  Comput. Phys. Commun. \textbf{183}, 1201-1214 (2012)
+  doi:10.1016/j.cpc.2012.01.022
+  [arXiv:1108.2040 [hep-ph]].
+  %791 citations counted in INSPIRE as of 12 Nov 2020
+
 %\cite{Ball:2012cx}
 \bibitem{Ball:2012cx}
   R.~D.~Ball, V.~Bertone, S.~Carrazza, C.~S.~Deans, L.~Del Debbio, S.~Forte, A.~Guffanti, N.~P.~Hartland, J.~I.~Latorre and J.~Rojo, \textit{et al.}
@@ -457,70 +485,6 @@ doi:10.17182/hepdata.92006
   %%CITATION = doi:10.1088/1126-6708/2009/02/017;%%
   %210 citations counted in INSPIRE as of 27 Mar 2020  
 
-%\cite{Sjostrand:2007gs}
-\bibitem{Sjostrand:2007gs} 
-  T.~Sjostrand, S.~Mrenna and P.~Z.~Skands,
-  %``A Brief Introduction to PYTHIA 8.1,''
-  Comput.\ Phys.\ Commun.\  {\bf 178}, 852 (2008)
-  doi:10.1016/j.cpc.2008.01.036
-  [arXiv:0710.3820 [hep-ph]].
-  %%CITATION = doi:10.1016/j.cpc.2008.01.036;%%
-  %5077 citations counted in INSPIRE as of 27 Mar 2020
-
-%\cite{deFavereau:2013fsa}
-\bibitem{deFavereau:2013fsa} 
-  J.~de Favereau {\it et al.} [DELPHES 3 Collaboration],
-  %``DELPHES 3, A modular framework for fast simulation of a generic collider experiment,''
-  JHEP {\bf 1402}, 057 (2014)
-  doi:10.1007/JHEP02(2014)057
-  [arXiv:1307.6346 [hep-ex]].
-  %%CITATION = doi:10.1007/JHEP02(2014)057;%%
-  %1518 citations counted in INSPIRE as of 27 Mar 2020
-
-%\cite{Cacciari:2011ma}
-\bibitem{Cacciari:2011ma} 
-  M.~Cacciari, G.~P.~Salam and G.~Soyez,
-  %``FastJet User Manual,''
-  Eur.\ Phys.\ J.\ C {\bf 72}, 1896 (2012)
-  doi:10.1140/epjc/s10052-012-1896-2
-  [arXiv:1111.6097 [hep-ph]].
-  %%CITATION = doi:10.1140/epjc/s10052-012-1896-2;%%
-  %3362 citations counted in INSPIRE as of 27 Mar 2020
-
-%\cite{ATLAS:2017mpa}
-\bibitem{ATLAS:2017mpa}
-  ATLAS Collaboration,
-  %``Measurement of the tau lepton reconstruction and identification performance in the ATLAS experiment using $pp$ collisions at $\sqrt{s}=13~{\rm TeV}$,''
-  ATLAS-CONF-2017-029.
-  %113 citations counted in INSPIRE as of 11 Nov 2020
-
-%\cite{Lester:1999tx}
-\bibitem{Lester:1999tx}
-  C.~G.~Lester and D.~J.~Summers,
-  %``Measuring masses of semiinvisibly decaying particles pair produced at hadron colliders,''
-  Phys. Lett. B \textbf{463}, 99-103 (1999)
-  doi:10.1016/S0370-2693(99)00945-4
-  [arXiv:hep-ph/9906349 [hep-ph]].
-  %867 citations counted in INSPIRE as of 12 Nov 2020
-
-%\cite{Cheng:2008hk}
-\bibitem{Cheng:2008hk}
-  H.~C.~Cheng and Z.~Han,
-  %``Minimal Kinematic Constraints and m(T2),''
-  JHEP \textbf{12}, 063 (2008)
-  doi:10.1088/1126-6708/2008/12/063
-  [arXiv:0810.5178 [hep-ph]].
-  %220 citations counted in INSPIRE as of 13 Nov 2020
- 
-%\cite{Degrande:2011ua}
-\bibitem{Degrande:2011ua}
-  C.~Degrande, C.~Duhr, B.~Fuks, D.~Grellscheid, O.~Mattelaer and T.~Reiter,
-  %``UFO - The Universal FeynRules Output,''
-  Comput. Phys. Commun. \textbf{183}, 1201-1214 (2012)
-  doi:10.1016/j.cpc.2012.01.022
-  [arXiv:1108.2040 [hep-ph]].
-  %791 citations counted in INSPIRE as of 12 Nov 2020
-
 %\cite{Sjostrand:2014zea}
 \bibitem{Sjostrand:2014zea}
   T.~Sj\"ostrand, S.~Ask, J.~R.~Christiansen, R.~Corke, N.~Desai, P.~Ilten, S.~Mrenna, S.~Prestel, C.~O.~Rasmussen and P.~Z.~Skands,
@@ -536,5 +500,16 @@ doi:10.17182/hepdata.92006
   %``ATLAS Pythia 8 tunes to 7 TeV data,''
   ATL-PHYS-PUB-2014-021.
   %790 citations counted in INSPIRE as of 13 Nov 2020
+
+%\cite{Cacciari:2011ma}
+\bibitem{Cacciari:2011ma} 
+  M.~Cacciari, G.~P.~Salam and G.~Soyez,
+  %``FastJet User Manual,''
+  Eur.\ Phys.\ J.\ C {\bf 72}, 1896 (2012)
+  doi:10.1140/epjc/s10052-012-1896-2
+  [arXiv:1111.6097 [hep-ph]].
+  %%CITATION = doi:10.1140/epjc/s10052-012-1896-2;%%
+  %3362 citations counted in INSPIRE as of 27 Mar 2020
+
 \end{thebibliography}
 \end{document}
