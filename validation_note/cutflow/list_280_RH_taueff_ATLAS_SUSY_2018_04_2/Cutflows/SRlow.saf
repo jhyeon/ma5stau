@@ -1,0 +1,89 @@
+<SAFheader>
+</SAFheader>
+
+<InitialCounter>
+"Initial number of events"      #
+230375          0               # nentries
+2.303750e+05    0.000000e+00    # sum of weights
+2.303750e+05    0.000000e+00    # sum of weights^2
+</InitialCounter>
+
+<Counter>
+"Baseline cut"                  # 1st cut
+26312           0               # nentries
+2.631200e+04    0.000000e+00    # sum of weights
+2.631200e+04    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"asymmetric di-$\tau$ trigger"  # 2st cut
+10608           0               # nentries
+6.873984e+03    0.000000e+00    # sum of weights
+4.454342e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"2 medium $\tau$ (OS) and 3rd medium $\tau$ veto"# 3st cut
+10012           0               # nentries
+4.541443e+03    0.000000e+00    # sum of weights
+2.059999e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"b-jet veto"                    # 4st cut
+9758            0               # nentries
+4.426229e+03    0.000000e+00    # sum of weights
+2.007737e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"light lepton veto"             # 5st cut
+9756            0               # nentries
+4.425321e+03    0.000000e+00    # sum of weights
+2.007326e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"Z/H veto"                      # 6st cut
+9680            0               # nentries
+4.390848e+03    0.000000e+00    # sum of weights
+1.991689e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$75 < E^{miss}_{T} < 150$ GeV" # 7st cut
+3464            0               # nentries
+1.571270e+03    0.000000e+00    # sum of weights
+7.127282e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"2 tight $\tau$ (OS)"           # 8st cut
+3464            0               # nentries
+1.099889e+03    0.000000e+00    # sum of weights
+3.492368e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$|\Delta\phi(\tau_{1},\tau_{2})|>0.8$ [rad],low"# 9st cut
+3460            0               # nentries
+1.098619e+03    0.000000e+00    # sum of weights
+3.488336e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$\Delta R(\tau_{1},\tau_{2})<3.2$,low"# 10st cut
+3160            0               # nentries
+1.003363e+03    0.000000e+00    # sum of weights
+3.185879e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$m_{T2}>70$ GeV,low"           # 11st cut
+928             0               # nentries
+2.946586e+02    0.000000e+00    # sum of weights
+9.355998e+01    0.000000e+00    # sum of weights^2
+</Counter>
+
+<SAFfooter>
+</SAFfooter>

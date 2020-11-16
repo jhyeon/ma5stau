@@ -1,0 +1,61 @@
+<SAFheader>
+</SAFheader>
+
+<Histo>
+  <Description>
+    "SRlow_mT2"
+    # nbins   xmin           xmax           
+      5       7.000000e+01   1.200000e+02   
+    # Defined regions
+      SRlow    # Region nr. 1
+  </Description>
+  <Statistics>
+      919            0               # nevents
+      2.918009e+02   0.000000e+00    # sum of event-weights over events
+      919            0               # nentries
+      2.918009e+02   0.000000e+00    # sum of event-weights over entries
+      9.265262e+01   0.000000e+00    # sum weights^2
+      2.514871e+04   0.000000e+00    # sum value*weight
+      2.216532e+06   0.000000e+00    # sum value^2*weight
+  </Statistics>
+  <Data>
+      0.000000e+00   0.000000e+00    # underflow
+      1.089094e+02   0.000000e+00    # bin 1 / 5
+      9.081072e+01   0.000000e+00    # bin 2 / 5
+      5.112072e+01   0.000000e+00   
+      2.825928e+01   0.000000e+00    # bin 4 / 5
+      8.255520e+00   0.000000e+00    # bin 5 / 5
+      4.445280e+00   0.000000e+00    # overflow
+  </Data>
+</Histo>
+
+<Histo>
+  <Description>
+    "SRhigh_mT2"
+    # nbins   xmin           xmax           
+      5       7.000000e+01   2.200000e+02   
+    # Defined regions
+      SRhigh    # Region nr. 1
+  </Description>
+  <Statistics>
+      392            0               # nevents
+      1.618082e+02   0.000000e+00    # sum of event-weights over events
+      392            0               # nentries
+      1.618082e+02   0.000000e+00    # sum of event-weights over entries
+      6.679054e+01   0.000000e+00    # sum weights^2
+      1.461154e+04   0.000000e+00    # sum value*weight
+      1.379626e+06   0.000000e+00    # sum value^2*weight
+  </Statistics>
+  <Data>
+      0.000000e+00   0.000000e+00    # underflow
+      1.271350e+02   0.000000e+00    # bin 1 / 5
+      3.137098e+01   0.000000e+00    # bin 2 / 5
+      2.063880e+00   0.000000e+00   
+      4.127760e-01   0.000000e+00    # bin 4 / 5
+      0.000000e+00   0.000000e+00    # bin 5 / 5
+      8.255520e-01   0.000000e+00    # overflow
+  </Data>
+</Histo>
+
+<SAFfooter>
+</SAFfooter>

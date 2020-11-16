@@ -1,0 +1,82 @@
+<SAFheader>
+</SAFheader>
+
+<InitialCounter>
+"Initial number of events"      #
+230309          0               # nentries
+2.303090e+05    0.000000e+00    # sum of weights
+2.303090e+05    0.000000e+00    # sum of weights^2
+</InitialCounter>
+
+<Counter>
+"Baseline cut"                  # 1st cut
+26026           0               # nentries
+2.602600e+04    0.000000e+00    # sum of weights
+2.602600e+04    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"di-$\tau +E^{miss}_{T}$ trigger"# 2st cut
+2226            0               # nentries
+1.442448e+03    0.000000e+00    # sum of weights
+9.347063e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"2 medium $\tau$ (OS) and 3rd medium $\tau$ veto"# 3st cut
+2077            0               # nentries
+9.421272e+02    0.000000e+00    # sum of weights
+4.273489e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"b-jet veto"                    # 4st cut
+1982            0               # nentries
+8.990352e+02    0.000000e+00    # sum of weights
+4.078024e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"light lepton veto"             # 5st cut
+1982            0               # nentries
+8.990352e+02    0.000000e+00    # sum of weights
+4.078024e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"Z/H veto"                      # 6st cut
+1846            0               # nentries
+8.373456e+02    0.000000e+00    # sum of weights
+3.798200e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$\geq 1$ tight $\tau$"         # 7st cut
+1846            0               # nentries
+7.619845e+02    0.000000e+00    # sum of weights
+3.145289e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$|\Delta\phi(\tau_{1},\tau_{2})|>0.8$ [rad],high"# 8st cut
+1821            0               # nentries
+7.516651e+02    0.000000e+00    # sum of weights
+3.102693e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$\Delta R(\tau_{1},\tau_{2})<3.2$,high"# 9st cut
+1663            0               # nentries
+6.864465e+02    0.000000e+00    # sum of weights
+2.833486e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"$m_{T2}>70$ GeV,high"          # 10st cut
+392             0               # nentries
+1.618082e+02    0.000000e+00    # sum of weights
+6.679054e+01    0.000000e+00    # sum of weights^2
+</Counter>
+
+<SAFfooter>
+</SAFfooter>
