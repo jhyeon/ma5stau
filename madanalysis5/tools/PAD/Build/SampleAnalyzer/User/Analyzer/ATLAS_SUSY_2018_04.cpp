@@ -143,7 +143,7 @@ bool ATLAS_SUSY_2018_04::Execute(SampleFormat& sample, const EventFormat& event)
     double iso_dR = std::min(10./pt,0.3);
     double iso_tracks = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), iso_dR, 0., IsolationEFlow::TRACK_COMPONENT);
     double iso_all    = PHYSICS->Isol->eflow->relIsolation(Lep,event.rec(), 0.2, 0., IsolationEFlow::ALL_COMPONENTS);
-    bool iso = (iso_tracks<0.15 && iso_all<0.30);
+    bool iso = (iso_tracks<0.15 && pt < 200.) || (pt > 200. && iso_all<0.30);
 
     // Signal leptons
     if( Lep->abseta() < 2.7 && pt > 14. && iso ) SignalMuons.push_back(Lep);

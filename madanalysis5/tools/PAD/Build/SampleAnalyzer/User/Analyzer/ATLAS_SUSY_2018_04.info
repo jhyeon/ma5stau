@@ -15,16 +15,16 @@ i.e. Build/SampleAnalyzer/User/Analyzer/
   <!--  signal regions -->
 
   <region type="signal" id="SRlow">
-    <nobs>17</nobs>
-    <nb>17.1</nb>
-    <deltanb>2.8</deltanb>
+    <nobs>10</nobs>
+    <nb>6.0</nb>
+    <deltanb>1.7</deltanb>
   </region>
 
 
   <region type="signal" id="SRhigh">
-    <nobs>3</nobs>
-    <nb>3.3</nb>
-    <deltanb>0.9</deltanb>
+    <nobs>7</nobs>
+    <nb>10.2</nb>
+    <deltanb>3.3</deltanb>
   </region>
 
 </analysis>
