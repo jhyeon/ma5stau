@@ -13,12 +13,12 @@ onesig_plus_x = np.array([115.41, 119.46, 130.00, 146.22, 167.30,
                           189.19, 205.41, 222.43, 239.46, 254.05,
                           274.32, 292.97, 308.38, 317.30, 322.16,
                           326.22, 331.08, 335.14, 340.00, 345.68,
-                          350.54, 357.03, 360.27, 363.51, 363.51, 364.32])
+                          350.54, 357.03, 360.27, 363.51, 364.32, 363.51])
 onesig_plus_y = np.array([0.00, 14.66, 35.08, 49.21, 59.42,
                           72.77, 83.77, 93.98, 107.33, 119.11,
                           130.89, 135.60, 133.25, 125.39, 117.54,
                           108.12, 96.34, 86.13, 75.92, 64.92,
-                          56.28, 43.72, 34.29, 17.80, 0.00, 2.88])
+                          56.28, 43.72, 34.29, 17.80, 2.88, 0.00,])
 
 onesig_minus_x = np.array([169.73, 173.78, 181.08, 185.95, 194.86,
                           202.97, 213.51, 220.81, 224.86, 223.24,
@@ -32,27 +32,29 @@ m_th_y = np.array([80,180])
 
 accep_x = np.array([100,120,120,120,140,
                     180,200,220,250,250,
-                    300,340,360,380])
+                    300,340,360,380,380,
+                    380])
 accep_y = np.array([1,20,30,50,50,
                     80,100,100,120,150,
-                    140,120,110,80])
+                    140,120,110,30,50,
+                    80])
 rejec_x = np.array([120,140,140,160,180,
                     200,200,200,220,250,
                     250,280,300,300,300,
                     320,320,340,360,360,
-                    360,360,])
+                    360,360,360])
 rejec_y = np.array([1,1,30,1,60,
                     50,70,80,80,70,
                     100,1,70,100,120,
-                    1,50,100,50,60,
-                    80,100,])
+                    1,50,100,30,50,
+                    60,80,100,])
 
 
 tfont = {'fontname':'Nimbus Roman:style=Bold'}
 fig, ax = plt.subplots()
-plt.plot(obs_mstau, obs_mneu, antialiased=True, color='maroon', label='Observed (ATLAS)')
+plt.plot(obs_mstau, obs_mneu, antialiased=True, color='darkred', label='Observed (ATLAS)')
 plt.plot(exp_mstau, exp_mneu, '--', antialiased=True, color='black', label='Expected (ATLAS)')
-plt.plot(onesig_plus_x, onesig_plus_y, antialiased=True, color='gold', label='$\pm 1 \sigma$ (ATLAS)')
+plt.plot(onesig_plus_x, onesig_plus_y, antialiased=True, color='gold', label='Exp $\pm 1 \sigma$ (ATLAS)')
 plt.plot(onesig_minus_x, onesig_minus_y, antialiased=True, color='gold')
 plt.plot(m_th_x, m_th_y, '--', color='gray')
 plt.plot(accep_x, accep_y, '+', color='green', label='Accepted (MA5)')
@@ -60,15 +62,15 @@ plt.plot(rejec_x, rejec_y, 'x', color='red', label='Rejected (MA5)')
 plt.grid(True)
 plt.xlim(80,450)
 plt.ylim(0,270)
-plt.xlabel(r'$m(\tilde{\tau})$ [GeV]', horizontalalignment='right', x=1.0)
-plt.ylabel(r'$m(\tilde{\chi}^0_1)$ [GeV]', horizontalalignment='right', y=1.0)
+plt.xlabel(r'$m(\tilde{\tau})$ [GeV]', horizontalalignment='right', x=1.0, fontsize=14)
+plt.ylabel(r'$m(\tilde{\chi}^0_1)$ [GeV]', horizontalalignment='right', y=1.0, fontsize=14)
 plt.legend(loc='upper right', prop={'size': 8})
 text_mass= r'$m(\tilde{\tau})$ < $m(\tilde{\chi}^0_1)$'
 ax.text(0.10, 0.65, text_mass, rotation=45, color='gray',
         transform=ax.transAxes, fontsize=8, verticalalignment='top')
 text = '\n'.join((
-        r'MadAnalysis5 ATLAS-SYSY-2018-04',
-        r'$\sqrt{s}$=13 TeV, 139 fb$^-1$',
+        r'MadAnalysis5 ATLAS-SUSY-2018-04',
+        r'$\sqrt{s}$=13 TeV, 139 fb$^{-1}$',
         r'$\tilde{\tau}^{+}_{L}\tilde{\tau}^{-}_{L}\rightarrow 2 \times \tau \tilde{\chi}^0_1$',
         r'SR combined (ATLAS) and best of SR (MA5)'))
 ax.text(0.05, 0.95, text,

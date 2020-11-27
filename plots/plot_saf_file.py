@@ -1,16 +1,11 @@
-#!/usr/bin/env python3
-
 import sys
 import os
 from operator import add
-from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib import pyplot as plt
 
 outnames = ['m120_SRlow.pdf', 'm120_SRhigh.pdf', 'm280_SRlow.pdf', 'm280_SRhigh.pdf']
 
 for outfile in outnames:
-
-  pp = PdfPages(outfile)
 
   nbins = 5
   xmin = 70.
@@ -75,15 +70,18 @@ for outfile in outnames:
   #print(data)
   #print(norm_data)
   #print(comp_data)
-  plt.figure()
-  plt.rc("axes",labelsize=14)
-  plt.rc("legend",fontsize=12)
+  plt.rc("axes", labelsize=14)
+  plt.rc("legend", fontsize=14)
+  fig, ax = plt.subplots()
   plt.hist(x, bins=thebins, weights=norm_data, label='MA5', histtype='step', fill=False)
-  plt.errorbar(x, norm_comp_data, yerr=norm_comp_err, label='ATLAS', fmt='.k')
-  plt.xlabel(r"$m_{T2}$")
+  plt.errorbar(x, norm_comp_data, yerr=norm_comp_err, label='ATLAS', fmt='.k', markersize=10)
+  plt.xlabel(r"$m_{T2}$ [GeV]")
   plt.ylabel('Normalized Events')
+  plt.title(plot_title, fontsize=20)
+  for tick in ax.xaxis.get_major_ticks():
+      tick.label.set_fontsize(12)
+  for tick in ax.yaxis.get_major_ticks():
+      tick.label.set_fontsize(12)
   plt.legend()
-  plt.title(plot_title)
-  pp.savefig()
-  pp.close()
+  plt.savefig(outfile, bbox_inches='tight')
   print "wrote results to", outfile
